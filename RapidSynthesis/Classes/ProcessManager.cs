@@ -10,19 +10,35 @@ namespace RapidSynthesis
 {
     // TODO: 
     // implement logic for handling multiple processes
+    // handle no process found
     static class ProcessManager
     {
+        #region private fields and properties
         private static readonly string debugProcessName = "notepad";
-        private static readonly string finalFantasyXIVProcessName = "ffxiv";
+        private static readonly string finalFantasyXIVProcessName = "ffxiv_dx11";
         private static readonly bool debugEnabled = false;
         private static IntPtr GameProcessPtr { get; set; }
+        #endregion
+
+        #region user32.dll imports
+        [DllImport("user32.dll")]
+        public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern IntPtr FindWindowEx(IntPtr hwndParent, IntPtr hwndChildAfter, string lpszClass, string lpszWindow);
+        #endregion
+
         public static Process GameProcess;
 
+        static ProcessManager()
+        {
+            LoadProcess();
+        }
 
         public static void LoadProcess()
         {  
-            // find all processes
+            // find all processes matching either FFXIV or notepad, depending on debugging enabled
             Process[] foundProcesses;
+            var lol = Process.GetProcesses();
             if (!debugEnabled)
             {
                 foundProcesses = Process.GetProcessesByName(finalFantasyXIVProcessName);
@@ -37,16 +53,18 @@ namespace RapidSynthesis
         }
 
 
-        [DllImport("user32.dll")]
-        public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
-
         public static IntPtr ProcessPtr()
         {
-            if (GameProcessPtr == null)
+            if (GameProcessPtr == IntPtr.Zero)
             {
                 GameProcessPtr = FindWindow(null, GameProcess.MainWindowTitle);
+                // if debug is enabled, child process of notepad needs to be grabbed
+                if (debugEnabled)
+                {
+                    GameProcessPtr = FindWindowEx(GameProcessPtr, IntPtr.Zero, "edit", null);
+                }
             }
-            return GameProcessPtr;
+             return GameProcessPtr;
         }
     }
 }
