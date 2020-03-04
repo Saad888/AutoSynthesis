@@ -1,0 +1,42 @@
+﻿<Window x:Class="RapidSynthesis.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RapidSynthesis"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="576">
+    <Grid Margin="0,0,3.6,0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="180*"/>
+            <ColumnDefinition Width="103*"/>
+        </Grid.ColumnDefinitions>
+        <Label x:Name="LabelUpdate" Content="Label" HorizontalAlignment="Left" Margin="302,223,0,0" VerticalAlignment="Top" Height="138" Width="254" Grid.ColumnSpan="2"/>
+        <Button x:Name="ButtonTest" Content="Test" HorizontalAlignment="Left" Margin="10,366,0,0" VerticalAlignment="Top" Width="302" Height="44" Click="btnTest_Click"/>
+        <Label x:Name="LabelMacro1" Content="Macro 1" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="LabelMacro2" Content="Macro 2" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="LabelMacro3" Content="Macro 3" HorizontalAlignment="Left" Margin="10,72,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="TextBoxMacro1" HorizontalAlignment="Left" Height="23" Margin="68,14,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="TextBoxMacro2" HorizontalAlignment="Left" Height="23" Margin="68,44,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="TextBoxMacro3" HorizontalAlignment="Left" Height="23" Margin="68,72,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
+        <Label x:Name="LabelFood" Content="Food" HorizontalAlignment="Left" Margin="10,103,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="LabelPotion" Content="Potion" HorizontalAlignment="Left" Margin="10,134,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="LabelCraftWindow" Content="Crafting Window" HorizontalAlignment="Left" Margin="10,165,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="LabelSelectConfirm" Content="Select/Confirm" HorizontalAlignment="Left" Margin="10,196,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="LabelExitMenus" Content="Exit Menus" HorizontalAlignment="Left" Margin="10,227,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="TextBoxFood" HorizontalAlignment="Left" Height="23" Margin="68,103,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="TextBoxPotion" HorizontalAlignment="Left" Height="23" Margin="68,135,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="TextBoxCraftingWindow" HorizontalAlignment="Left" Height="23" Margin="109,165,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="TextBoxSelectConfirm" HorizontalAlignment="Left" Height="23" Margin="103,200,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="TextBoxExitMenus" HorizontalAlignment="Left" Height="23" Margin="82,231,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="TextBoxMacro1Timer" HorizontalAlignment="Left" Height="23" Margin="223,15,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="47"/>
+        <TextBox x:Name="TextBoxMacro2Timer" HorizontalAlignment="Left" Height="23" Margin="223,44,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="47"/>
+        <TextBox x:Name="TextBoxMacro3Timer" HorizontalAlignment="Left" Height="23" Margin="223,72,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="47"/>
+        <TextBox x:Name="TextBoxFoodTimer" HorizontalAlignment="Left" Height="23" Margin="223,103,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="47"/>
+        <TextBox x:Name="TextBoxPotionTimer" HorizontalAlignment="Left" Height="23" Margin="223,135,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="47"/>
+        <TextBox x:Name="TextBoxCraftingWindowTimer" HorizontalAlignment="Left" Height="23" Margin="239,165,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="47"/>
+        <TextBox x:Name="TextBoxSelectConfirmTimer" HorizontalAlignment="Left" Height="23" Margin="237,200,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="47"/>
+        <TextBox x:Name="TextBoxExitMenusTimer" HorizontalAlignment="Left" Height="23" Margin="228,231,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="47"/>
+
+    </Grid>
+</Window>
