@@ -23,8 +23,12 @@ namespace RapidSynthesis
         #region user32.dll imports
         [DllImport("user32.dll")]
         public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+
         [DllImport("user32.dll", SetLastError = true)]
         static extern IntPtr FindWindowEx(IntPtr hwndParent, IntPtr hwndChildAfter, string lpszClass, string lpszWindow);
+
+        [DllImport("user32.dll")]
+        static extern bool SetForegroundWindow(IntPtr hWnd);
         #endregion
 
         public static Process GameProcess;
@@ -65,6 +69,11 @@ namespace RapidSynthesis
                 }
             }
              return GameProcessPtr;
+        }
+
+        public static void FocusGame()
+        {
+            SetForegroundWindow(ProcessPtr());
         }
     }
 }
