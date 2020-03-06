@@ -14,7 +14,6 @@ namespace RapidSynthesis
         Confirm,
         Cancel,
         Food,
-        Syrup, 
-        Collectable
+        Syrup
     }
 }

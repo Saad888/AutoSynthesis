@@ -22,6 +22,7 @@ namespace RapidSynthesis
         private const int STANDARD_SYRUP_TIME = 15;
         private const int STANDARD_MENU_DELAY = 1000;
         private const int STANDARD_ANIMATION_DELAY = 3000;
+        private static int craftCount = 0;
 
 
         public static void InitiateCraftingEngine(Dictionary<HKType, Hotkey> hotKeyDictionary,
@@ -83,7 +84,7 @@ namespace RapidSynthesis
             // begin next craft
 
             // Set crafting parameters
-            int craftsCount = 1;
+            craftCount = 1;
             if (HotkeySet[HKType.Food] != null)
                 NextFoodUse = CalculateNextConsumableUse(Settings.StartingFoodTime);
             if (HotkeySet[HKType.Syrup] != null)
@@ -92,7 +93,7 @@ namespace RapidSynthesis
 
             // If crafts remaining was 0, loop infinitley
             // If not, craft until quota is met
-            while ((Settings.CraftCount == 0) || (craftsCount <= Settings.CraftCount))
+            while ((Settings.CraftCount == 0) || (craftCount <= Settings.CraftCount))
             {
                 // UI MESSAGE: Set timer for overall craft
 
@@ -114,11 +115,11 @@ namespace RapidSynthesis
                 // Use Food and Syrup
                 SendFoodAndSyrupInput();
 
-                // Prepare next craft
+                // Prepare next craft if crafting is not finished
                 PrepareNextCraftInput();
                 Break(STANDARD_ANIMATION_DELAY);
 
-                craftsCount += 1;
+                craftCount += 1;
             }
             EndCraftingProcess();
         }
@@ -173,7 +174,8 @@ namespace RapidSynthesis
 
         private static void PrepareNextCraftInput()
         {
-            SendInput(HotkeySet[HKType.Confirm], 3);
+            if ((Settings.CraftCount == 0) || (craftCount < Settings.CraftCount))
+                SendInput(HotkeySet[HKType.Confirm], 3);
         }
         #endregion
 

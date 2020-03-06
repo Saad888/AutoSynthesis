@@ -70,8 +70,9 @@
     <Compile Include="Classes\Backend\KeyInputEngine.cs" />
     <Compile Include="Classes\Backend\ProcessManager.cs" />
     <Compile Include="Classes\Backend\CraftingEngine.cs" />
+    <Compile Include="DataTypes\Crafting\CraftingTiming.cs" />
     <Compile Include="DataTypes\Crafting\Hotkey.cs" />
-    <Compile Include="DataTypes\Crafting\HotkeyType.cs" />
+    <Compile Include="DataTypes\Crafting\HKType.cs" />
     <Compile Include="DataTypes\SettingsContainer.cs" />
     <Compile Include="Exceptions\CraftingException.cs" />
     <Compile Include="Exceptions\DuplicateCraftingAttemptedException.cs" />
@@ -108,6 +109,8 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="DataBindings\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
