@@ -37,6 +37,7 @@
         <TextBox x:Name="TextBoxCraftingWindowTimer" HorizontalAlignment="Left" Height="23" Margin="239,165,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="47"/>
         <TextBox x:Name="TextBoxSelectConfirmTimer" HorizontalAlignment="Left" Height="23" Margin="237,200,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="47"/>
         <TextBox x:Name="TextBoxExitMenusTimer" HorizontalAlignment="Left" Height="23" Margin="228,231,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="47"/>
+        <Button x:Name="CancelButton" Content="Cancel" HorizontalAlignment="Left" Margin="165,332,0,0" VerticalAlignment="Top" Width="75" Click="CancelButton_Click"/>
 
     </Grid>
 </Window>

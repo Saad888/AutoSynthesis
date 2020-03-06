@@ -34,14 +34,9 @@ namespace RapidSynthesis
             SendKeysToGame(key, mods);
         }
 
-        private static void SendKeysToGame(VirtualKeyCode key, VirtualKeyCode[] modKeys = null)
+        public static void SendKeysToGame(VirtualKeyCode key, VirtualKeyCode[] modKeys = null)
         {
-            KeyPress(key, modKeys);
-        }
-
-        private static void KeyPress(VirtualKeyCode key, VirtualKeyCode[] modKeys)
-        {
-            Thread.Sleep(5000);
+            // submit mod keys
             if (modKeys != null)
             {
                 foreach (var modKey in modKeys)
@@ -50,8 +45,11 @@ namespace RapidSynthesis
                 }
             }
 
+            // send key command 
             SendMessage(ProcessManager.ProcessPtr(), WM_KEYDOWN, (int)key, 0);
             SendMessage(ProcessManager.ProcessPtr(), WM_KEYUP, (int)key, 0);
+
+            // release mod keys
             if (modKeys != null)
             {
                 foreach (var modKey in modKeys)
@@ -60,8 +58,6 @@ namespace RapidSynthesis
                 }
             }
         }
-
-
     }
 }
 

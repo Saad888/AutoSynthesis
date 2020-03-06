@@ -67,8 +67,15 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Classes\KeyInputEngine.cs" />
-    <Compile Include="Classes\ProcessManager.cs" />
+    <Compile Include="Classes\Backend\KeyInputEngine.cs" />
+    <Compile Include="Classes\Backend\ProcessManager.cs" />
+    <Compile Include="Classes\Backend\CraftingEngine.cs" />
+    <Compile Include="DataTypes\Crafting\Hotkey.cs" />
+    <Compile Include="DataTypes\Crafting\HotkeyType.cs" />
+    <Compile Include="DataTypes\SettingsContainer.cs" />
+    <Compile Include="Exceptions\CraftingException.cs" />
+    <Compile Include="Exceptions\DuplicateCraftingAttemptedException.cs" />
+    <Compile Include="Exceptions\InvalidUserParametersException.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -101,8 +108,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="DataTypes\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
