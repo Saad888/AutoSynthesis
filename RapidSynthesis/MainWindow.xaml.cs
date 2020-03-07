@@ -17,6 +17,11 @@ using System.Threading;
 
 namespace RapidSynthesis
 {
+    // keycodes being eaten
+    // https://stackoverflow.com/questions/1458748/wpf-onkeydown-not-being-called-for-space-key-in-control-derived-from-wpf-text
+
+
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -46,42 +51,66 @@ namespace RapidSynthesis
             var settings = new SettingsContainer(craftCount, collectableCraft, fourtyMinuteFood, startingFoodTime, startingSyrupTime);
 
             CraftingEngine.InitiateCraftingEngine(testingHotkeys, settings);
-           
+
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
         }
 
-        private void KeyDown(object sender, KeyEventArgs e)
+
+        private void HotkeyKeyDown(object sender, KeyEventArgs e)
         {
             var textBox = (TextBox)sender;
-            textBox.Text = e.Key.ToString();
+            textBox.Text = HotkeyProcessor.ProcessEventInputs(e.Key, new HashSet<Key>());
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            Task.Run(() =>
-            {
-                UpdateProgressBar(100);
-            });
-        }
+        //MISSING
+        //F10
+        //=
+        //Left Alt
+        //Right Alt
 
-        private void UpdateProgressBar(int target)
-        {
-            Action action = () => { SetBar(target); };
-            TestBar.Dispatcher.BeginInvoke(action);
-        }
 
-        private void SetBar(int target)
-        {
-            while (TestBar.Value < target)
-            {
-                var currentValue = TestBar.Value;
-                var nextValue = Math.Ceiling((target - currentValue) / 2 + currentValue);
-                TestBar.Value = nextValue;
-                Thread.Sleep(100);
-            }
-        }
+        //WRONG
+        //[and]
+        //\
+
+        //FIX
+        //Caps
+        //Ctrl1
+        //Ctrl2
+
+
+
+        //NOT ENABLED
+        //PrintScreen
+
+
+        //    private void Button_Click(object sender, RoutedEventArgs e)
+        //    {
+        //        Task.Run(() =>
+        //        {
+        //            UpdateProgressBar(100);
+        //        });
+        //    }
+
+        //    private void UpdateProgressBar(int target)
+        //    {
+        //        Action action = () => { SetBar(target); };
+        //        TestBar.Dispatcher.BeginInvoke(action);
+        //    }
+
+        //    private void SetBar(int target)
+        //    {
+        //        while (TestBar.Value < target)
+        //        {
+        //            var currentValue = TestBar.Value;
+        //            var nextValue = Math.Ceiling((target - currentValue) / 2 + currentValue);
+        //            TestBar.Value = nextValue;
+        //            Thread.Sleep(100);
+        //        }
+        //    }
+        //}
     }
 }

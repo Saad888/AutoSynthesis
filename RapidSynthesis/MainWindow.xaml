@@ -11,43 +11,17 @@
             <ColumnDefinition Width="180*"/>
             <ColumnDefinition Width="103*"/>
         </Grid.ColumnDefinitions>
-        <Label x:Name="LabelUpdate" Content="Label" HorizontalAlignment="Left" Margin="302,223,0,0" VerticalAlignment="Top" Height="138" Width="254" Grid.ColumnSpan="2" Background="Transparent" BorderBrush="#FF711414"/>
         <Button x:Name="ButtonTest" Content="Test" HorizontalAlignment="Left" Margin="10,366,0,0" VerticalAlignment="Top" Width="302" Height="44" Click="btnTest_Click"/>
         <Label x:Name="LabelMacro1" Content="Macro 1" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
         <Label x:Name="LabelMacro2" Content="Macro 2" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top"/>
         <Label x:Name="LabelMacro3" Content="Macro 3" HorizontalAlignment="Left" Margin="10,72,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="TextBoxMacro3" HorizontalAlignment="Left" Height="23" Margin="68,72,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120" KeyDown="KeyDown"/>
-        <TextBox x:Name="TextBoxMacro1" IsReadOnly="True" HorizontalAlignment="Left" Height="23" Margin="68,14,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120" KeyDown="KeyDown"/>
-        <TextBox x:Name="TextBoxMacro2" HorizontalAlignment="Left" Height="23" Margin="68,44,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120" KeyDown="KeyDown"/>
         <Label x:Name="LabelFood" Content="Food" HorizontalAlignment="Left" Margin="10,103,0,0" VerticalAlignment="Top"/>
         <Label x:Name="LabelPotion" Content="Potion" HorizontalAlignment="Left" Margin="10,134,0,0" VerticalAlignment="Top"/>
         <Label x:Name="LabelCraftWindow" Content="Crafting Window" HorizontalAlignment="Left" Margin="10,165,0,0" VerticalAlignment="Top"/>
         <Label x:Name="LabelSelectConfirm" Content="Select/Confirm" HorizontalAlignment="Left" Margin="10,196,0,0" VerticalAlignment="Top"/>
         <Label x:Name="LabelExitMenus" Content="Exit Menus" HorizontalAlignment="Left" Margin="10,227,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="TextBoxFood" HorizontalAlignment="Left" Height="23" Margin="68,103,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="TextBoxPotion" HorizontalAlignment="Left" Height="23" Margin="68,135,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="TextBoxCraftingWindow" HorizontalAlignment="Left" Height="23" Margin="109,165,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="TextBoxSelectConfirm" HorizontalAlignment="Left" Height="23" Margin="103,200,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="TextBoxExitMenus" HorizontalAlignment="Left" Height="23" Margin="82,231,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="TextBoxMacro1Timer" HorizontalAlignment="Left" Height="23" Margin="223,15,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="47"/>
-        <TextBox x:Name="TextBoxMacro2Timer" HorizontalAlignment="Left" Height="23" Margin="223,44,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="47"/>
-        <TextBox x:Name="TextBoxMacro3Timer" HorizontalAlignment="Left" Height="23" Margin="223,72,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="47"/>
-        <TextBox x:Name="TextBoxFoodTimer" HorizontalAlignment="Left" Height="23" Margin="223,103,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="47"/>
-        <TextBox x:Name="TextBoxPotionTimer" HorizontalAlignment="Left" Height="23" Margin="223,135,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="47"/>
-        <TextBox x:Name="TextBoxCraftingWindowTimer" HorizontalAlignment="Left" Height="23" Margin="239,165,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="47"/>
-        <TextBox x:Name="TextBoxSelectConfirmTimer" HorizontalAlignment="Left" Height="23" Margin="237,200,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="47"/>
-        <TextBox x:Name="TextBoxExitMenusTimer" HorizontalAlignment="Left" Height="23" Margin="228,231,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="47"/>
-        <Button x:Name="CancelButton" Content="Cancel" HorizontalAlignment="Left" Margin="165,332,0,0" VerticalAlignment="Top" Width="75" Click="CancelButton_Click"/>
-        <TextBox Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="41,95,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
-        <ProgressBar x:Name="TestBar" HorizontalAlignment="Left" Height="23" Margin="38,267,0,0" VerticalAlignment="Top" Width="150">
-            <ProgressBar.OpacityMask>
-                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                    <GradientStop Color="Black" Offset="0"/>
-                    <GradientStop Color="#FFBC3C3C" Offset="1"/>
-                </LinearGradientBrush>
-            </ProgressBar.OpacityMask>
-        </ProgressBar>
-        <Button Grid.ColumnSpan="2" Content="Button" HorizontalAlignment="Left" Margin="297,301,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
+        <TextBox x:Name="TXBMacro1Key" HorizontalAlignment="Left" Height="23" Margin="150,14,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120" IsReadOnly="True" PreviewKeyDown="HotkeyKeyDown"/>
+        <TextBox x:Name="TXBMacro1Timer" HorizontalAlignment="Left" Height="23" Margin="286,14,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="74" IsReadOnly="True"/>
 
     </Grid>
 </Window>
