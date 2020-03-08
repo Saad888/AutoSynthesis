@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:RapidSynthesis"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="576">
-    <Grid Margin="0,0,3.6,0">
+    <Grid x:Name="MainWindowGrid" Margin="0,0,3.6,0" KeyboardNavigation.TabNavigation="Continue">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="180*"/>
             <ColumnDefinition Width="103*"/>
@@ -20,8 +20,10 @@
         <Label x:Name="LabelCraftWindow" Content="Crafting Window" HorizontalAlignment="Left" Margin="10,165,0,0" VerticalAlignment="Top"/>
         <Label x:Name="LabelSelectConfirm" Content="Select/Confirm" HorizontalAlignment="Left" Margin="10,196,0,0" VerticalAlignment="Top"/>
         <Label x:Name="LabelExitMenus" Content="Exit Menus" HorizontalAlignment="Left" Margin="10,227,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="TXBMacro1Key" HorizontalAlignment="Left" Height="23" Margin="150,14,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120" IsReadOnly="True" PreviewKeyDown="HotkeyKeyDown"/>
-        <TextBox x:Name="TXBMacro1Timer" HorizontalAlignment="Left" Height="23" Margin="286,14,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="74" IsReadOnly="True"/>
+        <!-- MACRO 1 -->
+        <TextBox x:Name="TXBMacro1Key" HorizontalAlignment="Left" Height="23" Margin="150,14,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="236" IsReadOnly="True" PreviewKeyDown="HotkeyKeyDown" Grid.ColumnSpan="2" PreviewKeyUp="HotkeyKeyUp" GotFocus="HotkeyTextboxGainFocus" LostFocus="HotkeyTextboxLoseFocus"/>
+        <TextBox x:Name="TXBMacro1Timer" HorizontalAlignment="Left" Height="23" Margin="41,14,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="74" IsReadOnly="True" Grid.Column="1" KeyDown="SetTimeValue" GotFocus="TimeGetFocus" LostFocus="TimeLostFocus"/>
+        <Button x:Name="TEST" Content="Test" HorizontalAlignment="Left" Margin="23,268,0,0" VerticalAlignment="Top" Width="75" Click="TEST_Click"/>
 
     </Grid>
 </Window>

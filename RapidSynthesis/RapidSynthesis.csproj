@@ -70,7 +70,10 @@
     <Compile Include="Classes\Backend\KeyInputEngine.cs" />
     <Compile Include="Classes\Backend\ProcessManager.cs" />
     <Compile Include="Classes\Backend\CraftingEngine.cs" />
+    <Compile Include="Classes\UI Classes\HotkeyContainer.cs" />
     <Compile Include="Classes\UI Classes\HotkeyProcessor.cs" />
+    <Compile Include="Classes\UI Classes\TimeInputContainer.cs" />
+    <Compile Include="Classes\UI Classes\TimeInputProcessor.cs" />
     <Compile Include="DataTypes\Crafting\CraftingTiming.cs" />
     <Compile Include="DataTypes\Crafting\Hotkey.cs" />
     <Compile Include="DataTypes\Crafting\HKType.cs" />
