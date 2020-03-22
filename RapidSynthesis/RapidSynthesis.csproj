@@ -70,6 +70,7 @@
     <Compile Include="Classes\Backend\KeyInputEngine.cs" />
     <Compile Include="Classes\Backend\ProcessManager.cs" />
     <Compile Include="Classes\Backend\CraftingEngine.cs" />
+    <Compile Include="Classes\Backend\UICommunicator.cs" />
     <Compile Include="Classes\UI Classes\HotkeyContainer.cs" />
     <Compile Include="Classes\UI Classes\HotkeyProcessor.cs" />
     <Compile Include="Classes\UI Classes\TimeInputContainer.cs" />
@@ -78,6 +79,7 @@
     <Compile Include="DataTypes\Crafting\Hotkey.cs" />
     <Compile Include="DataTypes\Crafting\HKType.cs" />
     <Compile Include="DataTypes\SettingsContainer.cs" />
+    <Compile Include="Exceptions\CraftCancelRequest.cs" />
     <Compile Include="Exceptions\CraftingException.cs" />
     <Compile Include="Exceptions\DuplicateCraftingAttemptedException.cs" />
     <Compile Include="Exceptions\InvalidUserParametersException.cs" />

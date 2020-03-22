@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace RapidSynthesis
 {
-    class TimeInputContainer
+    class CraftCancelRequest : Exception
     {
-        public bool FreshFocus { get; set; } = true;
-        public int Timer { get; set; } = 0;
+        public CraftCancelRequest() { }
     }
 }

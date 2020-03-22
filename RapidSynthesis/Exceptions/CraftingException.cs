@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RapidSynthesis.Exceptions
+namespace RapidSynthesis
 {
     public class CraftingException: Exception
     {

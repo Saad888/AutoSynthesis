@@ -9,9 +9,11 @@ namespace RapidSynthesis
 {
     static class CraftingEngine
     {
+        #region Class Properties and Consts
         private static Dictionary<HKType, Hotkey> HotkeySet { get; set; }
         private static SettingsContainer Settings { get; set; }
         private static bool CraftingActive { get; set; } = false;
+        private static bool CraftingSuccessfullyCancelled { get; set; } = false;
         public static DateTime NextFoodUse { get; set; }
         public static DateTime NextSyrupUse { get; set; }
         public static CancellationTokenSource Cts { get; set; }
@@ -22,9 +24,11 @@ namespace RapidSynthesis
         private const int STANDARD_SYRUP_TIME = 15;
         private const int STANDARD_MENU_DELAY = 1000;
         private const int STANDARD_ANIMATION_DELAY = 3000;
+        private const int STANDARD_TICK_TIME = 50;
         private static int craftCount = 0;
+        #endregion
 
-
+        #region System Methods
         public static void InitiateCraftingEngine(Dictionary<HKType, Hotkey> hotKeyDictionary,
             SettingsContainer userSettings)
         {
@@ -55,19 +59,21 @@ namespace RapidSynthesis
             HotkeySet = hotKeyDictionary;
             Settings = userSettings;
 
-
-
             // Run crafting system on a new thread
             Cts = new CancellationTokenSource();
             var token = Cts.Token;
             Task.Run(() => RunCraftingEngine(token), token);
-
         }
 
         public static void CancelCrafting()
         {
-            Console.WriteLine("Sending Cancel");
+            CraftingSuccessfullyCancelled = false;
+            UICommunicator.UpdateStatus("Ending Craft...");
             Cts.Cancel();
+            while (!CraftingSuccessfullyCancelled)
+            {
+                Thread.Sleep(100);
+            }
         }
 
         private static void RunCraftingEngine(CancellationToken token)
@@ -83,54 +89,88 @@ namespace RapidSynthesis
             // pot if needed
             // begin next craft
 
-            // Set crafting parameters
-            craftCount = 1;
-            if (HotkeySet[HKType.Food] != null)
-                NextFoodUse = CalculateNextConsumableUse(Settings.StartingFoodTime);
-            if (HotkeySet[HKType.Syrup] != null)
-                NextSyrupUse = CalculateNextConsumableUse(Settings.StartingSyrupTime);
-
-
-            // If crafts remaining was 0, loop infinitley
-            // If not, craft until quota is met
-            while ((Settings.CraftCount == 0) || (craftCount <= Settings.CraftCount))
+            try
             {
-                // UI MESSAGE: Set timer for overall craft
+                // Set crafting parameters
+                UICommunicator.UpdateStatus("Setting up for Crafting...");
+                craftCount = 1;
+                if (HotkeySet[HKType.Food] != null)
+                    NextFoodUse = CalculateNextConsumableUse(Settings.StartingFoodTime);
+                if (HotkeySet[HKType.Syrup] != null)
+                    NextSyrupUse = CalculateNextConsumableUse(Settings.StartingSyrupTime);
 
-                // Initiate Macro 1
-                SendMacroInput(HotkeySet[HKType.Macro1], 1);
 
-                // Initiate Macro 2
-                SendMacroInput(HotkeySet[HKType.Macro2], 2);
+                // If crafts remaining was 0, loop infinitley
+                // If not, craft until quota is met
+                while ((Settings.CraftCount == 0) || (craftCount <= Settings.CraftCount))
+                {
+                    // UI MESSAGE: Set timer for overall craft
+                    UICommunicator.UpdateCraftUIInfo(craftCount, Settings.CraftCount);
 
-                // Initiate Macro 3
-                SendMacroInput(HotkeySet[HKType.Macro3], 3);
+                    // Begin Craft Timer:
+                    RunCraftProgressBar();
 
-                // Collectable Menu Option
-                SendCollectableConfirmationInput();
+                    // Initiate Macro 1
+                    SendMacroInput(HotkeySet[HKType.Macro1], 1);
 
-                // Standard delay for menus
-                Break(STANDARD_MENU_DELAY);
+                    // Initiate Macro 2
+                    SendMacroInput(HotkeySet[HKType.Macro2], 2);
 
-                // Use Food and Syrup
-                SendFoodAndSyrupInput();
+                    // Initiate Macro 3
+                    SendMacroInput(HotkeySet[HKType.Macro3], 3);
 
-                // Prepare next craft if crafting is not finished
-                PrepareNextCraftInput();
-                Break(STANDARD_ANIMATION_DELAY);
+                    // Collectable Menu Option
+                    SendCollectableConfirmationInput();
 
-                craftCount += 1;
+                    // Standard delay for menus
+                    Break(STANDARD_MENU_DELAY);
+
+                    // Use Food and Syrup
+                    SendFoodAndSyrupInput();
+
+                    // Prepare next craft if crafting is not finished
+                    PrepareNextCraftInput();
+                    Break(STANDARD_ANIMATION_DELAY);
+
+                    craftCount += 1;
+                }
+            } 
+            catch (Exception e) when (!(e is CraftCancelRequest))
+            {
+                Console.WriteLine("ERROR");
+                Console.WriteLine(e.Message);
+                throw e;
+            } 
+            finally
+            {
+                EndCraftingProcess();
             }
-            EndCraftingProcess();
         }
 
-        #region crafting methods
+        private static void EndCraftingProcess()
+        {
+            // ALL CLEANUP
+            CraftingActive = false;
+            CraftingSuccessfullyCancelled = true;
+            UICommunicator.UpdateStatus("");
+            UICommunicator.EndAllProgress();
+        }
+
+        private static void CheckCancelRequest()
+        {
+            if (Cts.IsCancellationRequested)
+                throw new CraftCancelRequest();
+        }
+        #endregion
+
+        #region Crafting Methods
         private static void SendMacroInput(Hotkey hotkey, int macroNumber)
         {
             if (hotkey == null)
                 return;
 
             // UI message: MACRO NUMBER macroNumber
+            UICommunicator.UpdateMacroUIInfo(macroNumber, hotkey.TimerInMiliseconds);
             SendInput(hotkey);
         }
 
@@ -139,12 +179,16 @@ namespace RapidSynthesis
             if (Settings.CollectableCraft == false)
                 return;
 
+            UICommunicator.UpdateStatus("Accepting Collectable Craft...");
             SendInput(HotkeySet[HKType.Confirm]);
         }
 
         private static void SendFoodAndSyrupInput()
         {
-            // check if timers is passed
+
+            if ((Settings.CraftCount != 0) && (craftCount < Settings.CraftCount))
+                return;
+                // check if timers is passed
             bool useFood = (HotkeySet[HKType.Food] != null && DateTime.Compare(NextFoodUse, DateTime.Now) <= 0);
             bool useSyrup = (HotkeySet[HKType.Syrup] != null && DateTime.Compare(NextSyrupUse, DateTime.Now) <= 0);
 
@@ -162,11 +206,13 @@ namespace RapidSynthesis
             // use food and syrup as needed
             if (useFood)
             {
+                UICommunicator.UpdateStatus("Using Food...");
                 SendInput(HotkeySet[HKType.Food]);
                 NextFoodUse = CalculateNextConsumableUse(Settings.FoodTimerFourtyMinutes ? EXTENDED_FOOD_TIME : STANDARD_FOOD_TIME);
             }
             if (useSyrup)
             {
+                UICommunicator.UpdateStatus("Using Syrup...");
                 SendInput(HotkeySet[HKType.Syrup]);
                 NextSyrupUse = CalculateNextConsumableUse(STANDARD_SYRUP_TIME);
             }
@@ -175,20 +221,9 @@ namespace RapidSynthesis
         private static void PrepareNextCraftInput()
         {
             if ((Settings.CraftCount == 0) || (craftCount < Settings.CraftCount))
-                SendInput(HotkeySet[HKType.Confirm], 3);
-        }
-        #endregion
-
-        private static void Break(int time)
-        {
-            Thread.Sleep(time);
-        }
-        private static void SendInput(Hotkey hotkey, int repeat = 1)
-        {
-            for (int i = repeat; i > 0; i--)
             {
-                KeyInputEngine.SendKeysToGame(hotkey.KeyCode, hotkey.ModKeyCodes);
-                Thread.Sleep(hotkey.TimerInMiliseconds);
+                UICommunicator.UpdateStatus("Preparing Next Craft...");
+                SendInput(HotkeySet[HKType.Confirm], 3);
             }
         }
 
@@ -197,10 +232,45 @@ namespace RapidSynthesis
             return DateTime.Now.AddMinutes(timeRemainingInMinutes - CONSUMABLE_MARGIN_IN_MINUTES);
         }
 
-        private static void EndCraftingProcess()
+        #endregion
+
+        #region UI Methods
+        private static void RunCraftProgressBar()
         {
-            // ALL CLEANUP
-            CraftingActive = false;
+            int totalTime = HotkeySet[HKType.Macro1].TimerInMiliseconds;
+            if (HotkeySet[HKType.Macro2] != null)
+                totalTime += HotkeySet[HKType.Macro2].TimerInMiliseconds;
+            if (HotkeySet[HKType.Macro3] != null)
+                totalTime += HotkeySet[HKType.Macro3].TimerInMiliseconds;
+
+            UICommunicator.BeginCraftTimer(totalTime);
         }
+        #endregion
+
+        #region Timing Methods
+        private static void Break(int time)
+        {
+            SleepThread(time);
+        }
+
+        private static void SendInput(Hotkey hotkey, int repeat = 1)
+        {
+            for (int i = repeat; i > 0; i--)
+            {
+                KeyInputEngine.SendKeysToGame(hotkey.KeyCode, hotkey.ModKeyCodes);
+                SleepThread(hotkey.TimerInMiliseconds);
+            }
+        }
+
+        private static void SleepThread(int timeInMilliseconds)
+        {
+            var targetTimeEnd = DateTime.Now.AddMilliseconds(timeInMilliseconds);
+            while (DateTime.Now <= targetTimeEnd)
+            {
+                CheckCancelRequest();
+                Thread.Sleep(STANDARD_TICK_TIME);
+            }
+        }
+        #endregion
     }
 }

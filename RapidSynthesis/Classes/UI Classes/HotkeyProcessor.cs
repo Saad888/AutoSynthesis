@@ -20,7 +20,7 @@ namespace RapidSynthesis
             SetDictionaryValues();
         }
 
-        public static string ProcessEventInputs(Key keys, HashSet<Key> modKeys)
+        public static string GetKeyInputText(Key keys, HashSet<Key> modKeys)
         {
             string response = "";
             // Add Shift

@@ -11,19 +11,62 @@
             <ColumnDefinition Width="180*"/>
             <ColumnDefinition Width="103*"/>
         </Grid.ColumnDefinitions>
-        <Button x:Name="ButtonTest" Content="Test" HorizontalAlignment="Left" Margin="10,366,0,0" VerticalAlignment="Top" Width="302" Height="44" Click="btnTest_Click"/>
-        <Label x:Name="LabelMacro1" Content="Macro 1" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="LabelMacro2" Content="Macro 2" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="LabelMacro3" Content="Macro 3" HorizontalAlignment="Left" Margin="10,72,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="LabelFood" Content="Food" HorizontalAlignment="Left" Margin="10,103,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="LabelPotion" Content="Potion" HorizontalAlignment="Left" Margin="10,134,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="LabelCraftWindow" Content="Crafting Window" HorizontalAlignment="Left" Margin="10,165,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="LabelSelectConfirm" Content="Select/Confirm" HorizontalAlignment="Left" Margin="10,196,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="LabelExitMenus" Content="Exit Menus" HorizontalAlignment="Left" Margin="10,227,0,0" VerticalAlignment="Top"/>
+
         <!-- MACRO 1 -->
+        <Label x:Name="LabelMacro1" Content="Macro 1" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="TXBMacro1Key" HorizontalAlignment="Left" Height="23" Margin="150,14,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="236" IsReadOnly="True" PreviewKeyDown="HotkeyKeyDown" Grid.ColumnSpan="2" PreviewKeyUp="HotkeyKeyUp" GotFocus="HotkeyTextboxGainFocus" LostFocus="HotkeyTextboxLoseFocus"/>
         <TextBox x:Name="TXBMacro1Timer" HorizontalAlignment="Left" Height="23" Margin="41,14,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="74" IsReadOnly="True" Grid.Column="1" KeyDown="SetTimeValue" GotFocus="TimeGetFocus" LostFocus="TimeLostFocus"/>
-        <Button x:Name="TEST" Content="Test" HorizontalAlignment="Left" Margin="23,268,0,0" VerticalAlignment="Top" Width="75" Click="TEST_Click"/>
+
+        <!-- MACRO 2 -->
+        <Label x:Name="LabelMacro2" Content="Macro 2" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="TXBMacro2Key" HorizontalAlignment="Left" Height="23" Margin="150,45,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="236" IsReadOnly="True" PreviewKeyDown="HotkeyKeyDown" Grid.ColumnSpan="2" PreviewKeyUp="HotkeyKeyUp" GotFocus="HotkeyTextboxGainFocus" LostFocus="HotkeyTextboxLoseFocus"/>
+        <TextBox x:Name="TXBMacro2Timer" HorizontalAlignment="Left" Height="23" Margin="41,45,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="74" IsReadOnly="True" Grid.Column="1" KeyDown="SetTimeValue" GotFocus="TimeGetFocus" LostFocus="TimeLostFocus"/>
+        <CheckBox x:Name="CHBMacro2" Content="CheckBox" Grid.Column="1" HorizontalAlignment="Left" Margin="127,47,0,0" VerticalAlignment="Top"/>
+
+        <!-- MACRO 3 -->
+        <Label x:Name="LabelMacro3" Content="Macro 3" HorizontalAlignment="Left" Margin="10,72,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="TXBMacro3Key" HorizontalAlignment="Left" Height="23" Margin="150,76,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="236" IsReadOnly="True" PreviewKeyDown="HotkeyKeyDown" Grid.ColumnSpan="2" PreviewKeyUp="HotkeyKeyUp" GotFocus="HotkeyTextboxGainFocus" LostFocus="HotkeyTextboxLoseFocus"/>
+        <TextBox x:Name="TXBMacro3Timer" HorizontalAlignment="Left" Height="23" Margin="41,76,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="74" IsReadOnly="True" Grid.Column="1" KeyDown="SetTimeValue" GotFocus="TimeGetFocus" LostFocus="TimeLostFocus"/>
+        <CheckBox x:Name="CHBMacro3" Content="CheckBox" Grid.Column="1" HorizontalAlignment="Left" Margin="127,78,0,0" VerticalAlignment="Top"/>
+
+        <!-- Food -->
+        <Label x:Name="LabelFood" Content="Food" HorizontalAlignment="Left" Margin="10,103,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="TXBFoodKey" HorizontalAlignment="Left" Height="23" Margin="150,107,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="236" IsReadOnly="True" PreviewKeyDown="HotkeyKeyDown" Grid.ColumnSpan="2" PreviewKeyUp="HotkeyKeyUp" GotFocus="HotkeyTextboxGainFocus" LostFocus="HotkeyTextboxLoseFocus"/>
+        <TextBox x:Name="TXBFoodTimer" HorizontalAlignment="Left" Height="23" Margin="41,106,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="74" IsReadOnly="True" Grid.Column="1" KeyDown="SetTimeValue" GotFocus="TimeGetFocus" LostFocus="TimeLostFocus"/>
+        <CheckBox x:Name="CHBFood" Content="CheckBox" Grid.Column="1" HorizontalAlignment="Left" Margin="127,109,0,0" VerticalAlignment="Top"/>
+
+        <!-- Syrup -->
+        <Label x:Name="LabelSyrup" Content="Syrup" HorizontalAlignment="Left" Margin="10,134,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="TXBSyrupKey" HorizontalAlignment="Left" Height="23" Margin="150,138,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="236" IsReadOnly="True" PreviewKeyDown="HotkeyKeyDown" Grid.ColumnSpan="2" PreviewKeyUp="HotkeyKeyUp" GotFocus="HotkeyTextboxGainFocus" LostFocus="HotkeyTextboxLoseFocus"/>
+        <TextBox x:Name="TXBSyrupTimer" HorizontalAlignment="Left" Height="23" Margin="41,138,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="74" IsReadOnly="True" Grid.Column="1" KeyDown="SetTimeValue" GotFocus="TimeGetFocus" LostFocus="TimeLostFocus"/>
+        <CheckBox x:Name="CHBSyrup" Content="CheckBox" Grid.Column="1" HorizontalAlignment="Left" Margin="126,140,0,0" VerticalAlignment="Top"/>
+
+        <!-- Confirm -->
+        <Label x:Name="LabelSelectConfirm" Content="Select/Confirm" HorizontalAlignment="Left" Margin="10,165,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="TXBConfirmKey" HorizontalAlignment="Left" Height="23" Margin="150,169,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="236" IsReadOnly="True" PreviewKeyDown="HotkeyKeyDown" Grid.ColumnSpan="2" PreviewKeyUp="HotkeyKeyUp" GotFocus="HotkeyTextboxGainFocus" LostFocus="HotkeyTextboxLoseFocus"/>
+
+        <!-- Cancel -->
+        <Label x:Name="LabelCancel" Content="Cancel" HorizontalAlignment="Left" Margin="10,202,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="TXBCancelKey" HorizontalAlignment="Left" Height="23" Margin="150,206,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="236" IsReadOnly="True" PreviewKeyDown="HotkeyKeyDown" Grid.ColumnSpan="2" PreviewKeyUp="HotkeyKeyUp" GotFocus="HotkeyTextboxGainFocus" LostFocus="HotkeyTextboxLoseFocus"/>
+
+        <!-- Settings -->
+        <CheckBox x:Name="CHBCollectableCraft" Content="Collectable Craft" HorizontalAlignment="Left" Margin="10,233,0,0" VerticalAlignment="Top"/>
+        <RadioButton x:Name="RDFood30" Content="30 Minute Food" HorizontalAlignment="Left" Margin="13,253,0,0" VerticalAlignment="Top" Width="103" GroupName="RDFoodTimer" IsChecked="True" Checked="RDFood30_Checked"/>
+        <RadioButton x:Name="RDFood40" Content="40 Minute Food" HorizontalAlignment="Left" Margin="13,268,0,0" VerticalAlignment="Top" Width="103" GroupName="RDFoodTimer" Checked="RDFood40_Checked"/>
+        <Label x:Name="LabelCraftCount" Content="Craft Count" HorizontalAlignment="Left" Margin="18,293,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="TXBCraftCount" HorizontalAlignment="Left" Height="23" Margin="102,297,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="74" IsReadOnly="True" KeyDown="SetTimeValue" GotFocus="TimeGetFocus" LostFocus="TimeLostFocus"/>
+        <CheckBox x:Name="CHBCraftCount" Content="Enabled" HorizontalAlignment="Left" Margin="189,299,0,0" VerticalAlignment="Top"/>
+
+        <!-- Buttons -->
+        <Button x:Name="ButtonTest" Content="Test" HorizontalAlignment="Left" Margin="10,366,0,0" VerticalAlignment="Top" Width="302" Height="44" Click="BTNCraftInitiate"/>
+        <Button x:Name="TEST" Content="Test" HorizontalAlignment="Left" Margin="337,379,0,0" VerticalAlignment="Top" Width="75" Click="TEST_Click" Grid.ColumnSpan="2"/>
+
+        <!-- Status -->
+        <Label x:Name="LBLUpdate" Content="Label" HorizontalAlignment="Left" Margin="337,265,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Background="#FFFF7878"/>
+        <Label x:Name="LBLCraftNumber" Content="Label" HorizontalAlignment="Left" Margin="337,235,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Background="#FFFF7878"/>
+        <ProgressBar x:Name="PGBOverall" Grid.ColumnSpan="2" HorizontalAlignment="Left" Height="15" Margin="337,299,0,0" VerticalAlignment="Top" Width="181" Maximum="1000" Value="55" Background="#FFE6E6E6" Foreground="#FF06B025"/>
+        <ProgressBar x:Name="PGBCraft" Grid.ColumnSpan="2" HorizontalAlignment="Left" Height="15" Margin="337,319,0,0" VerticalAlignment="Top" Width="181" Maximum="1000"/>
+        <ProgressBar x:Name="PGBMacro" Grid.ColumnSpan="2" HorizontalAlignment="Left" Height="15" Margin="337,339,0,0" VerticalAlignment="Top" Width="181" Maximum="1000"/>
 
     </Grid>
 </Window>

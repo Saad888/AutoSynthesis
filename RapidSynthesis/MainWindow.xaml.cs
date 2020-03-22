@@ -24,11 +24,16 @@ namespace RapidSynthesis
 
     // GLITCHES:
     // Double shift kinda acts weird
-    
+    // Activating a bar and then losing focus causes it to stay on "Enter keybind...", save previous or empty the bar when focus force lost
+    // When crafting finishes naturally, it doesnt properly set the system state back, fix that
+
+
 
     // TO DO: 
     // Check behaviour when you change windows altogehter
-
+    // Set the chekcboxes to enable or disable some windows when pressed (as relevant to them)
+    // Check if the tab sorting is correct
+    // See ProcessManager for ToDo's
 
 
     /// <summary>
@@ -36,7 +41,7 @@ namespace RapidSynthesis
     /// </summary>
     public partial class MainWindow : Window
     {
-        #region hotkey private properties
+        #region Hotkey Properties
         private Dictionary<TextBox, HotkeyContainer> HKTContainers { get; set; }
         private enum HotkeyStates
         {
@@ -47,27 +52,70 @@ namespace RapidSynthesis
         private Dictionary<HotkeyStates, System.Windows.Media.SolidColorBrush> HKTBrushes { get; set; }
         #endregion
 
-        #region time private properties
-        private Dictionary<TextBox, TimeInputContainer> TimeContainers { get; set; }
+        #region Time Properties
+        private Dictionary<TextBox, TimeInputContainer> TimerContainers { get; set; }
         private enum TimeStates
         {
-            UNFOCUSED, 
+            UNFOCUSED,
             FOCUSED
         }
         private Dictionary<TimeStates, System.Windows.Media.SolidColorBrush> TimeBrushes { get; set; }
+        private const int DEFAULT_CONSUMABLE_TIMER = 1000;
+        private int FoodTimer { get; set; } = 30;
         #endregion
 
+        #region General System Properties
+        private enum SystemStates
+        {
+            IDLE,
+            PREPARINGCCRAFT,
+            ACTIVECRAFTING,
+            CANCELLINGCRAFT
+        }
+        private SystemStates SystemState { get; set; }
+        private Dictionary<SystemStates, System.Windows.Media.SolidColorBrush> MainButtonBrushes { get; set; }
+        #endregion
+
+        #region Initiating Methods
         public MainWindow()
         {
             InitializeComponent();
+            SetContainerValues();
+            SetBrushValues();
+
+            // Set up UICommunicator
+            UICommunicator.ConnectUI(LBLCraftNumber, LBLUpdate, PGBOverall, PGBCraft, PGBMacro);
+
+            // Set system state
+            SystemState = SystemStates.IDLE;
+
+            SetDefaultValues();
+        }
+
+        private void SetContainerValues()
+        {
             // Attach all hotkey textboxes
             HKTContainers = new Dictionary<TextBox, HotkeyContainer>();
             HKTContainers.Add(TXBMacro1Key, new HotkeyContainer());
+            HKTContainers.Add(TXBMacro2Key, new HotkeyContainer());
+            HKTContainers.Add(TXBMacro3Key, new HotkeyContainer());
+            HKTContainers.Add(TXBFoodKey, new HotkeyContainer());
+            HKTContainers.Add(TXBSyrupKey, new HotkeyContainer());
+            HKTContainers.Add(TXBConfirmKey, new HotkeyContainer());
+            HKTContainers.Add(TXBCancelKey, new HotkeyContainer());
 
             // Attach all time textboxes
-            TimeContainers = new Dictionary<TextBox, TimeInputContainer>();
-            TimeContainers.Add(TXBMacro1Timer, new TimeInputContainer());
+            TimerContainers = new Dictionary<TextBox, TimeInputContainer>();
+            TimerContainers.Add(TXBMacro1Timer, new TimeInputContainer());
+            TimerContainers.Add(TXBMacro2Timer, new TimeInputContainer());
+            TimerContainers.Add(TXBMacro3Timer, new TimeInputContainer());
+            TimerContainers.Add(TXBFoodTimer, new TimeInputContainer());
+            TimerContainers.Add(TXBSyrupTimer, new TimeInputContainer());
+            TimerContainers.Add(TXBCraftCount, new TimeInputContainer());
+        }
 
+        private void SetBrushValues()
+        {
             // Set all brush dictionaries
             HKTBrushes = new Dictionary<HotkeyStates, SolidColorBrush>();
             HKTBrushes.Add(HotkeyStates.UNFOCUSED, Brushes.White);
@@ -78,32 +126,184 @@ namespace RapidSynthesis
             TimeBrushes.Add(TimeStates.UNFOCUSED, Brushes.White);
             TimeBrushes.Add(TimeStates.FOCUSED, Brushes.Yellow);
 
+            MainButtonBrushes = new Dictionary<SystemStates, SolidColorBrush>();
+            MainButtonBrushes.Add(SystemStates.IDLE, Brushes.White);
+            MainButtonBrushes.Add(SystemStates.PREPARINGCCRAFT, Brushes.White);
+            MainButtonBrushes.Add(SystemStates.ACTIVECRAFTING, Brushes.Green);
+            MainButtonBrushes.Add(SystemStates.CANCELLINGCRAFT, Brushes.Red);
         }
 
-        private void btnTest_Click(object sender, RoutedEventArgs e)
+        private void SetDefaultValues()
         {
-            var testingHotkeys = new Dictionary<HKType, Hotkey>();
-            testingHotkeys.Add(HKType.Macro1, new Hotkey(VirtualKeyCode.VK_1, 3000));
-            testingHotkeys.Add(HKType.Macro2, new Hotkey(VirtualKeyCode.VK_2, 3000));
-            testingHotkeys.Add(HKType.Macro3, new Hotkey(VirtualKeyCode.VK_3, 3000));
-            testingHotkeys.Add(HKType.Confirm, new Hotkey(VirtualKeyCode.VK_4));
-            testingHotkeys.Add(HKType.Cancel, new Hotkey(VirtualKeyCode.VK_5));
-            testingHotkeys.Add(HKType.Food, new Hotkey(VirtualKeyCode.VK_6, 1000));
-            testingHotkeys.Add(HKType.Syrup, new Hotkey(VirtualKeyCode.VK_7, 1000));
+            var macro1 = new HotkeyContainer(Key.D1, new HashSet<Key>());
+            var macro2 = new HotkeyContainer(Key.D2, new HashSet<Key>());
+            var macro3 = new HotkeyContainer(Key.D3, new HashSet<Key>());
+            var food = new HotkeyContainer(Key.D4, new HashSet<Key>());
+            var syrup = new HotkeyContainer(Key.D5, new HashSet<Key>());
+            var confirm = new HotkeyContainer(Key.NumPad0, new HashSet<Key>());
+            var cancel = new HotkeyContainer(Key.NumPad1, new HashSet<Key>());
 
-            int craftCount = 3;
+            int macro1timer = 10;
+            int macro2timer = 11;
+            int macro3timer = 12;
+            int foodtimer = 13;
+            int syruptimer = 14;
+
+            bool macro2check = true;
+            bool macro3check = true;
+            bool foodcheck = false;
+            bool syrupcheck = false;
             bool collectableCraft = true;
-            bool fourtyMinuteFood = false;
-            int startingFoodTime = 1;
-            int startingSyrupTime = 1;
-            var settings = new SettingsContainer(craftCount, collectableCraft, fourtyMinuteFood, startingFoodTime, startingSyrupTime);
+            bool thirtyMinCraft = false;
 
-            CraftingEngine.InitiateCraftingEngine(testingHotkeys, settings);
-
+            SetAllHoykeys(macro1, macro1timer, macro2, macro2timer, macro2check, macro3, macro3timer, 
+                          macro3check, food, foodtimer, foodcheck, syrup, syruptimer, syrupcheck, confirm, cancel, 
+                          collectableCraft, thirtyMinCraft);
         }
 
+        #endregion
 
-        #region hotkey methods
+        #region Crafting Methods
+        /// <summary>
+        /// Initiates or cancels the crafting system
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BTNCraftInitiate(object sender, RoutedEventArgs e)
+        {
+            if (SystemState == SystemStates.IDLE)
+            {
+                SetCraftingStatus(SystemStates.PREPARINGCCRAFT);
+
+                var hotkeys = new Dictionary<HKType, Hotkey>();
+                SettingsContainer settings = null;
+                HotkeyContainer hkContainer;
+                TimeInputContainer timerContainer;
+
+                try
+                {
+                    // Macro 1
+                    hkContainer = HKTContainers[TXBMacro1Key];
+                    timerContainer = TimerContainers[TXBMacro1Timer];
+                    ValidateHotkeyInputs(hkContainer, timerContainer, "Macro 1");
+                    hotkeys.Add(HKType.Macro1, new Hotkey(hkContainer.Keys(), hkContainer.ModKeys(), timerContainer.Timer * 1000));
+
+                    // Macro 2
+                    if ((bool)CHBMacro2.IsChecked)
+                    {
+                        hkContainer = HKTContainers[TXBMacro2Key];
+                        timerContainer = TimerContainers[TXBMacro2Timer];
+                        ValidateHotkeyInputs(hkContainer, timerContainer, "Macro 2");
+                        hotkeys.Add(HKType.Macro2, new Hotkey(hkContainer.Keys(), hkContainer.ModKeys(), timerContainer.Timer * 1000));
+                    }
+                    else
+                        hotkeys.Add(HKType.Macro2, null);
+
+                    // Macro 3
+                    if ((bool)CHBMacro3.IsChecked)
+                    {
+                        hkContainer = HKTContainers[TXBMacro3Key];
+                        timerContainer = TimerContainers[TXBMacro3Timer];
+                        ValidateHotkeyInputs(hkContainer, timerContainer, "Macro 3");
+                        hotkeys.Add(HKType.Macro3, new Hotkey(hkContainer.Keys(), hkContainer.ModKeys(), timerContainer.Timer * 1000));
+                    }
+                    else
+                        hotkeys.Add(HKType.Macro3, null);
+
+                    // Food
+                    if ((bool)CHBFood.IsChecked)
+                    {
+                        hkContainer = HKTContainers[TXBFoodKey];
+                        timerContainer = TimerContainers[TXBFoodTimer];
+                        ValidateHotkeyInputs(hkContainer, timerContainer, "Food");
+                        hotkeys.Add(HKType.Food, new Hotkey(hkContainer.Keys(), hkContainer.ModKeys(), DEFAULT_CONSUMABLE_TIMER));
+                    }
+                    else
+                        hotkeys.Add(HKType.Food, null);
+
+                    // Syrup
+                    if ((bool)CHBSyrup.IsChecked)
+                    {
+                        hkContainer = HKTContainers[TXBSyrupKey];
+                        timerContainer = TimerContainers[TXBSyrupTimer];
+                        ValidateHotkeyInputs(hkContainer, timerContainer, "Syrup");
+                        hotkeys.Add(HKType.Syrup, new Hotkey(hkContainer.Keys(), hkContainer.ModKeys(), DEFAULT_CONSUMABLE_TIMER));
+                    }
+                    else
+                        hotkeys.Add(HKType.Syrup, null);
+
+                    // Select/Confirm
+                    hkContainer = HKTContainers[TXBConfirmKey];
+                    timerContainer = null;
+                    ValidateHotkeyInputs(hkContainer, timerContainer, "Confirm");
+                    hotkeys.Add(HKType.Confirm, new Hotkey(hkContainer.Keys(), hkContainer.ModKeys()));
+
+                    // Cancel
+                    if ((bool)CHBFood.IsChecked || (bool)CHBSyrup.IsChecked)
+                    {
+                        hkContainer = HKTContainers[TXBCancelKey];
+                        timerContainer = null;
+                        ValidateHotkeyInputs(hkContainer, timerContainer, "Cancel");
+                        hotkeys.Add(HKType.Cancel, new Hotkey(hkContainer.Keys(), hkContainer.ModKeys()));
+                    }
+                    else
+                        hotkeys.Add(HKType.Cancel, null);
+
+                    // Settings
+                    var craftCount = (bool)CHBCraftCount.IsChecked ? TimerContainers[TXBCraftCount].Timer : 0;
+                    settings = new SettingsContainer(
+                        craftCount,
+                        (bool)CHBCollectableCraft.IsChecked,
+                        FoodTimer == 30,
+                        TimerContainers[TXBFoodTimer].Timer,
+                        TimerContainers[TXBSyrupTimer].Timer
+                    );
+                }
+                catch (InvalidUserParametersException error)
+                {
+                    Console.WriteLine(error.Message);
+                    UICommunicator.UpdateStatus("ERROR!");
+                    SetCraftingStatus(SystemStates.IDLE);
+                    return;
+                }
+
+                CraftingEngine.InitiateCraftingEngine(hotkeys, settings);
+                SetCraftingStatus(SystemStates.ACTIVECRAFTING);
+
+            }
+            else if (SystemState == SystemStates.ACTIVECRAFTING)
+            {
+                // Cancel the craft
+                SetCraftingStatus(SystemStates.CANCELLINGCRAFT);
+                CraftingEngine.CancelCrafting();
+                SetCraftingStatus(SystemStates.IDLE);
+            }
+        }
+
+        /// <summary>
+        /// Verifies if the hotkeys are inputted correctly
+        /// </summary>
+        /// <param name="hotkeyContainer"></param>
+        /// <returns>True if no issues</returns>
+        private void ValidateHotkeyInputs(HotkeyContainer hotkeyContainer, TimeInputContainer timeInput, string source)
+        {
+            if (hotkeyContainer.LastPressedKey == Key.None)
+            {
+                throw new InvalidUserParametersException(source + " Hotkey not set correctly");
+            }
+            if (timeInput != null && timeInput.Timer == 0)
+            {
+                throw new InvalidUserParametersException(source + " Timer is set to 0");
+            }
+        }
+        #endregion
+
+        #region Hotkey Methods
+        /// <summary>
+        /// Activates the hotkey for user inputs, accepts user inputs
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void HotkeyKeyDown(object sender, KeyEventArgs e)
         {
             // If key state is not accepting new inputs, do nothing UNLESS its a SPACE or ENTER
@@ -129,13 +329,13 @@ namespace RapidSynthesis
                     case Key.RightAlt:
                         if (!HotkeyProcessor.NumpadKey(hotkeyContainer.LastPressedKey))  //Numpads do not behave well with modifiers
                             if (hotkeyContainer.LastPressedKey != Key.None)  // Update visuals if key is currently stored
-                                textBox.Text = HotkeyProcessor.ProcessEventInputs(hotkeyContainer.LastPressedKey, hotkeyContainer.ActiveModKeys);
+                                textBox.Text = HotkeyProcessor.GetKeyInputText(hotkeyContainer.LastPressedKey, hotkeyContainer.ActiveModKeys);
                         hotkeyContainer.ActiveModKeys.Add(key);
                         break;
                     default:
                         hotkeyContainer.ActiveNonModKeys.Add(key);
                         hotkeyContainer.LastPressedKey = key;
-                        textBox.Text = HotkeyProcessor.ProcessEventInputs(key, hotkeyContainer.ActiveModKeys);
+                        textBox.Text = HotkeyProcessor.GetKeyInputText(key, hotkeyContainer.ActiveModKeys);
                         break;
                 }
             } else
@@ -146,6 +346,11 @@ namespace RapidSynthesis
             }
         }
 
+        /// <summary>
+        /// Processes key up events for hotkeys
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void HotkeyKeyUp(object sender, KeyEventArgs e)
         {
             // if not accepting inputs, do nothing
@@ -172,11 +377,15 @@ namespace RapidSynthesis
                 hotkeyContainer.ActiveModKeys.Remove(key);
                 if (hotkeyContainer.LastPressedKey != Key.None)
                 {
-                    textBox.Text = HotkeyProcessor.ProcessEventInputs(hotkeyContainer.LastPressedKey, hotkeyContainer.ActiveModKeys);
+                    textBox.Text = HotkeyProcessor.GetKeyInputText(hotkeyContainer.LastPressedKey, hotkeyContainer.ActiveModKeys);
                 }
             }
         }
 
+        /// <summary>
+        /// Activates hotkey textbox, sets parameters and display
+        /// </summary>
+        /// <param name="txb"></param>
         private void ActivateHotkeyTextbox(TextBox txb)
         {
             HKTContainers[txb] = new HotkeyContainer();
@@ -187,6 +396,10 @@ namespace RapidSynthesis
             DisableTabbing();
         }
 
+        /// <summary>
+        /// Deactivate hotkey 
+        /// </summary>
+        /// <param name="txb"></param>
         private void DeactivateHotkeyTextbox(TextBox txb)
         {
             HKTContainers[txb].AcceptingInputs = false;
@@ -194,12 +407,22 @@ namespace RapidSynthesis
             EnableTabbing();
         }
 
+        /// <summary>
+        /// Processes hotkey taking focus
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void HotkeyTextboxGainFocus(object sender, RoutedEventArgs e)
         {
             var txb = (TextBox)sender;
             txb.Background = HKTBrushes[HotkeyStates.FOCUSED];
         }
 
+        /// <summary>
+        /// Processes hotkey losing focus
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void HotkeyTextboxLoseFocus(object sender, RoutedEventArgs e)
         {
             var txb = (TextBox)sender;
@@ -209,40 +432,55 @@ namespace RapidSynthesis
         }
         #endregion
 
-        #region timeline methods
+        #region Timeline Methods
         // TAKE FOCUS: Change to focused color
         // LOSE FOCUS: Change to normal color
         // KEY IN: Only accept numbers, up to 2 digits. When taking focus, get ready to reset the number
 
+        /// <summary>
+        /// Processes time textbox inputs for numbers
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void SetTimeValue(object sender, KeyEventArgs e)
         {
             var tbx = (TextBox)sender;
-            var container = TimeContainers[tbx];
+            var container = TimerContainers[tbx];
             int keyValue = 0;
             if (TimeInputProcessor.TryGetNumber(e.Key, ref keyValue))
             {
-                var currentTime = container.TimeInSeconds;
+                var currentTime = container.Timer;
                 // if freshly focused, reset the timer on input
                 if (container.FreshFocus)
                     currentTime = 0;
 
                 var newTime = (currentTime % 10) * 10 + keyValue;
-                container.TimeInSeconds = newTime;
+                container.Timer = newTime;
                 tbx.Text = newTime.ToString();
                 container.FreshFocus = false;
             }
         }
 
+        /// <summary>
+        /// Handles gaining focus for time textboxes
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void TimeGetFocus(object sender, RoutedEventArgs e)
         {
             var tbx = (TextBox)sender;
-            var container = TimeContainers[tbx];
+            var container = TimerContainers[tbx];
             // Set fresh focus to true
             container.FreshFocus = true;
             // Modify display
             tbx.Background = TimeBrushes[TimeStates.FOCUSED];
         }
 
+        /// <summary>
+        /// Handles losing focus 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void TimeLostFocus(object sender, RoutedEventArgs e)
         {
             var tbx = (TextBox)sender;
@@ -251,7 +489,106 @@ namespace RapidSynthesis
         }
         #endregion
 
-        #region full window methods
+        #region Settings Methods
+        private void RDFood30_Checked(object sender, RoutedEventArgs e)
+        {
+            FoodTimer = 30;
+        }
+
+        private void RDFood40_Checked(object sender, RoutedEventArgs e)
+        {
+            FoodTimer = 40;
+        }
+
+
+        #endregion
+
+        #region Set Presets Methods
+        private void SetAllHoykeys(HotkeyContainer macro1, int macro1time, 
+                                  HotkeyContainer macro2, int macro2time, bool macro2check,
+                                  HotkeyContainer macro3, int macro3time, bool macro3check,
+                                  HotkeyContainer food, int foodtime, bool foodcheck,
+                                  HotkeyContainer syrup, int syruptime, bool syrupcheck,
+                                  HotkeyContainer select, HotkeyContainer cancel, 
+                                  bool collectable, bool thirtyFood)
+        {
+            // Set Macro 1
+            SetHotkeyState(TXBMacro1Key, macro1);
+            SetTimeState(TXBMacro1Timer, macro1time);
+            // Set Macro 2
+            SetHotkeyState(TXBMacro2Key, macro2);
+            SetTimeState(TXBMacro2Timer, macro2time);
+            CHBMacro2.IsChecked = macro2check;
+            // Set Macro 3
+            SetHotkeyState(TXBMacro3Key, macro3);
+            SetTimeState(TXBMacro3Timer, macro3time);
+            CHBMacro3.IsChecked = macro3check;
+            // Set Food
+            SetHotkeyState(TXBFoodKey, food);
+            SetTimeState(TXBFoodTimer, foodtime);
+            CHBFood.IsChecked = foodcheck;
+            // Set Syrup
+            SetHotkeyState(TXBSyrupKey, syrup);
+            SetTimeState(TXBSyrupTimer, syruptime);
+            CHBSyrup.IsChecked = syrupcheck;
+            // Set Select
+            SetHotkeyState(TXBConfirmKey, select);
+            // Set Cancel
+            SetHotkeyState(TXBCancelKey, cancel);
+            // Settings
+            CHBCollectableCraft.IsChecked = collectable;
+            if (thirtyFood)
+                RDFood30.IsChecked = true;
+            else
+                RDFood40.IsChecked = true;
+        }
+
+        /// <summary>
+        /// Sets the hotkey textbox and internal state for a single hotkey
+        /// </summary>
+        /// <param name="hotkeyBox"></param>
+        /// <param name="pressedKey"></param>
+        /// <param name="pressedModKeys"></param>
+        private void SetHotkeyState(TextBox hotkeyBox, HotkeyContainer container)
+        {
+            HKTContainers[hotkeyBox] = container;
+            if (container != null)
+                hotkeyBox.Text = HotkeyProcessor.GetKeyInputText(container.LastPressedKey, container.ActiveModKeys);
+            else
+                hotkeyBox.Text = "";
+        }
+
+        /// <summary>
+        /// Sets the time value and internal state for a single timebox
+        /// </summary>
+        /// <param name="timeBox"></param>
+        /// <param name="timer"></param>
+        private void SetTimeState(TextBox timeBox, int timer)
+        {
+            var container = TimerContainers[timeBox];
+            timer = Math.Max(0, Math.Min(timer, 99));
+            container.Timer = timer;
+            timeBox.Text = timer.ToString();
+            
+        }
+        #endregion
+
+        #region UI Updates During Crafting
+        public void UpdateCraftingLabel(string text)
+        {
+            LBLUpdate.Content = text;
+        }
+        #endregion
+
+        #region Setting Crafting Button States
+        private void SetCraftingStatus(SystemStates state)
+        {
+            SystemState = state;
+            ButtonTest.Background = MainButtonBrushes[SystemState];
+        }
+        #endregion
+
+        #region Full Winodws Methods
         private void DisableTabbing()
         {
             KeyboardNavigation.SetTabNavigation(MainWindowGrid, KeyboardNavigationMode.None);
@@ -266,32 +603,5 @@ namespace RapidSynthesis
             KeyInputEngine.SendKeysToGame(HKTContainers[TXBMacro1Key].Keys(), HKTContainers[TXBMacro1Key].ModKeys());
         }
         #endregion
-
-
-        //    private void Button_Click(object sender, RoutedEventArgs e)
-        //    {
-        //        Task.Run(() =>
-        //        {
-        //            UpdateProgressBar(100);
-        //        });
-        //    }
-
-        //    private void UpdateProgressBar(int target)
-        //    {
-        //        Action action = () => { SetBar(target); };
-        //        TestBar.Dispatcher.BeginInvoke(action);
-        //    }
-
-        //    private void SetBar(int target)
-        //    {
-        //        while (TestBar.Value < target)
-        //        {
-        //            var currentValue = TestBar.Value;
-        //            var nextValue = Math.Ceiling((target - currentValue) / 2 + currentValue);
-        //            TestBar.Value = nextValue;
-        //            Thread.Sleep(100);
-        //        }
-        //    }
-        //}
     }
 }

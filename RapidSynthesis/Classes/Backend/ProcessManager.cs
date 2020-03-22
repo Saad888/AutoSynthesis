@@ -42,7 +42,7 @@ namespace RapidSynthesis
         {  
             // find all processes matching either FFXIV or notepad, depending on debugging enabled
             Process[] foundProcesses;
-            var lol = Process.GetProcesses();
+            Process.GetProcesses();
             if (!debugEnabled)
             {
                 foundProcesses = Process.GetProcessesByName(finalFantasyXIVProcessName);
