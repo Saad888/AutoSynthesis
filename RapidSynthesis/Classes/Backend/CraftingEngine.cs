@@ -17,20 +17,21 @@ namespace RapidSynthesis
         public static DateTime NextFoodUse { get; set; }
         public static DateTime NextSyrupUse { get; set; }
         public static CancellationTokenSource Cts { get; set; }
+        private static Action EndCraftCallback { get; set; }
 
         private const int CONSUMABLE_MARGIN_IN_MINUTES = 2;
         private const int STANDARD_FOOD_TIME = 30;
         private const int EXTENDED_FOOD_TIME = 40;
         private const int STANDARD_SYRUP_TIME = 15;
-        private const int STANDARD_MENU_DELAY = 1000;
-        private const int STANDARD_ANIMATION_DELAY = 3000;
+        private const int STANDARD_MENU_DELAY = 1500;
+        private const int STANDARD_ANIMATION_DELAY = 2000;
         private const int STANDARD_TICK_TIME = 50;
         private static int craftCount = 0;
         #endregion
 
         #region System Methods
         public static void InitiateCraftingEngine(Dictionary<HKType, Hotkey> hotKeyDictionary,
-            SettingsContainer userSettings)
+            SettingsContainer userSettings, Action endCraftCallback)
         {
             // Ensure craft is not already happening
             if (CraftingActive)
@@ -38,6 +39,8 @@ namespace RapidSynthesis
                 throw new DuplicateCraftingAttemptedException();
             }
             CraftingActive = true;
+
+            EndCraftCallback = endCraftCallback;
 
             // Verify hotkeys are built correctly
             if (hotKeyDictionary[HKType.Macro1] == null)
@@ -152,8 +155,9 @@ namespace RapidSynthesis
             // ALL CLEANUP
             CraftingActive = false;
             CraftingSuccessfullyCancelled = true;
-            UICommunicator.UpdateStatus("");
+            UICommunicator.UpdateStatus("Craft Finished!");
             UICommunicator.EndAllProgress();
+            EndCraftCallback.Invoke();
         }
 
         private static void CheckCancelRequest()
@@ -180,12 +184,13 @@ namespace RapidSynthesis
                 return;
 
             UICommunicator.UpdateStatus("Accepting Collectable Craft...");
+            Break(STANDARD_MENU_DELAY);
+            SendInput(HotkeySet[HKType.Confirm]);
             SendInput(HotkeySet[HKType.Confirm]);
         }
 
         private static void SendFoodAndSyrupInput()
         {
-
             if ((Settings.CraftCount != 0) && (craftCount < Settings.CraftCount))
                 return;
                 // check if timers is passed
@@ -197,11 +202,12 @@ namespace RapidSynthesis
                 return;
 
             // enter a craft and leave it out
-            SendInput(HotkeySet[HKType.Confirm], 3);
             Break(500);
+            SendInput(HotkeySet[HKType.Confirm], 3);
+            Break(1000);
             SendInput(HotkeySet[HKType.Cancel]);
             SendInput(HotkeySet[HKType.Confirm]);
-            Break(1000);
+            Break(1500);
 
             // use food and syrup as needed
             if (useFood)

@@ -31,5 +31,32 @@ namespace RapidSynthesis
         {
             return HotkeyProcessor.GetVKCFromKeyCode(LastPressedKey);
         }
+
+        public override string ToString()
+        {
+            // Create comma delinated string of the hotkeys
+            var output = LastPressedKey.ToString();
+            foreach (var modkey in ActiveModKeys)
+            {
+                output += "," + modkey.ToString();
+            }
+            return output;
+        }
+
+        public static HotkeyContainer FromString(string input)
+        {
+            // Takes the comma delinated string and sets it
+            List<string> inputs = input.Split(',').ToList();
+            Key baseKey = Key.None;
+            var modKeys = new HashSet<Key>();
+            foreach (var keypress in inputs)
+            {
+                if (keypress == inputs.First())
+                    baseKey = (Key)Enum.Parse(typeof(Key), keypress);
+                else
+                    modKeys.Add((Key)Enum.Parse(typeof(Key), keypress));
+            }
+            return new HotkeyContainer(baseKey, modKeys);
+        }
     }
 }

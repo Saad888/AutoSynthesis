@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WindowsInput.Native;
 using System.Threading;
+using RapidSynthesis.Windows;
 
 namespace RapidSynthesis
 {
@@ -26,7 +27,7 @@ namespace RapidSynthesis
     // Double shift kinda acts weird
     // Activating a bar and then losing focus causes it to stay on "Enter keybind...", save previous or empty the bar when focus force lost
     // When crafting finishes naturally, it doesnt properly set the system state back, fix that
-
+    // Macro progress bar keeps running after a craft is ended if you end a craft as the next one starts
 
 
     // TO DO: 
@@ -34,6 +35,7 @@ namespace RapidSynthesis
     // Set the chekcboxes to enable or disable some windows when pressed (as relevant to them)
     // Check if the tab sorting is correct
     // See ProcessManager for ToDo's
+    // Make the save profile window appear in the same location each time
 
 
     /// <summary>
@@ -59,8 +61,8 @@ namespace RapidSynthesis
             UNFOCUSED,
             FOCUSED
         }
-        private Dictionary<TimeStates, System.Windows.Media.SolidColorBrush> TimeBrushes { get; set; }
-        private const int DEFAULT_CONSUMABLE_TIMER = 1000;
+        private Dictionary<TimeStates, SolidColorBrush> TimeBrushes { get; set; }
+        private const int DEFAULT_CONSUMABLE_TIMER = 4000;
         private int FoodTimer { get; set; } = 30;
         #endregion
 
@@ -73,7 +75,7 @@ namespace RapidSynthesis
             CANCELLINGCRAFT
         }
         private SystemStates SystemState { get; set; }
-        private Dictionary<SystemStates, System.Windows.Media.SolidColorBrush> MainButtonBrushes { get; set; }
+        private Dictionary<SystemStates, SolidColorBrush> MainButtonBrushes { get; set; }
         #endregion
 
         #region Initiating Methods
@@ -89,7 +91,9 @@ namespace RapidSynthesis
             // Set system state
             SystemState = SystemStates.IDLE;
 
-            SetDefaultValues();
+            // Load Profiles
+            GetProfiles();
+            LoadDefaultProfile();
         }
 
         private void SetContainerValues()
@@ -143,22 +147,21 @@ namespace RapidSynthesis
             var confirm = new HotkeyContainer(Key.NumPad0, new HashSet<Key>());
             var cancel = new HotkeyContainer(Key.NumPad1, new HashSet<Key>());
 
-            int macro1timer = 10;
-            int macro2timer = 11;
-            int macro3timer = 12;
-            int foodtimer = 13;
-            int syruptimer = 14;
+            int macro1timer = 5;
+            int macro2timer = 5;
+            int macro3timer = 5;
 
-            bool macro2check = true;
-            bool macro3check = true;
+            bool macro2check = false;
+            bool macro3check = false;
             bool foodcheck = false;
             bool syrupcheck = false;
-            bool collectableCraft = true;
-            bool thirtyMinCraft = false;
+            bool collectableCraft = false;
+            bool thirtyMinCraft = true;
 
-            SetAllHoykeys(macro1, macro1timer, macro2, macro2timer, macro2check, macro3, macro3timer, 
-                          macro3check, food, foodtimer, foodcheck, syrup, syruptimer, syrupcheck, confirm, cancel, 
+            var profile = new Profile(macro1, macro1timer, macro2, macro2timer, macro2check, macro3, macro3timer, 
+                          macro3check, food, foodcheck, syrup, syrupcheck, confirm, cancel, 
                           collectableCraft, thirtyMinCraft);
+            SetAllHoykeys(profile);
         }
 
         #endregion
@@ -267,7 +270,13 @@ namespace RapidSynthesis
                     return;
                 }
 
-                CraftingEngine.InitiateCraftingEngine(hotkeys, settings);
+                // Create ending action
+                Action action = () =>
+                {
+                    ButtonTest.Dispatcher.Invoke(() => { SetCraftingStatus(SystemStates.IDLE); });
+                };
+
+                CraftingEngine.InitiateCraftingEngine(hotkeys, settings, action);
                 SetCraftingStatus(SystemStates.ACTIVECRAFTING);
 
             }
@@ -504,40 +513,32 @@ namespace RapidSynthesis
         #endregion
 
         #region Set Presets Methods
-        private void SetAllHoykeys(HotkeyContainer macro1, int macro1time, 
-                                  HotkeyContainer macro2, int macro2time, bool macro2check,
-                                  HotkeyContainer macro3, int macro3time, bool macro3check,
-                                  HotkeyContainer food, int foodtime, bool foodcheck,
-                                  HotkeyContainer syrup, int syruptime, bool syrupcheck,
-                                  HotkeyContainer select, HotkeyContainer cancel, 
-                                  bool collectable, bool thirtyFood)
+        private void SetAllHoykeys(Profile profile)
         {
             // Set Macro 1
-            SetHotkeyState(TXBMacro1Key, macro1);
-            SetTimeState(TXBMacro1Timer, macro1time);
+            SetHotkeyState(TXBMacro1Key, profile.Macro1);
+            SetTimeState(TXBMacro1Timer, profile.Macro1Time);
             // Set Macro 2
-            SetHotkeyState(TXBMacro2Key, macro2);
-            SetTimeState(TXBMacro2Timer, macro2time);
-            CHBMacro2.IsChecked = macro2check;
+            SetHotkeyState(TXBMacro2Key, profile.Macro2);
+            SetTimeState(TXBMacro2Timer, profile.Macro2Time);
+            CHBMacro2.IsChecked = profile.Macro2Check;
             // Set Macro 3
-            SetHotkeyState(TXBMacro3Key, macro3);
-            SetTimeState(TXBMacro3Timer, macro3time);
-            CHBMacro3.IsChecked = macro3check;
+            SetHotkeyState(TXBMacro3Key, profile.Macro3);
+            SetTimeState(TXBMacro3Timer, profile.Macro3Time);
+            CHBMacro3.IsChecked = profile.Macro3Check;
             // Set Food
-            SetHotkeyState(TXBFoodKey, food);
-            SetTimeState(TXBFoodTimer, foodtime);
-            CHBFood.IsChecked = foodcheck;
+            SetHotkeyState(TXBFoodKey, profile.Food);
+            CHBFood.IsChecked = profile.FoodCheck;
             // Set Syrup
-            SetHotkeyState(TXBSyrupKey, syrup);
-            SetTimeState(TXBSyrupTimer, syruptime);
-            CHBSyrup.IsChecked = syrupcheck;
+            SetHotkeyState(TXBSyrupKey, profile.Syrup);
+            CHBSyrup.IsChecked = profile.SyrupCheck;
             // Set Select
-            SetHotkeyState(TXBConfirmKey, select);
+            SetHotkeyState(TXBConfirmKey, profile.Select);
             // Set Cancel
-            SetHotkeyState(TXBCancelKey, cancel);
+            SetHotkeyState(TXBCancelKey, profile.Cancel);
             // Settings
-            CHBCollectableCraft.IsChecked = collectable;
-            if (thirtyFood)
+            CHBCollectableCraft.IsChecked = profile.Collectable;
+            if (profile.ThirtyFood)
                 RDFood30.IsChecked = true;
             else
                 RDFood40.IsChecked = true;
@@ -603,5 +604,74 @@ namespace RapidSynthesis
             KeyInputEngine.SendKeysToGame(HKTContainers[TXBMacro1Key].Keys(), HKTContainers[TXBMacro1Key].ModKeys());
         }
         #endregion
+
+        #region Save and Load Profile System
+        private void GetProfiles()
+        {
+            var profileNameList = ProfileManager.GetProfilesList();
+            CMBProfileList.ItemsSource = profileNameList;
+        }
+
+        private void LoadProfile(string name)
+        {
+            if (String.IsNullOrEmpty(name))
+                return;
+            var profileToLoad = ProfileManager.LoadProfile(name);
+            SetAllHoykeys(profileToLoad);
+            CMBProfileList.SelectedItem = name;
+        }
+
+        private void LoadDefaultProfile()
+        {
+            if (ProfileManager.VerifyDefaultProfile())
+                LoadProfile(ProfileManager.DefaultProfile);
+            else
+                SetDefaultValues();
+        }
+
+        private void BTNSave_Click(object sender, RoutedEventArgs e)
+        {
+            var saveDialog = new SaveDialog();
+            if (saveDialog.ShowDialog() == true)
+            {
+                var name = saveDialog.SaveName;
+                var newProfile = BuildProfileFromCurrent();
+                ProfileManager.SaveProfile(name, newProfile);
+                GetProfiles();
+                CMBProfileList.SelectedItem = name;
+            }
+        }
+
+        private void BTNLoad_Click(object sender, RoutedEventArgs e)
+        {
+            var profileToLoad = CMBProfileList.SelectedItem.ToString();
+            LoadProfile(profileToLoad);
+        }
+
+        private void BTNDelete_Click(object sender, RoutedEventArgs e)
+        {
+            var currentIndex = CMBProfileList.SelectedIndex;
+            if (currentIndex == -1)
+                return;
+            var profileToDelete = CMBProfileList.SelectedItem.ToString();
+            ProfileManager.DeleteProfile(profileToDelete);
+            GetProfiles();
+            CMBProfileList.SelectedIndex = Math.Min(currentIndex, CMBProfileList.Items.Count - 1);
+        }
+
+        private Profile BuildProfileFromCurrent()
+        {
+            return new Profile(
+                HKTContainers[TXBMacro1Key], TimerContainers[TXBMacro1Timer].Timer,
+                HKTContainers[TXBMacro2Key], TimerContainers[TXBMacro2Timer].Timer, (bool)CHBMacro2.IsChecked,
+                HKTContainers[TXBMacro3Key], TimerContainers[TXBMacro3Timer].Timer, (bool)CHBMacro3.IsChecked,
+                HKTContainers[TXBFoodKey], (bool)CHBFood.IsChecked,
+                HKTContainers[TXBSyrupKey], (bool)CHBSyrup.IsChecked,
+                HKTContainers[TXBConfirmKey], HKTContainers[TXBCancelKey],
+                (bool)CHBCollectableCraft.IsChecked, (bool)RDFood30.IsChecked
+            );
+        }
+        #endregion
+
     }
 }

@@ -32,13 +32,13 @@
         <!-- Food -->
         <Label x:Name="LabelFood" Content="Food" HorizontalAlignment="Left" Margin="10,103,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="TXBFoodKey" HorizontalAlignment="Left" Height="23" Margin="150,107,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="236" IsReadOnly="True" PreviewKeyDown="HotkeyKeyDown" Grid.ColumnSpan="2" PreviewKeyUp="HotkeyKeyUp" GotFocus="HotkeyTextboxGainFocus" LostFocus="HotkeyTextboxLoseFocus"/>
-        <TextBox x:Name="TXBFoodTimer" HorizontalAlignment="Left" Height="23" Margin="41,106,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="74" IsReadOnly="True" Grid.Column="1" KeyDown="SetTimeValue" GotFocus="TimeGetFocus" LostFocus="TimeLostFocus"/>
+        <TextBox x:Name="TXBFoodTimer" HorizontalAlignment="Left" Height="23" Margin="41,106,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="74" IsReadOnly="True" Grid.Column="1" KeyDown="SetTimeValue" GotFocus="TimeGetFocus" LostFocus="TimeLostFocus"/>
         <CheckBox x:Name="CHBFood" Content="CheckBox" Grid.Column="1" HorizontalAlignment="Left" Margin="127,109,0,0" VerticalAlignment="Top"/>
 
         <!-- Syrup -->
         <Label x:Name="LabelSyrup" Content="Syrup" HorizontalAlignment="Left" Margin="10,134,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="TXBSyrupKey" HorizontalAlignment="Left" Height="23" Margin="150,138,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="236" IsReadOnly="True" PreviewKeyDown="HotkeyKeyDown" Grid.ColumnSpan="2" PreviewKeyUp="HotkeyKeyUp" GotFocus="HotkeyTextboxGainFocus" LostFocus="HotkeyTextboxLoseFocus"/>
-        <TextBox x:Name="TXBSyrupTimer" HorizontalAlignment="Left" Height="23" Margin="41,138,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="74" IsReadOnly="True" Grid.Column="1" KeyDown="SetTimeValue" GotFocus="TimeGetFocus" LostFocus="TimeLostFocus"/>
+        <TextBox x:Name="TXBSyrupTimer" HorizontalAlignment="Left" Height="23" Margin="41,138,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="74" IsReadOnly="True" Grid.Column="1" KeyDown="SetTimeValue" GotFocus="TimeGetFocus" LostFocus="TimeLostFocus"/>
         <CheckBox x:Name="CHBSyrup" Content="CheckBox" Grid.Column="1" HorizontalAlignment="Left" Margin="126,140,0,0" VerticalAlignment="Top"/>
 
         <!-- Confirm -->
@@ -54,12 +54,18 @@
         <RadioButton x:Name="RDFood30" Content="30 Minute Food" HorizontalAlignment="Left" Margin="13,253,0,0" VerticalAlignment="Top" Width="103" GroupName="RDFoodTimer" IsChecked="True" Checked="RDFood30_Checked"/>
         <RadioButton x:Name="RDFood40" Content="40 Minute Food" HorizontalAlignment="Left" Margin="13,268,0,0" VerticalAlignment="Top" Width="103" GroupName="RDFoodTimer" Checked="RDFood40_Checked"/>
         <Label x:Name="LabelCraftCount" Content="Craft Count" HorizontalAlignment="Left" Margin="18,293,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="TXBCraftCount" HorizontalAlignment="Left" Height="23" Margin="102,297,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="74" IsReadOnly="True" KeyDown="SetTimeValue" GotFocus="TimeGetFocus" LostFocus="TimeLostFocus"/>
+        <TextBox x:Name="TXBCraftCount" HorizontalAlignment="Left" Height="23" Margin="102,297,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="74" IsReadOnly="True" KeyDown="SetTimeValue" GotFocus="TimeGetFocus" LostFocus="TimeLostFocus"/>
         <CheckBox x:Name="CHBCraftCount" Content="Enabled" HorizontalAlignment="Left" Margin="189,299,0,0" VerticalAlignment="Top"/>
 
         <!-- Buttons -->
         <Button x:Name="ButtonTest" Content="Test" HorizontalAlignment="Left" Margin="10,366,0,0" VerticalAlignment="Top" Width="302" Height="44" Click="BTNCraftInitiate"/>
         <Button x:Name="TEST" Content="Test" HorizontalAlignment="Left" Margin="337,379,0,0" VerticalAlignment="Top" Width="75" Click="TEST_Click" Grid.ColumnSpan="2"/>
+
+        <!-- Profile Systems -->
+        <Button x:Name="BTNSave" Content="Save" Grid.Column="1" HorizontalAlignment="Left" Margin="38,197,0,0" VerticalAlignment="Top" Width="75" Click="BTNSave_Click"/>
+        <Button x:Name="BTNLoad" Content="Load" Grid.Column="1" HorizontalAlignment="Left" Margin="122,197,0,0" VerticalAlignment="Top" Width="75" Click="BTNLoad_Click"/>
+        <Button x:Name="BTNDelete" Content="Delete" Grid.Column="1" HorizontalAlignment="Left" Margin="38,221,0,0" VerticalAlignment="Top" Width="75" Click="BTNDelete_Click"/>
+        <ComboBox x:Name="CMBProfileList" Grid.Column="1" HorizontalAlignment="Left" Margin="38,170,0,0" VerticalAlignment="Top" Width="158" Height="22"/>
 
         <!-- Status -->
         <Label x:Name="LBLUpdate" Content="Label" HorizontalAlignment="Left" Margin="337,265,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Background="#FFFF7878"/>
@@ -67,6 +73,5 @@
         <ProgressBar x:Name="PGBOverall" Grid.ColumnSpan="2" HorizontalAlignment="Left" Height="15" Margin="337,299,0,0" VerticalAlignment="Top" Width="181" Maximum="1000" Value="55" Background="#FFE6E6E6" Foreground="#FF06B025"/>
         <ProgressBar x:Name="PGBCraft" Grid.ColumnSpan="2" HorizontalAlignment="Left" Height="15" Margin="337,319,0,0" VerticalAlignment="Top" Width="181" Maximum="1000"/>
         <ProgressBar x:Name="PGBMacro" Grid.ColumnSpan="2" HorizontalAlignment="Left" Height="15" Margin="337,339,0,0" VerticalAlignment="Top" Width="181" Maximum="1000"/>
-
     </Grid>
 </Window>
