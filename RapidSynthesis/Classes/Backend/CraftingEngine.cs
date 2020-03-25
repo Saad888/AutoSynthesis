@@ -42,6 +42,9 @@ namespace RapidSynthesis
 
             EndCraftCallback = endCraftCallback;
 
+            // Load process or throw error if process does not exist
+            ProcessManager.LoadProcess();
+
             // Verify hotkeys are built correctly
             if (hotKeyDictionary[HKType.Macro1] == null)
             {
@@ -70,6 +73,8 @@ namespace RapidSynthesis
 
         public static void CancelCrafting()
         {
+            if (!CraftingActive)
+                return;
             CraftingSuccessfullyCancelled = false;
             UICommunicator.UpdateStatus("Ending Craft...");
             Cts.Cancel();
@@ -156,6 +161,7 @@ namespace RapidSynthesis
             CraftingActive = false;
             CraftingSuccessfullyCancelled = true;
             UICommunicator.UpdateStatus("Craft Finished!");
+            Thread.Sleep(STANDARD_TICK_TIME * 5); 
             UICommunicator.EndAllProgress();
             EndCraftCallback.Invoke();
         }

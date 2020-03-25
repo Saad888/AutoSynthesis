@@ -24,18 +24,13 @@ namespace RapidSynthesis
     // https://stackoverflow.com/questions/979876/set-background-color-of-wpf-textbox-in-c-sharp-code
 
     // GLITCHES:
-    // Double shift kinda acts weird
-    // Activating a bar and then losing focus causes it to stay on "Enter keybind...", save previous or empty the bar when focus force lost
-    // When crafting finishes naturally, it doesnt properly set the system state back, fix that
     // Macro progress bar keeps running after a craft is ended if you end a craft as the next one starts
 
 
     // TO DO: 
-    // Check behaviour when you change windows altogehter
-    // Set the chekcboxes to enable or disable some windows when pressed (as relevant to them)
     // Check if the tab sorting is correct
     // See ProcessManager for ToDo's
-    // Make the save profile window appear in the same location each time
+    // Implement a proper logger
 
 
     /// <summary>
@@ -264,8 +259,7 @@ namespace RapidSynthesis
                 }
                 catch (InvalidUserParametersException error)
                 {
-                    Console.WriteLine(error.Message);
-                    UICommunicator.UpdateStatus("ERROR!");
+                    MessageBox.Show(error.Message);
                     SetCraftingStatus(SystemStates.IDLE);
                     return;
                 }
@@ -275,9 +269,17 @@ namespace RapidSynthesis
                 {
                     ButtonTest.Dispatcher.Invoke(() => { SetCraftingStatus(SystemStates.IDLE); });
                 };
-
-                CraftingEngine.InitiateCraftingEngine(hotkeys, settings, action);
-                SetCraftingStatus(SystemStates.ACTIVECRAFTING);
+                try
+                {
+                    CraftingEngine.InitiateCraftingEngine(hotkeys, settings, action);
+                    SetCraftingStatus(SystemStates.ACTIVECRAFTING);
+                }
+                catch (ProcessMissingException)
+                {
+                    MessageBox.Show("FFXIV Was Not Detected! Please ensure the game is running.");
+                    SetCraftingStatus(SystemStates.IDLE);
+                    return;
+                }
 
             }
             else if (SystemState == SystemStates.ACTIVECRAFTING)
@@ -413,6 +415,7 @@ namespace RapidSynthesis
         {
             HKTContainers[txb].AcceptingInputs = false;
             txb.Background = HKTBrushes[HotkeyStates.FOCUSED];
+            txb.Text = HotkeyProcessor.GetKeyInputText(HKTContainers[txb].LastPressedKey, HKTContainers[txb].ActiveModKeys);
             EnableTabbing();
         }
 
@@ -632,6 +635,7 @@ namespace RapidSynthesis
         private void BTNSave_Click(object sender, RoutedEventArgs e)
         {
             var saveDialog = new SaveDialog();
+            saveDialog.Owner = Application.Current.MainWindow;
             if (saveDialog.ShowDialog() == true)
             {
                 var name = saveDialog.SaveName;
@@ -670,6 +674,46 @@ namespace RapidSynthesis
                 HKTContainers[TXBConfirmKey], HKTContainers[TXBCancelKey],
                 (bool)CHBCollectableCraft.IsChecked, (bool)RDFood30.IsChecked
             );
+        }
+        #endregion
+
+        #region Checkbox Enable/Disables
+        private void CHBMacro2_Checked(object sender, RoutedEventArgs e)
+        {
+            bool check = (bool)CHBMacro2.IsChecked;
+            TXBMacro2Key.IsEnabled = check;
+            TXBMacro2Timer.IsEnabled = check;
+        }
+
+        private void CHBMacro3_Checked(object sender, RoutedEventArgs e)
+        {
+            bool check = (bool)CHBMacro3.IsChecked;
+            TXBMacro3Key.IsEnabled = check;
+            TXBMacro3Timer.IsEnabled = check;
+        }
+
+        private void CHBFood_Checked(object sender, RoutedEventArgs e)
+        {
+            bool foodcheck = (bool)CHBFood.IsChecked;
+            bool syrupcheck = (bool)CHBSyrup.IsChecked;
+            TXBFoodKey.IsEnabled = foodcheck;
+            TXBFoodTimer.IsEnabled = foodcheck;
+            TXBCancelKey.IsEnabled = foodcheck || syrupcheck;
+        }
+
+        private void CHBSyrup_Checked(object sender, RoutedEventArgs e)
+        {
+            bool foodcheck = (bool)CHBFood.IsChecked;
+            bool syrupcheck = (bool)CHBSyrup.IsChecked;
+            TXBSyrupKey.IsEnabled = syrupcheck;
+            TXBSyrupTimer.IsEnabled = syrupcheck;
+            TXBCancelKey.IsEnabled = foodcheck || syrupcheck;
+        }
+
+        private void CHBCraftCount_Checked(object sender, RoutedEventArgs e)
+        {
+            bool check = (bool)CHBCraftCount.IsChecked;
+            TXBCraftCount.IsEnabled = check;
         }
         #endregion
 

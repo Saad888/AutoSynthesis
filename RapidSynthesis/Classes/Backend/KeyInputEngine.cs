@@ -29,6 +29,7 @@ namespace RapidSynthesis
 
         public static void SendKeysToGame(VirtualKeyCode key, VirtualKeyCode[] modKeys = null)
         {
+            LogInputs(key, modKeys);
             // submit mod keys
             if (modKeys != null)
             {
@@ -50,6 +51,21 @@ namespace RapidSynthesis
                     SendMessage(ProcessManager.ProcessPtr(), WM_KEYUP, (int)modKey, 0);
                 }
             }
+        }
+
+        private static void LogInputs(VirtualKeyCode key, VirtualKeyCode[] modKeys)
+        {
+            Logger.Write($"Sending Inputs to Process {ProcessManager.GameProcess.Id}");
+
+            string modkeyText = "";
+            if (modKeys != null && modKeys.Length >= 1)
+            {
+                modkeyText += " With Mods";
+                foreach (var mod in modKeys)
+                    modkeyText += " " + mod.ToString();
+            }
+
+            Logger.Write($"Input {key.ToString()}{modkeyText}");
         }
     }
 }

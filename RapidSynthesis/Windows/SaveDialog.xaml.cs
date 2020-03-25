@@ -39,5 +39,10 @@ namespace RapidSynthesis.Windows
         {
             DialogResult = false;
         }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            TXBName.Focus();
+        }
     }
 }

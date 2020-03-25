@@ -59,10 +59,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Classes\Backend\Logger.cs" />
     <Compile Include="Classes\UI Classes\Profile.cs" />
     <Compile Include="Classes\UI Classes\ProfileManager.cs" />
     <Compile Include="Exceptions\InvalidProfileNameException.cs" />
     <Compile Include="Exceptions\InvalidProfileSettingsException.cs" />
+    <Compile Include="Exceptions\ProcessMissingException.cs" />
     <Compile Include="Exceptions\ProfileImproperStringFormatException.cs" />
     <Compile Include="Windows\SaveDialog.xaml.cs">
       <DependentUpon>SaveDialog.xaml</DependentUpon>
@@ -123,6 +125,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <Resource Include="Resources\Fonts\Sen-Regular.ttf" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

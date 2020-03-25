@@ -14,26 +14,42 @@ namespace RapidSynthesis
         private static Dictionary<Key, string> KeyCodeToString;
         private static Dictionary<Key, VirtualKeyCode> KeyCodeToVKCode;
         private static HashSet<Key> NumpadKeys;
+        private const int MAX_CHARACTER = 18;
 
         static HotkeyProcessor()
         {
             SetDictionaryValues();
         }
 
-        public static string GetKeyInputText(Key keys, HashSet<Key> modKeys)
+        public static string GetKeyInputText(Key keys, HashSet<Key> modKeys, bool shortenString = false)
         {
             string response = "";
+            if (keys == Key.None)
+                return response;
             // Add Shift
             if (modKeys.Contains(Key.LeftShift) || modKeys.Contains(Key.RightShift))
-                response += "SHIFT + ";
+                if (!shortenString)
+                    response += "SHIFT + ";
+                else
+                    response += "SHFT+";
             // Add Control
             if (modKeys.Contains(Key.LeftCtrl) || modKeys.Contains(Key.RightCtrl))
-                response += "CTRL + ";
+                if (!shortenString)
+                    response += "CTRL + ";
+                else
+                    response += "CTL+";
             // Add Alt
             if (modKeys.Contains(Key.LeftAlt) || modKeys.Contains(Key.RightAlt))
-                response += "ALT + ";
+                if (!shortenString)
+                    response += "ALT + ";
+                else
+                    response += "ALT+";
             // Add Key
             response += KeyCodeToString[keys];
+
+            // If string is too long, shorten
+            if (response.Length > MAX_CHARACTER && !shortenString)
+                return GetKeyInputText(keys, modKeys, true);
             return response;
         }
 
