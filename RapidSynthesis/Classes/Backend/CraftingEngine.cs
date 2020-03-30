@@ -12,7 +12,7 @@ namespace RapidSynthesis
         #region Class Properties and Consts
         private static Dictionary<HKType, Hotkey> HotkeySet { get; set; }
         private static SettingsContainer Settings { get; set; }
-        private static bool CraftingActive { get; set; } = false;
+        public static bool CraftingActive { get; set; } = false;
         private static bool CraftingSuccessfullyCancelled { get; set; } = false;
         public static DateTime NextFoodUse { get; set; }
         public static DateTime NextSyrupUse { get; set; }
@@ -100,7 +100,12 @@ namespace RapidSynthesis
             try
             {
                 // Set crafting parameters
+                UICommunicator.ResetValues();
                 UICommunicator.UpdateStatus("Setting up for Crafting...");
+                UICommunicator.StartTimedProgressBarUpdates();
+                UICommunicator.UpdateCompletedUIInfo(0, Settings.CraftCount);
+
+
                 craftCount = 1;
                 if (HotkeySet[HKType.Food] != null)
                     NextFoodUse = CalculateNextConsumableUse(Settings.StartingFoodTime);
@@ -127,8 +132,12 @@ namespace RapidSynthesis
                     // Initiate Macro 3
                     SendMacroInput(HotkeySet[HKType.Macro3], 3);
 
+                    // Update UI Message
+                    UICommunicator.UpdateCompletedUIInfo(craftCount, Settings.CraftCount);
+
                     // Collectable Menu Option
                     SendCollectableConfirmationInput();
+
 
                     // Standard delay for menus
                     Break(STANDARD_MENU_DELAY);
@@ -141,6 +150,7 @@ namespace RapidSynthesis
                     Break(STANDARD_ANIMATION_DELAY);
 
                     craftCount += 1;
+
                 }
             } 
             catch (Exception e) when (!(e is CraftCancelRequest))

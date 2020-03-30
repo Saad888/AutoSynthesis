@@ -25,13 +25,29 @@ namespace RapidSynthesis
 
     // GLITCHES:
     // Macro progress bar keeps running after a craft is ended if you end a craft as the next one starts
+    // Trying to start the craft when the game isnt running means the thread isnt ending, meaning it crashes even when the game is launched after
+
 
 
     // TO DO: 
-    // Check if the tab sorting is correct
-    // See ProcessManager for ToDo's
+    // See ProcessManager for ToDo's (?)
     // Implement a proper logger
 
+
+    // Stuff left on UI:
+    // Make elements enable or disbaled  when crafting
+    // Set button state correctly
+    // Make a timer for Food and Pots on a separate thread
+    // Have the progress bar labels fade in and out
+    // Add another UI label to indicate what is going into the system
+    // Update the design of the Save Profile 
+    // Add 45 minutes and update EVERYTHING accordingly
+    // Fix craft counter to go higher than 99
+    // Set timer windows to have a flag so that when you highlight into them they reset back to 0 once you hit anything
+    // Add a double click option for the input component
+    // Add a help button that redirects to the readme
+    // Check if the tab sorting is correct
+    // Fix XAML if needed
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -73,15 +89,22 @@ namespace RapidSynthesis
         private Dictionary<SystemStates, SolidColorBrush> MainButtonBrushes { get; set; }
         #endregion
 
+        #region Brush Colors
+        private SolidColorBrush DefaultLight { get; set; } = (SolidColorBrush)(new BrushConverter().ConvertFrom("#DCEDFF"));
+        private SolidColorBrush DefaultFocused { get; set; } = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFFF82"));
+        private SolidColorBrush DefaultActive { get; set; } = (SolidColorBrush)(new BrushConverter().ConvertFrom("#DD7373"));
+        #endregion
+
         #region Initiating Methods
         public MainWindow()
         {
             InitializeComponent();
             SetContainerValues();
             SetBrushValues();
-
+            
             // Set up UICommunicator
-            UICommunicator.ConnectUI(LBLCraftNumber, LBLUpdate, PGBOverall, PGBCraft, PGBMacro);
+            UICommunicator.ConnectUI(LBLCraftNumber, LBLUpdate, LBLUpdateFooter, LBLTimerCraft, LBLTimerMacro, 
+                PGBOverall, PGBCraft, PGBMacro);
 
             // Set system state
             SystemState = SystemStates.IDLE;
@@ -116,20 +139,26 @@ namespace RapidSynthesis
         private void SetBrushValues()
         {
             // Set all brush dictionaries
-            HKTBrushes = new Dictionary<HotkeyStates, SolidColorBrush>();
-            HKTBrushes.Add(HotkeyStates.UNFOCUSED, Brushes.White);
-            HKTBrushes.Add(HotkeyStates.FOCUSED, Brushes.Yellow);
-            HKTBrushes.Add(HotkeyStates.ACTIVE, Brushes.Red);
+            HKTBrushes = new Dictionary<HotkeyStates, SolidColorBrush>
+            {
+                { HotkeyStates.UNFOCUSED, DefaultLight },
+                { HotkeyStates.FOCUSED, DefaultFocused },
+                { HotkeyStates.ACTIVE, DefaultActive }
+            };
 
-            TimeBrushes = new Dictionary<TimeStates, SolidColorBrush>();
-            TimeBrushes.Add(TimeStates.UNFOCUSED, Brushes.White);
-            TimeBrushes.Add(TimeStates.FOCUSED, Brushes.Yellow);
+            TimeBrushes = new Dictionary<TimeStates, SolidColorBrush>
+            {
+                { TimeStates.UNFOCUSED, DefaultLight },
+                { TimeStates.FOCUSED, DefaultFocused }
+            };
 
-            MainButtonBrushes = new Dictionary<SystemStates, SolidColorBrush>();
-            MainButtonBrushes.Add(SystemStates.IDLE, Brushes.White);
-            MainButtonBrushes.Add(SystemStates.PREPARINGCCRAFT, Brushes.White);
-            MainButtonBrushes.Add(SystemStates.ACTIVECRAFTING, Brushes.Green);
-            MainButtonBrushes.Add(SystemStates.CANCELLINGCRAFT, Brushes.Red);
+            MainButtonBrushes = new Dictionary<SystemStates, SolidColorBrush>
+            {
+                { SystemStates.IDLE, Brushes.White },
+                { SystemStates.PREPARINGCCRAFT, Brushes.White },
+                { SystemStates.ACTIVECRAFTING, Brushes.Green },
+                { SystemStates.CANCELLINGCRAFT, Brushes.Red }
+            };
         }
 
         private void SetDefaultValues()
@@ -158,7 +187,6 @@ namespace RapidSynthesis
                           collectableCraft, thirtyMinCraft);
             SetAllHoykeys(profile);
         }
-
         #endregion
 
         #region Crafting Methods
@@ -267,7 +295,7 @@ namespace RapidSynthesis
                 // Create ending action
                 Action action = () =>
                 {
-                    ButtonTest.Dispatcher.Invoke(() => { SetCraftingStatus(SystemStates.IDLE); });
+                    BTNCraft.Dispatcher.Invoke(() => { SetCraftingStatus(SystemStates.IDLE); });
                 };
                 try
                 {
@@ -280,6 +308,12 @@ namespace RapidSynthesis
                     SetCraftingStatus(SystemStates.IDLE);
                     return;
                 }
+                catch (DuplicateCraftingAttemptedException)
+                {
+                    MessageBox.Show("DUPLICATECRAFTATTEMPTEDEXCEPTION");
+                    SetCraftingStatus(SystemStates.IDLE);
+                    return;
+                }
 
             }
             else if (SystemState == SystemStates.ACTIVECRAFTING)
@@ -287,6 +321,10 @@ namespace RapidSynthesis
                 // Cancel the craft
                 SetCraftingStatus(SystemStates.CANCELLINGCRAFT);
                 CraftingEngine.CancelCrafting();
+                while (CraftingEngine.CraftingActive)
+                {
+                    Thread.Sleep(10);
+                }
                 SetCraftingStatus(SystemStates.IDLE);
             }
         }
@@ -588,7 +626,7 @@ namespace RapidSynthesis
         private void SetCraftingStatus(SystemStates state)
         {
             SystemState = state;
-            ButtonTest.Background = MainButtonBrushes[SystemState];
+            BTNCraft.Background = MainButtonBrushes[SystemState];
         }
         #endregion
 
@@ -716,6 +754,5 @@ namespace RapidSynthesis
             TXBCraftCount.IsEnabled = check;
         }
         #endregion
-
     }
 }

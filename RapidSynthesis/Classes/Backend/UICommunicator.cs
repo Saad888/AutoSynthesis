@@ -21,29 +21,51 @@ namespace RapidSynthesis
     {
         #region Properties and Consts
         public static Label UpdateLabel { get; set; }
-        public static Label HeaderLabel { get; set; }
+        public static Label CraftsCompletedLabel { get; set; }
+        public static Label FoodSyrupLabel { get; set; }
+        public static Label CraftTimerLabel { get; set; }
+        public static Label MacroTimerLabel { get; set; }
         public static ProgressBar ProgressOverall { get; set; }
         public static ProgressBar ProgressCraft { get; set; }
         public static ProgressBar ProgressMacro { get; set; }
 
+        private static double ProgressCraftTimeDuration { get; set; }
+        private static DateTime ProgressCraftTime { get; set; }
+        private static double ProgressMacroTimeDuration { get; set; }
+        private static DateTime ProgressMacroTime { get; set; }
+        private static DateTime NullDateTime { get; set; }
+        private static int MacroNumber { get; set; }
+        private static int CraftNumber { get; set; }
+        private static int MaxNumber { get; set; }
+
         private const int MIN_PROG = 0;
         private const int MAX_PROG = 1000;
-        private const int TICK_TIME = 50;
+        private const int TICK_TIME = 25;
 
-        private static Dictionary<ProgressBar, CancellationTokenSource> CancelTokenSources { get; set; }
+        private static CancellationTokenSource OverallCancellationToken { get; set; }
+        private static CancellationTokenSource TimedCancellationToken { get; set; }
         #endregion
 
         #region Setup Methods
-        public static void ConnectUI(Label headerLabel, Label updateLabel, ProgressBar progressOverall,
+        public static void ConnectUI(Label headerLabel, Label updateLabel, Label foodSyrupLabel, Label craftLabel, 
+                                     Label macroLabel, ProgressBar progressOverall,
                                      ProgressBar progressCraft, ProgressBar progressMacro)
         {
-            HeaderLabel = headerLabel;
+            CraftsCompletedLabel = headerLabel;
             UpdateLabel = updateLabel;
+            FoodSyrupLabel = foodSyrupLabel;
+            CraftTimerLabel = craftLabel;
+            MacroTimerLabel = macroLabel;
             ProgressOverall = progressOverall;
             ProgressCraft = progressCraft;
             ProgressMacro = progressMacro;
+        }
 
-            CancelTokenSources = new Dictionary<ProgressBar, CancellationTokenSource>();
+        public static void ResetValues()
+        {
+            CraftNumber = 0;
+            MaxNumber = 0;
+            MacroNumber = 0;
         }
         #endregion
 
@@ -52,37 +74,55 @@ namespace RapidSynthesis
         {
             // Updates visual display on craft status
             // Label
-            var uiText = $"Craft Number {craftCount}";
+            CraftNumber = craftCount;
+            MaxNumber = max;
+        }
+
+        public static void UpdateCompletedUIInfo(int craftCount, int max)
+        {
+            CraftNumber = craftCount;
+            MaxNumber = max;
+            string uiText = $"Crafted: ";
+            string craftCounter = CraftNumber.ToString();
             if (max != 0)
+                craftCounter += $"/{MaxNumber}";
+
+            if (craftCounter.Length > 5)
             {
-                uiText += $" out of {max}";
+                UpdateCraftNumberLabel(craftCounter);
+            } else
+            {
+                UpdateCraftNumberLabel(uiText + craftCounter);
             }
-            UpdateCraftNumberLabel(uiText);
 
             // Progress Bar
             if (max > 0)
             {
-                double p = (double)craftCount / max;
-                //UpdateProgressBar(ProgressOverall, p);
+                double p = (double)CraftNumber / MaxNumber;
                 SmoothProgressUpdate(ProgressOverall, p);
             }
         }
 
         public static void UpdateMacroUIInfo(int macroNumber, int macroTimer)
         {
-            UpdateStatus($"Using Macro {macroNumber}...");
-            TimedProgressUpdate(ProgressMacro, macroTimer);
+            MacroNumber = macroNumber;
+            UpdateStatus($"Using Macro {MacroNumber}...");
+            ProgressMacroTimeDuration = macroTimer;
+            ProgressMacroTime = DateTime.Now.AddMilliseconds(macroTimer);
         }
 
         public static void BeginCraftTimer(int totalTime)
         {
-            TimedProgressUpdate(ProgressCraft, totalTime);
+            ProgressCraftTimeDuration = totalTime;
+            ProgressCraftTime = DateTime.Now.AddMilliseconds(totalTime);
         }
-
+        
         public static void EndAllProgress()
         {
-            foreach(var tokenSources in CancelTokenSources.Values)
-                tokenSources.Cancel();
+            TimedCancellationToken.Cancel();
+            if (OverallCancellationToken != null)
+                OverallCancellationToken.Cancel();
+            DropProgressToZero();
             UpdateProgressBar(ProgressOverall, 0);
             UpdateProgressBar(ProgressCraft, 0);
             UpdateProgressBar(ProgressMacro, 0);
@@ -93,8 +133,8 @@ namespace RapidSynthesis
         private static void UpdateCraftNumberLabel(string uiText)
         {
             // Update label
-            Action action = () => { HeaderLabel.Content = uiText; };
-            DispatchActionLabel(HeaderLabel, action);
+            Action action = () => { CraftsCompletedLabel.Content = uiText; };
+            DispatchActionLabel(CraftsCompletedLabel, action);
             // Update progress bar
         }
 
@@ -106,53 +146,107 @@ namespace RapidSynthesis
         #endregion
 
         #region Progress Bar Updates
-        private static void TimedProgressUpdate(ProgressBar prog, int timeInMilliseconds)
+        public static void StartTimedProgressBarUpdates()
         {
-            if (CancelTokenSources.ContainsKey(prog))
-            {
-                CancelTokenSources[prog].Cancel();
-                CancelTokenSources.Remove(prog);
-            }
-
-            // Create cancellation token
-            CancelTokenSources.Add(prog, new CancellationTokenSource());
-            var token = CancelTokenSources[prog].Token;
+            TimedCancellationToken = new CancellationTokenSource();
+            var token = TimedCancellationToken.Token;
 
             Action action = () =>
             {
-                var progVal = 0;
-                // Set bar to 0
-                UpdateProgressBar(prog, progVal);
+                SetLabelVisibility(Visibility.Visible);
 
-                // Update progress bar to max value at 20HZ (aka 50ms ticks)
-                var tickCount = timeInMilliseconds / TICK_TIME;
-                for (int i = 0; i <= tickCount; i++)
+                while (!token.IsCancellationRequested)
                 {
-                    if (!token.IsCancellationRequested)
-                    {
-                        double p = (double)i / tickCount;
-                        UpdateProgressBar(prog, p);
-                        Thread.Sleep(50);
-                    } 
-                    else
-                        break;
+                    // Update Craft Timer
+                    UpdateTimerProgressBar(ProgressCraft, ProgressCraftTime, ProgressCraftTimeDuration);
+                    UpdateCraftTimerText();
+
+                    // Update Macro Timer
+                    UpdateTimerProgressBar(ProgressMacro, ProgressMacroTime, ProgressMacroTimeDuration);
+                    UpdateMacroTimerText();
+
+                    Thread.Sleep(TICK_TIME);
                 }
-                // Clear token from dictionary
-                CancelTokenSources.Remove(prog);
+
+                SetLabelVisibility(Visibility.Hidden);
             };
             Task.Run(action, token);
         }
 
+        private static void UpdateCraftTimerText()
+        {
+            var output = "Craft " + CraftNumber + ": ";
+            var difference = ProgressCraftTime - DateTime.Now + new TimeSpan(0, 0, 1);
+            var timer = "";
+
+            if (difference.TotalMilliseconds < 0)
+                timer = "0:00";
+            else
+                timer = difference.ToString(@"m\:ss");
+
+            output += timer;
+
+            CraftTimerLabel.Dispatcher.Invoke(() => { CraftTimerLabel.Content = output; });
+        }
+
+        private static void UpdateMacroTimerText()
+        {
+            var output = "Macro " + MacroNumber + ": ";
+            var difference = ProgressMacroTime - DateTime.Now + new TimeSpan(0, 0, 1);
+            var timer = "";
+
+            if (difference.TotalMilliseconds < 0)
+                timer = "0:00";
+            else
+                timer = difference.ToString(@"m\:ss");
+
+            output += timer;
+            MacroTimerLabel.Dispatcher.Invoke(() => { MacroTimerLabel.Content = output; });
+        }
+
+        private static void SetLabelVisibility(Visibility setting)
+        {
+            Action action = () =>
+            {
+                CraftsCompletedLabel.Visibility = setting;
+                MacroTimerLabel.Visibility = setting;
+                CraftTimerLabel.Visibility = setting;
+            };
+            MacroTimerLabel.Dispatcher.Invoke(action);
+        }
+
+        private static void UpdateTimerProgressBar(ProgressBar prog, DateTime time, double duration)
+        {
+            // Update Progress Bar
+            var p = GetProgressBarValue(time, duration);
+            UpdateProgressBar(prog, p);
+        }
+
+        private static double GetProgressBarValue(DateTime target, double duration)
+        {
+            if (IsDateNull(target))
+            {
+                return 0;
+            }
+            else
+            {
+                var difference = (target - DateTime.Now).TotalMilliseconds;
+                var percent = (duration - difference) / duration;
+                return Math.Max(0, Math.Min(1, percent));
+            }
+        }
+
+        private static bool IsDateNull(DateTime target)
+        {
+            return DateTime.Compare(target, NullDateTime) == 0;
+        }
+
+
         private static void SmoothProgressUpdate(ProgressBar prog, double targetValue)
         {
-            if (CancelTokenSources.ContainsKey(prog))
-            {
-                return;
-            }
-
             // Create cancellation token
-            CancelTokenSources.Add(prog, new CancellationTokenSource());
-            var token = CancelTokenSources[prog].Token;
+            OverallCancellationToken = new CancellationTokenSource();
+            var token = OverallCancellationToken.Token;
 
             Action action = () =>
             {
@@ -168,9 +262,6 @@ namespace RapidSynthesis
                     Thread.Sleep(TICK_TIME);
                     currentValue = GetProgressBarValue(prog);
                 }
-
-                // Clear token from dictionary
-                CancelTokenSources.Remove(prog);
             };
             Task.Run(action, token);
         }
@@ -184,7 +275,29 @@ namespace RapidSynthesis
         }
         #endregion
 
-        #region Dispatcher Functions
+        #region ResetUIMethods
+        private static void DropProgressToZero()
+        {
+            var overallProgress = GetProgressBarValue(ProgressOverall);
+            var overallProgressStep = overallProgress / 10;
+            var craftProgress = GetProgressBarValue(ProgressCraft);
+            var craftProgressStep = craftProgress / 10;
+            var macroProgress = GetProgressBarValue(ProgressMacro);
+            var macroProgressStep = macroProgress / 10;
+            for (int i = 0; i < 20; i++)
+            {
+                overallProgress -= overallProgressStep;
+                craftProgress -= craftProgressStep;
+                macroProgress -= macroProgressStep;
+                UpdateProgressBar(ProgressOverall, overallProgress);
+                UpdateProgressBar(ProgressCraft, craftProgress);
+                UpdateProgressBar(ProgressMacro, macroProgress);
+                Thread.Sleep(TICK_TIME);
+            }
+        }
+        #endregion
+
+        #region Internal Functions
         private static void DispatchActionProgressBar(ProgressBar progress, Action action)
         {
             progress.Dispatcher.BeginInvoke(action);
