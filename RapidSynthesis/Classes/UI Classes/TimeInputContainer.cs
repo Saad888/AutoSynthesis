@@ -10,5 +10,8 @@ namespace RapidSynthesis
     {
         public bool FreshFocus { get; set; } = true;
         public int Timer { get; set; } = 0;
+        public bool Limit { get; set; } = true; // Prevent timer from going beyond 99
+        public TimeInputContainer() { }
+        public TimeInputContainer(bool limit) { Limit = limit; }
     }
 }

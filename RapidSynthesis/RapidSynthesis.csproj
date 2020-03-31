@@ -135,14 +135,14 @@
     <Folder Include="DataBindings\" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Images\Background\Background.png" />
-    <Resource Include="Resources\Images\Background\Background2.png" />
-    <Resource Include="Resources\Images\Background\Test.png" />
-    <Resource Include="Resources\Images\Background\Test2.png" />
-    <Resource Include="Resources\Images\Background\TestFlip.png" />
+    <Resource Include="Resources\Images\Background\Background 3.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Images\Background\Background 3.png" />
+    <Resource Include="Resources\Images\Background\InfoHighlighted.png" />
+    <Resource Include="Resources\Images\Background\InfoUnhighlighted.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\Background\InfoPressed.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

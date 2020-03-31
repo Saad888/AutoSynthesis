@@ -10,12 +10,12 @@ namespace RapidSynthesis
     {
         // contains settings metadata
         public int CraftCount { get; set; } // Set to 0 if endless craft
-        public bool FoodTimerFourtyMinutes { get; set; } // if 40 min food, true
+        public int FoodDuration { get; set; } // if 40 min food, true
         public bool CollectableCraft { get; set; }
         public int StartingFoodTime { get; set; }
         public int StartingSyrupTime { get; set; }
 
-        public SettingsContainer(int craftCount, bool collectableCraft, bool thirtyMinuteFood, int startingFoodTime, int startingSyrupTime)
+        public SettingsContainer(int craftCount, bool collectableCraft, int foodDuration, int startingFoodTime, int startingSyrupTime)
         {
             if (craftCount < 0)
             {
@@ -24,7 +24,7 @@ namespace RapidSynthesis
 
             CraftCount = craftCount;
             CollectableCraft = collectableCraft;
-            FoodTimerFourtyMinutes = thirtyMinuteFood;
+            FoodDuration = foodDuration;
             StartingFoodTime = startingFoodTime;
             StartingSyrupTime = startingSyrupTime;
         }

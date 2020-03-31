@@ -29,7 +29,7 @@ namespace RapidSynthesis
         public HotkeyContainer Select { get; set; }
         public HotkeyContainer Cancel { get; set; }
         public bool Collectable { get; set; }
-        public bool ThirtyFood { get; set; }
+        public int FoodDuration { get; set; }
 
         private const int PropertyCount = 16;
         #endregion
@@ -43,7 +43,7 @@ namespace RapidSynthesis
                        HotkeyContainer food, bool foodCheck, 
                        HotkeyContainer syrup, bool syrupCheck,
                        HotkeyContainer select, HotkeyContainer cancel, 
-                       bool collectable, bool thirtyFood)
+                       bool collectable, int foodDuration)
         {
             Macro1 = macro1;
             Macro2 = macro2;
@@ -60,7 +60,7 @@ namespace RapidSynthesis
             Select = select;
             Cancel = cancel;
             Collectable = collectable;
-            ThirtyFood = thirtyFood;
+            FoodDuration = foodDuration;
         }
 
         public Profile(string profileInput)
@@ -92,7 +92,7 @@ namespace RapidSynthesis
             Select = HotkeyContainer.FromString(inputs[12]);
             Cancel = HotkeyContainer.FromString(inputs[13]);
             Collectable = Convert.ToBoolean(inputs[14]);
-            ThirtyFood = Convert.ToBoolean(inputs[15]);
+            FoodDuration = Convert.ToInt32(inputs[15]);
         }
         #endregion
 
@@ -120,7 +120,7 @@ namespace RapidSynthesis
                 Select.ToString(),          // 12
                 Cancel.ToString(),          // 13
                 Collectable.ToString(),     // 14
-                ThirtyFood.ToString()       // 15
+                FoodDuration.ToString()       // 15
             });
             return output;
         }

@@ -12,7 +12,9 @@ namespace RapidSynthesis
         public VirtualKeyCode KeyCode { get; set; }
         public VirtualKeyCode[] ModKeyCodes { get; set; }
         public int TimerInMiliseconds { get; set; }
+        public string Text { get; set; }
         private const int DEFAULT_TIMER = 250;
+
 
 
         public Hotkey(VirtualKeyCode keyCode, int timer = DEFAULT_TIMER)
@@ -21,11 +23,17 @@ namespace RapidSynthesis
             ModKeyCodes = null;
             TimerInMiliseconds = timer;
         }
-        public Hotkey(VirtualKeyCode keyCode, VirtualKeyCode[] modKeyCodes, int timer = DEFAULT_TIMER)
+        public Hotkey(VirtualKeyCode keyCode, VirtualKeyCode[] modKeyCodes, string text, int timer = DEFAULT_TIMER)
         {
             KeyCode = keyCode;
             ModKeyCodes = modKeyCodes;
             TimerInMiliseconds = timer;
+            Text = text;
+        }
+
+        public override string ToString()
+        {
+            return Text;
         }
 
     }

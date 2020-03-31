@@ -15,6 +15,9 @@ namespace RapidSynthesis
         // Key vaues:
         public Key LastPressedKey { get; set; } = Key.None;
         public HashSet<Key> ActiveModKeys { get; set; } = new HashSet<Key>();
+
+        public Key LastSetKey { get; set; } = Key.None;
+        public HashSet<Key> LastSetModKeys { get; set; } = new HashSet<Key>();
         
         public HotkeyContainer() { }
         public HotkeyContainer(Key pressedKey, HashSet<Key> modKeys)

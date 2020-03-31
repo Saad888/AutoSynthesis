@@ -21,11 +21,10 @@ namespace RapidSynthesis
             SetDictionaryValues();
         }
 
+
         public static string GetKeyInputText(Key keys, HashSet<Key> modKeys, bool shortenString = false)
         {
             string response = "";
-            if (keys == Key.None)
-                return response;
             // Add Shift
             if (modKeys.Contains(Key.LeftShift) || modKeys.Contains(Key.RightShift))
                 if (!shortenString)
@@ -166,6 +165,7 @@ namespace RapidSynthesis
             KeyCodeToString.Add(Key.X, "X");
             KeyCodeToString.Add(Key.Y, "Y");
             KeyCodeToString.Add(Key.Z, "Z");
+            KeyCodeToString.Add(Key.None, "");
             #endregion
 
             // KeyCode to VirtualKeyCode

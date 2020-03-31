@@ -27,27 +27,16 @@ namespace RapidSynthesis
     // Macro progress bar keeps running after a craft is ended if you end a craft as the next one starts
     // Trying to start the craft when the game isnt running means the thread isnt ending, meaning it crashes even when the game is launched after
 
+    // TO DO: High priority
+    // Set button colors properly
+    // Set profiles so that they can accept a corrupted line
+    // Realign everything again
+    // Create proper highlighting for the buttons when keyboard is over them
 
-
-    // TO DO: 
+    // TO DO: (Low priority)
     // See ProcessManager for ToDo's (?)
+    // Create proper readme
     // Implement a proper logger
-
-
-    // Stuff left on UI:
-    // Make elements enable or disbaled  when crafting
-    // Set button state correctly
-    // Make a timer for Food and Pots on a separate thread
-    // Have the progress bar labels fade in and out
-    // Add another UI label to indicate what is going into the system
-    // Update the design of the Save Profile 
-    // Add 45 minutes and update EVERYTHING accordingly
-    // Fix craft counter to go higher than 99
-    // Set timer windows to have a flag so that when you highlight into them they reset back to 0 once you hit anything
-    // Add a double click option for the input component
-    // Add a help button that redirects to the readme
-    // Check if the tab sorting is correct
-    // Fix XAML if needed
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -104,7 +93,7 @@ namespace RapidSynthesis
             
             // Set up UICommunicator
             UICommunicator.ConnectUI(LBLCraftNumber, LBLUpdate, LBLUpdateFooter, LBLTimerCraft, LBLTimerMacro, 
-                PGBOverall, PGBCraft, PGBMacro);
+                LBLFoodSyrupTimer, PGBOverall, PGBCraft, PGBMacro);
 
             // Set system state
             SystemState = SystemStates.IDLE;
@@ -113,6 +102,7 @@ namespace RapidSynthesis
             GetProfiles();
             LoadDefaultProfile();
         }
+
 
         private void SetContainerValues()
         {
@@ -133,7 +123,7 @@ namespace RapidSynthesis
             TimerContainers.Add(TXBMacro3Timer, new TimeInputContainer());
             TimerContainers.Add(TXBFoodTimer, new TimeInputContainer());
             TimerContainers.Add(TXBSyrupTimer, new TimeInputContainer());
-            TimerContainers.Add(TXBCraftCount, new TimeInputContainer());
+            TimerContainers.Add(TXBCraftCount, new TimeInputContainer(false));
         }
 
         private void SetBrushValues()
@@ -180,11 +170,11 @@ namespace RapidSynthesis
             bool foodcheck = false;
             bool syrupcheck = false;
             bool collectableCraft = false;
-            bool thirtyMinCraft = true;
+            int foodDuration = 30;
 
             var profile = new Profile(macro1, macro1timer, macro2, macro2timer, macro2check, macro3, macro3timer, 
                           macro3check, food, foodcheck, syrup, syrupcheck, confirm, cancel, 
-                          collectableCraft, thirtyMinCraft);
+                          collectableCraft, foodDuration);
             SetAllHoykeys(profile);
         }
         #endregion
@@ -212,7 +202,8 @@ namespace RapidSynthesis
                     hkContainer = HKTContainers[TXBMacro1Key];
                     timerContainer = TimerContainers[TXBMacro1Timer];
                     ValidateHotkeyInputs(hkContainer, timerContainer, "Macro 1");
-                    hotkeys.Add(HKType.Macro1, new Hotkey(hkContainer.Keys(), hkContainer.ModKeys(), timerContainer.Timer * 1000));
+                    hotkeys.Add(HKType.Macro1, new Hotkey(hkContainer.Keys(), hkContainer.ModKeys(), 
+                                TXBMacro1Key.Text, timerContainer.Timer * 1000));
 
                     // Macro 2
                     if ((bool)CHBMacro2.IsChecked)
@@ -220,7 +211,8 @@ namespace RapidSynthesis
                         hkContainer = HKTContainers[TXBMacro2Key];
                         timerContainer = TimerContainers[TXBMacro2Timer];
                         ValidateHotkeyInputs(hkContainer, timerContainer, "Macro 2");
-                        hotkeys.Add(HKType.Macro2, new Hotkey(hkContainer.Keys(), hkContainer.ModKeys(), timerContainer.Timer * 1000));
+                        hotkeys.Add(HKType.Macro2, new Hotkey(hkContainer.Keys(), hkContainer.ModKeys(), 
+                                    TXBMacro2Key.Text, timerContainer.Timer * 1000));
                     }
                     else
                         hotkeys.Add(HKType.Macro2, null);
@@ -231,7 +223,8 @@ namespace RapidSynthesis
                         hkContainer = HKTContainers[TXBMacro3Key];
                         timerContainer = TimerContainers[TXBMacro3Timer];
                         ValidateHotkeyInputs(hkContainer, timerContainer, "Macro 3");
-                        hotkeys.Add(HKType.Macro3, new Hotkey(hkContainer.Keys(), hkContainer.ModKeys(), timerContainer.Timer * 1000));
+                        hotkeys.Add(HKType.Macro3, new Hotkey(hkContainer.Keys(), hkContainer.ModKeys(),
+                                    TXBMacro3Key.Text, timerContainer.Timer * 1000));
                     }
                     else
                         hotkeys.Add(HKType.Macro3, null);
@@ -242,7 +235,8 @@ namespace RapidSynthesis
                         hkContainer = HKTContainers[TXBFoodKey];
                         timerContainer = TimerContainers[TXBFoodTimer];
                         ValidateHotkeyInputs(hkContainer, timerContainer, "Food");
-                        hotkeys.Add(HKType.Food, new Hotkey(hkContainer.Keys(), hkContainer.ModKeys(), DEFAULT_CONSUMABLE_TIMER));
+                        hotkeys.Add(HKType.Food, new Hotkey(hkContainer.Keys(), hkContainer.ModKeys(),
+                                    TXBFoodKey.Text, DEFAULT_CONSUMABLE_TIMER));
                     }
                     else
                         hotkeys.Add(HKType.Food, null);
@@ -253,7 +247,8 @@ namespace RapidSynthesis
                         hkContainer = HKTContainers[TXBSyrupKey];
                         timerContainer = TimerContainers[TXBSyrupTimer];
                         ValidateHotkeyInputs(hkContainer, timerContainer, "Syrup");
-                        hotkeys.Add(HKType.Syrup, new Hotkey(hkContainer.Keys(), hkContainer.ModKeys(), DEFAULT_CONSUMABLE_TIMER));
+                        hotkeys.Add(HKType.Syrup, new Hotkey(hkContainer.Keys(), hkContainer.ModKeys(),
+                                    TXBSyrupKey.Text, DEFAULT_CONSUMABLE_TIMER));
                     }
                     else
                         hotkeys.Add(HKType.Syrup, null);
@@ -262,7 +257,7 @@ namespace RapidSynthesis
                     hkContainer = HKTContainers[TXBConfirmKey];
                     timerContainer = null;
                     ValidateHotkeyInputs(hkContainer, timerContainer, "Confirm");
-                    hotkeys.Add(HKType.Confirm, new Hotkey(hkContainer.Keys(), hkContainer.ModKeys()));
+                    hotkeys.Add(HKType.Confirm, new Hotkey(hkContainer.Keys(), hkContainer.ModKeys(), TXBConfirmKey.Text));
 
                     // Cancel
                     if ((bool)CHBFood.IsChecked || (bool)CHBSyrup.IsChecked)
@@ -270,7 +265,7 @@ namespace RapidSynthesis
                         hkContainer = HKTContainers[TXBCancelKey];
                         timerContainer = null;
                         ValidateHotkeyInputs(hkContainer, timerContainer, "Cancel");
-                        hotkeys.Add(HKType.Cancel, new Hotkey(hkContainer.Keys(), hkContainer.ModKeys()));
+                        hotkeys.Add(HKType.Cancel, new Hotkey(hkContainer.Keys(), hkContainer.ModKeys(), TXBCancelKey.Text));
                     }
                     else
                         hotkeys.Add(HKType.Cancel, null);
@@ -280,7 +275,7 @@ namespace RapidSynthesis
                     settings = new SettingsContainer(
                         craftCount,
                         (bool)CHBCollectableCraft.IsChecked,
-                        FoodTimer == 30,
+                        FoodTimer,
                         TimerContainers[TXBFoodTimer].Timer,
                         TimerContainers[TXBSyrupTimer].Timer
                     );
@@ -321,11 +316,6 @@ namespace RapidSynthesis
                 // Cancel the craft
                 SetCraftingStatus(SystemStates.CANCELLINGCRAFT);
                 CraftingEngine.CancelCrafting();
-                while (CraftingEngine.CraftingActive)
-                {
-                    Thread.Sleep(10);
-                }
-                SetCraftingStatus(SystemStates.IDLE);
             }
         }
 
@@ -376,10 +366,9 @@ namespace RapidSynthesis
                     case Key.RightCtrl:
                     case Key.LeftAlt:
                     case Key.RightAlt:
-                        if (!HotkeyProcessor.NumpadKey(hotkeyContainer.LastPressedKey))  //Numpads do not behave well with modifiers
-                            if (hotkeyContainer.LastPressedKey != Key.None)  // Update visuals if key is currently stored
-                                textBox.Text = HotkeyProcessor.GetKeyInputText(hotkeyContainer.LastPressedKey, hotkeyContainer.ActiveModKeys);
                         hotkeyContainer.ActiveModKeys.Add(key);
+                        if (!HotkeyProcessor.NumpadKey(hotkeyContainer.LastPressedKey))  //Numpads do not behave well with modifiers
+                            textBox.Text = HotkeyProcessor.GetKeyInputText(hotkeyContainer.LastPressedKey, hotkeyContainer.ActiveModKeys);
                         break;
                     default:
                         hotkeyContainer.ActiveNonModKeys.Add(key);
@@ -393,6 +382,12 @@ namespace RapidSynthesis
                 if (key == Key.Enter || key == Key.Space)
                     ActivateHotkeyTextbox(textBox);
             }
+        }
+
+
+        private void HotkeyInputDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            ActivateHotkeyTextbox((TextBox)sender);
         }
 
         /// <summary>
@@ -424,10 +419,7 @@ namespace RapidSynthesis
             {
                 // glitch: shift release event doesnt fire if both shifts are being pressed and only one is released
                 hotkeyContainer.ActiveModKeys.Remove(key);
-                if (hotkeyContainer.LastPressedKey != Key.None)
-                {
                     textBox.Text = HotkeyProcessor.GetKeyInputText(hotkeyContainer.LastPressedKey, hotkeyContainer.ActiveModKeys);
-                }
             }
         }
 
@@ -437,8 +429,12 @@ namespace RapidSynthesis
         /// <param name="txb"></param>
         private void ActivateHotkeyTextbox(TextBox txb)
         {
+            var key = HKTContainers[txb].LastPressedKey;
+            var modKeys = HKTContainers[txb].ActiveModKeys;
             HKTContainers[txb] = new HotkeyContainer();
             HKTContainers[txb].AcceptingInputs = true;
+            HKTContainers[txb].LastSetKey = key;
+            HKTContainers[txb].LastSetModKeys = modKeys;
             txb.Background = HKTBrushes[HotkeyStates.ACTIVE];
             txb.Text = "Enter Keybind...";
 
@@ -451,10 +447,18 @@ namespace RapidSynthesis
         /// <param name="txb"></param>
         private void DeactivateHotkeyTextbox(TextBox txb)
         {
-            HKTContainers[txb].AcceptingInputs = false;
-            txb.Background = HKTBrushes[HotkeyStates.FOCUSED];
-            txb.Text = HotkeyProcessor.GetKeyInputText(HKTContainers[txb].LastPressedKey, HKTContainers[txb].ActiveModKeys);
-            EnableTabbing();
+            if (HKTContainers[txb].AcceptingInputs)
+            {
+                HKTContainers[txb].AcceptingInputs = false;
+                txb.Background = HKTBrushes[HotkeyStates.FOCUSED];
+                if (HKTContainers[txb].LastPressedKey == Key.None)
+                {
+                    HKTContainers[txb].LastPressedKey = HKTContainers[txb].LastSetKey;
+                    HKTContainers[txb].ActiveModKeys = HKTContainers[txb].LastSetModKeys;
+                }
+                txb.Text = HotkeyProcessor.GetKeyInputText(HKTContainers[txb].LastPressedKey, HKTContainers[txb].ActiveModKeys);
+                EnableTabbing();
+            }
         }
 
         /// <summary>
@@ -504,7 +508,15 @@ namespace RapidSynthesis
                 if (container.FreshFocus)
                     currentTime = 0;
 
-                var newTime = (currentTime % 10) * 10 + keyValue;
+                int newTime;
+                if (container.Limit)
+                {
+                    newTime = (currentTime % 10) * 10 + keyValue;
+                } else
+                {
+                    newTime = (currentTime) * 10 + keyValue;
+                    newTime %= 1000;
+                }
                 container.Timer = newTime;
                 tbx.Text = newTime.ToString();
                 container.FreshFocus = false;
@@ -550,6 +562,11 @@ namespace RapidSynthesis
             FoodTimer = 40;
         }
 
+        private void RDFood45_Checked(object sender, RoutedEventArgs e)
+        {
+            FoodTimer = 45;
+        }
+
 
         #endregion
 
@@ -579,10 +596,12 @@ namespace RapidSynthesis
             SetHotkeyState(TXBCancelKey, profile.Cancel);
             // Settings
             CHBCollectableCraft.IsChecked = profile.Collectable;
-            if (profile.ThirtyFood)
+            if (profile.FoodDuration == 30)
                 RDFood30.IsChecked = true;
-            else
+            else if (profile.FoodDuration == 40)
                 RDFood40.IsChecked = true;
+            else
+                RDFood45.IsChecked = true;
         }
 
         /// <summary>
@@ -710,7 +729,7 @@ namespace RapidSynthesis
                 HKTContainers[TXBFoodKey], (bool)CHBFood.IsChecked,
                 HKTContainers[TXBSyrupKey], (bool)CHBSyrup.IsChecked,
                 HKTContainers[TXBConfirmKey], HKTContainers[TXBCancelKey],
-                (bool)CHBCollectableCraft.IsChecked, (bool)RDFood30.IsChecked
+                (bool)CHBCollectableCraft.IsChecked, FoodTimer
             );
         }
         #endregion
@@ -752,6 +771,74 @@ namespace RapidSynthesis
         {
             bool check = (bool)CHBCraftCount.IsChecked;
             TXBCraftCount.IsEnabled = check;
+        }
+        #endregion
+
+        #region Misc Functions
+        private void InputTextChange(object sender, TextChangedEventArgs e)
+        {
+            var txtbox = (TextBox)sender;
+            if (txtbox.Text.Length >= 20)
+                txtbox.FontSize = 12;
+            else
+                txtbox.FontSize = 16;
+        }
+
+        private void CheckFocusGain(object sender, RoutedEventArgs e)
+        {
+            var ckbbox = (CheckBox)sender;
+            ckbbox.Background = DefaultFocused;
+        }
+
+        private void CheckFocusLoss(object sender, RoutedEventArgs e)
+        {
+            var ckbbox = (CheckBox)sender;
+            ckbbox.Background = DefaultLight;
+        }
+
+        private void CheckRadioGain(object sender, RoutedEventArgs e)
+        {
+            var ckbbox = (RadioButton)sender;
+            ckbbox.Background = DefaultFocused;
+        }
+
+        private void CheckRadioLoss(object sender, RoutedEventArgs e)
+        {
+            var ckbbox = (RadioButton)sender;
+            ckbbox.Background = DefaultLight;
+        }
+        #endregion
+
+        #region Help Window
+        private ScaleTransform helpScale = new ScaleTransform(0.9, 0.9, 0.5, 0.5);
+        private string URL = "https://github.com/Saad888/AutoSynthesis/blob/master/README.md";
+        private void LBLHelp_MouseEnter(object sender, MouseEventArgs e)
+        {
+            var lbl = (Label)sender;
+            lbl.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), "Resources/Images/Background/InfoHighlighted.png")));
+            lbl.Background.RelativeTransform = helpScale;
+        }
+
+        private void LBLHelp_MouseLeave(object sender, MouseEventArgs e)
+        {
+            var lbl = (Label)sender;
+            lbl.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), "Resources/Images/Background/InfoUnhighlighted.png")));
+            lbl.Background.RelativeTransform = helpScale;
+        }
+
+        private void LBLHelp_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            var lbl = (Label)sender;
+            lbl.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), "Resources/Images/Background/InfoPressed.png")));
+            lbl.Background.RelativeTransform = helpScale;
+        }
+
+        private void LBLHelp_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            var lbl = (Label)sender;
+            lbl.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), "Resources/Images/Background/InfoHighlighted.png")));
+            lbl.Background.RelativeTransform = helpScale;
+            System.Diagnostics.Process.Start(URL);
         }
         #endregion
     }
