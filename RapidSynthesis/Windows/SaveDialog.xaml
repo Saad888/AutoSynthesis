@@ -68,9 +68,9 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <Label Content="Chose a name for the profile..." HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="265" Margin="0,-4,-1,0" Foreground="#FFDCEDFF"/>
-        <TextBox x:Name="TXBName" HorizontalAlignment="Left" Height="23" Margin="5,0,0,5.4" TextWrapping="Wrap" VerticalAlignment="Bottom" Width="160" Background="#FFDCEDFF" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-        <Button x:Name="BTNConfirm" Content="Save" HorizontalAlignment="Right" Margin="0,0,5,5.4" VerticalAlignment="Bottom" Width="80" Click="BTNConfirm_Click" Height="23" Style="{DynamicResource ButtonStyle1}" Foreground="#FFDCEDFF"/>
+        <Label Content="Chose a name for the profile..." HorizontalAlignment="Left" VerticalAlignment="Top" Height="26" Width="265" Margin="0" Foreground="#FFDCEDFF" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" VerticalContentAlignment="Center" Padding="5,0,0,3"/>
+        <TextBox x:Name="TXBName" HorizontalAlignment="Left" Height="23" Margin="5,0,0,5.4" TextWrapping="Wrap" VerticalAlignment="Bottom" Width="190" Background="#FFDCEDFF" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+        <Button x:Name="BTNConfirm" Content="Save" HorizontalAlignment="Right" Margin="0,0,5,5.4" VerticalAlignment="Bottom" Width="50" Click="BTNConfirm_Click" Height="23" Style="{DynamicResource ButtonStyle1}" Foreground="#FFDCEDFF" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen"/>
 
     </Grid>
 </Window>

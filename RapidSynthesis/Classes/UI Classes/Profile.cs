@@ -31,6 +31,20 @@ namespace RapidSynthesis
         public bool Collectable { get; set; }
         public int FoodDuration { get; set; }
 
+        private enum KeyType
+        {
+            Macro1, Macro2, Macro3,
+            Macro1Time, Macro2Time, Macro3Time, 
+            Macro2Check, Macro3Check,
+            Food, FoodCheck,
+            Syrup, SyrupCheck,
+            Select, Cancel, Collectable, FoodDuration
+        }
+
+        private Dictionary<KeyType, string> Defaults;
+
+
+
         private const int PropertyCount = 16;
         #endregion
 
@@ -61,40 +75,105 @@ namespace RapidSynthesis
             Cancel = cancel;
             Collectable = collectable;
             FoodDuration = foodDuration;
+
+            SetDefaults();
+
         }
 
         public Profile(string profileInput)
         {
             // Create from input string
             List<string> inputs = profileInput.Split('|').ToList();
-            if (inputs.Count != PropertyCount)
+            if (inputs.Count < PropertyCount)
             {
-                throw new ProfileImproperStringFormatException();
+                for (int i = inputs.Count; i < PropertyCount; i++)
+                    inputs.Add("");
             }
 
-            Macro1 = HotkeyContainer.FromString(inputs[0]);
-            Macro1Time = Convert.ToInt32(inputs[1]);
+            SetDefaults();
 
-            Macro2 = HotkeyContainer.FromString(inputs[2]);
-            Macro2Time = Convert.ToInt32(inputs[3]);
-            Macro2Check = Convert.ToBoolean(inputs[4]);
+            Macro1 = GetHotkeyString(inputs[0], KeyType.Macro1);
+            Macro1Time = GetInteger(inputs[1], KeyType.Macro1Time);
 
-            Macro3 = HotkeyContainer.FromString(inputs[5]);
-            Macro3Time = Convert.ToInt32(inputs[6]);
-            Macro3Check = Convert.ToBoolean(inputs[7]);
+            Macro2 = GetHotkeyString(inputs[2], KeyType.Macro2);
+            Macro2Time = GetInteger(inputs[3], KeyType.Macro2Time);
+            Macro2Check = GetBoolean(inputs[4], KeyType.Macro2Check);
 
-            Food = HotkeyContainer.FromString(inputs[8]);
-            FoodCheck = Convert.ToBoolean(inputs[9]);
+            Macro3 = GetHotkeyString(inputs[5], KeyType.Macro3);
+            Macro3Time = GetInteger(inputs[6], KeyType.Macro3Time);
+            Macro3Check = GetBoolean(inputs[7], KeyType.Macro3Check);
 
-            Syrup = HotkeyContainer.FromString(inputs[10]);
-            SyrupCheck = Convert.ToBoolean(inputs[11]);
+            Food = GetHotkeyString(inputs[8], KeyType.Food);
+            FoodCheck = GetBoolean(inputs[9], KeyType.FoodCheck);
 
-            Select = HotkeyContainer.FromString(inputs[12]);
-            Cancel = HotkeyContainer.FromString(inputs[13]);
-            Collectable = Convert.ToBoolean(inputs[14]);
-            FoodDuration = Convert.ToInt32(inputs[15]);
+            Syrup = GetHotkeyString(inputs[10], KeyType.Syrup);
+            SyrupCheck = GetBoolean(inputs[11], KeyType.SyrupCheck);
+
+            Select = GetHotkeyString(inputs[12], KeyType.Select);
+            Cancel = GetHotkeyString(inputs[13], KeyType.Cancel);
+            Collectable = GetBoolean(inputs[14], KeyType.Collectable);
+            FoodDuration = GetInteger(inputs[15], KeyType.FoodDuration);
+        }
+
+        private void SetDefaults()
+        {
+            Defaults = new Dictionary<KeyType, string>
+            {
+                { KeyType.Macro1, "D1"},
+                { KeyType.Macro2, "D2"},
+                { KeyType.Macro3, "D3"},
+                { KeyType.Macro1Time, "5"},
+                { KeyType.Macro2Time, "5"},
+                { KeyType.Macro3Time, "5"},
+                { KeyType.Macro2Check, "false"},
+                { KeyType.Macro3Check, "false"},
+                { KeyType.Food, "D4"},
+                { KeyType.FoodCheck, "false"},
+                { KeyType.Syrup, "D5"},
+                { KeyType.SyrupCheck, "false"},
+                { KeyType.Select, "NumPad0"},
+                { KeyType.Cancel, "NumPad1"},
+                { KeyType.Collectable, "false"},
+                { KeyType.FoodDuration, "30"}
+            };
         }
         #endregion
+
+        private HotkeyContainer GetHotkeyString(string input, KeyType keyType)
+        {
+            try
+            {
+                return HotkeyContainer.FromString(input);
+            }
+            catch (ArgumentException)
+            {
+                return HotkeyContainer.FromString(Defaults[keyType]);
+            }
+        }
+
+        private int GetInteger(string input, KeyType keyType)
+        {
+            try
+            {
+                return Convert.ToInt32(input);
+            }
+            catch (FormatException)
+            {
+                return Convert.ToInt32(Defaults[keyType]);
+            }
+        }
+
+        private bool GetBoolean(string input, KeyType keyType)
+        {
+            try
+            {
+                return Convert.ToBoolean(input);
+            }
+            catch (FormatException)
+            {
+                return Convert.ToBoolean(Defaults[keyType]);
+            }
+        }
 
         public override string ToString()
         {

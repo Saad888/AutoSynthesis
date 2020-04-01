@@ -55,8 +55,6 @@ namespace RapidSynthesis
 
         private static void LogInputs(VirtualKeyCode key, VirtualKeyCode[] modKeys)
         {
-            Logger.Write($"Sending Inputs to Process {ProcessManager.GameProcess.Id}");
-
             string modkeyText = "";
             if (modKeys != null && modKeys.Length >= 1)
             {
@@ -64,8 +62,7 @@ namespace RapidSynthesis
                 foreach (var mod in modKeys)
                     modkeyText += " " + mod.ToString();
             }
-
-            Logger.Write($"Input {key.ToString()}{modkeyText}");
+            Logger.Write($"Input {key.ToString()}{modkeyText} to Process {ProcessManager.GameProcess.Id}");
         }
     }
 }

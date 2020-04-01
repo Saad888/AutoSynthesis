@@ -24,19 +24,21 @@ namespace RapidSynthesis
     // https://stackoverflow.com/questions/979876/set-background-color-of-wpf-textbox-in-c-sharp-code
 
     // GLITCHES:
-    // Macro progress bar keeps running after a craft is ended if you end a craft as the next one starts
     // Trying to start the craft when the game isnt running means the thread isnt ending, meaning it crashes even when the game is launched after
 
     // TO DO: High priority
-    // Set button colors properly
-    // Set profiles so that they can accept a corrupted line
-    // Realign everything again
-    // Create proper highlighting for the buttons when keyboard is over them
+    // Make error messages more descriptive
+    // Set process to detect ffxiv dx9 as well
+    // Force application to detect that its launched in admin mode
+
 
     // TO DO: (Low priority)
     // See ProcessManager for ToDo's (?)
     // Create proper readme
     // Implement a proper logger
+    // Design a logo
+    // Sign EXE
+    // Setup installer
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -75,7 +77,9 @@ namespace RapidSynthesis
             CANCELLINGCRAFT
         }
         private SystemStates SystemState { get; set; }
-        private Dictionary<SystemStates, SolidColorBrush> MainButtonBrushes { get; set; }
+        private Dictionary<SystemStates, Style> MainButtonStyles { get; set; }
+        private Dictionary<SystemStates, string> MainButtonText { get; set; }
+        public Action<Exception> ErrorMessageHandler { get; set; }
         #endregion
 
         #region Brush Colors
@@ -89,7 +93,8 @@ namespace RapidSynthesis
         {
             InitializeComponent();
             SetContainerValues();
-            SetBrushValues();
+            SetUIDictionaries();
+            SetErrorAction();
             
             // Set up UICommunicator
             UICommunicator.ConnectUI(LBLCraftNumber, LBLUpdate, LBLUpdateFooter, LBLTimerCraft, LBLTimerMacro, 
@@ -126,7 +131,7 @@ namespace RapidSynthesis
             TimerContainers.Add(TXBCraftCount, new TimeInputContainer(false));
         }
 
-        private void SetBrushValues()
+        private void SetUIDictionaries()
         {
             // Set all brush dictionaries
             HKTBrushes = new Dictionary<HotkeyStates, SolidColorBrush>
@@ -142,12 +147,21 @@ namespace RapidSynthesis
                 { TimeStates.FOCUSED, DefaultFocused }
             };
 
-            MainButtonBrushes = new Dictionary<SystemStates, SolidColorBrush>
+            MainButtonStyles = new Dictionary<SystemStates, Style>
             {
-                { SystemStates.IDLE, Brushes.White },
-                { SystemStates.PREPARINGCCRAFT, Brushes.White },
-                { SystemStates.ACTIVECRAFTING, Brushes.Green },
-                { SystemStates.CANCELLINGCRAFT, Brushes.Red }
+                { SystemStates.IDLE, Resources["ButtonStyleIdle"] as Style },
+                { SystemStates.PREPARINGCCRAFT,Resources["ButtonStyleProcessing"] as Style },
+                { SystemStates.ACTIVECRAFTING, Resources["ButtonStyleCrafting"] as Style },
+                { SystemStates.CANCELLINGCRAFT, Resources["ButtonStyleProcessing"] as Style }
+            };
+
+
+            MainButtonText = new Dictionary<SystemStates, string>
+            {
+                { SystemStates.IDLE, "Start" },
+                { SystemStates.PREPARINGCCRAFT, "Preparing..." },
+                { SystemStates.ACTIVECRAFTING, "Crafting" },
+                { SystemStates.CANCELLINGCRAFT, "Ending..." }
             };
         }
 
@@ -176,6 +190,26 @@ namespace RapidSynthesis
                           macro3check, food, foodcheck, syrup, syrupcheck, confirm, cancel, 
                           collectableCraft, foodDuration);
             SetAllHoykeys(profile);
+        }
+
+        private void SetErrorAction()
+        {
+            ErrorMessageHandler = (Exception e) =>
+            {
+                MessageBox.Show("An error occurerd! Please see ERROR.txt for more details");
+                string profile;
+                try
+                {
+                    Func<string> GetProfileString = () => { return BuildProfileFromCurrent().ToString(); };
+                    profile = MainWindowGrid.Dispatcher.Invoke(GetProfileString);
+                }
+                catch (Exception f)
+                {
+                    profile = "ERROR WHEN BUILDING PROFILE\n";
+                    profile = f.Message;
+                }
+                Logger.ErrorHandler(e, profile);
+            };
         }
         #endregion
 
@@ -294,7 +328,7 @@ namespace RapidSynthesis
                 };
                 try
                 {
-                    CraftingEngine.InitiateCraftingEngine(hotkeys, settings, action);
+                    CraftingEngine.InitiateCraftingEngine(hotkeys, settings, action, ErrorMessageHandler);
                     SetCraftingStatus(SystemStates.ACTIVECRAFTING);
                 }
                 catch (ProcessMissingException)
@@ -303,9 +337,9 @@ namespace RapidSynthesis
                     SetCraftingStatus(SystemStates.IDLE);
                     return;
                 }
-                catch (DuplicateCraftingAttemptedException)
+                catch (Exception error)
                 {
-                    MessageBox.Show("DUPLICATECRAFTATTEMPTEDEXCEPTION");
+                    ErrorMessageHandler(error);
                     SetCraftingStatus(SystemStates.IDLE);
                     return;
                 }
@@ -349,38 +383,46 @@ namespace RapidSynthesis
             //      Then set the key state to accept inputs 
             // If key state is accepting inputs, process the inputs
 
-            // get textbox and state information
-            var textBox = (TextBox)sender;
-            var hotkeyContainer = HKTContainers[textBox];
-            var key = e.Key == Key.System ? e.SystemKey : e.Key;
+            try
+            {
+                // get textbox and state information
+                var textBox = (TextBox)sender;
+                var hotkeyContainer = HKTContainers[textBox];
+                var key = e.Key == Key.System ? e.SystemKey : e.Key;
 
-            // check state
-            if (hotkeyContainer.AcceptingInputs)
-            {
-                // add if modifier, send if not
-                switch(key)
+                // check state
+                if (hotkeyContainer.AcceptingInputs)
                 {
-                    case Key.LeftShift:
-                    case Key.RightShift:
-                    case Key.LeftCtrl:
-                    case Key.RightCtrl:
-                    case Key.LeftAlt:
-                    case Key.RightAlt:
-                        hotkeyContainer.ActiveModKeys.Add(key);
-                        if (!HotkeyProcessor.NumpadKey(hotkeyContainer.LastPressedKey))  //Numpads do not behave well with modifiers
-                            textBox.Text = HotkeyProcessor.GetKeyInputText(hotkeyContainer.LastPressedKey, hotkeyContainer.ActiveModKeys);
-                        break;
-                    default:
-                        hotkeyContainer.ActiveNonModKeys.Add(key);
-                        hotkeyContainer.LastPressedKey = key;
-                        textBox.Text = HotkeyProcessor.GetKeyInputText(key, hotkeyContainer.ActiveModKeys);
-                        break;
+                    // add if modifier, send if not
+                    switch (key)
+                    {
+                        case Key.LeftShift:
+                        case Key.RightShift:
+                        case Key.LeftCtrl:
+                        case Key.RightCtrl:
+                        case Key.LeftAlt:
+                        case Key.RightAlt:
+                            hotkeyContainer.ActiveModKeys.Add(key);
+                            if (!HotkeyProcessor.NumpadKey(hotkeyContainer.LastPressedKey))  //Numpads do not behave well with modifiers
+                                textBox.Text = HotkeyProcessor.GetKeyInputText(hotkeyContainer.LastPressedKey, hotkeyContainer.ActiveModKeys);
+                            break;
+                        default:
+                            hotkeyContainer.ActiveNonModKeys.Add(key);
+                            hotkeyContainer.LastPressedKey = key;
+                            textBox.Text = HotkeyProcessor.GetKeyInputText(key, hotkeyContainer.ActiveModKeys);
+                            break;
+                    }
                 }
-            } else
+                else
+                {
+                    // if ENTER or SPACE, then start accepting inputs
+                    if (key == Key.Enter || key == Key.Space)
+                        ActivateHotkeyTextbox(textBox);
+                }
+            }
+            catch (Exception error)
             {
-                // if ENTER or SPACE, then start accepting inputs
-                if (key == Key.Enter || key == Key.Space)
-                    ActivateHotkeyTextbox(textBox);
+                ErrorMessageHandler(error);
             }
         }
 
@@ -397,29 +439,35 @@ namespace RapidSynthesis
         /// <param name="e"></param>
         private void HotkeyKeyUp(object sender, KeyEventArgs e)
         {
-            // if not accepting inputs, do nothing
-            // if accepting inputs, check if the last non-mod key has been lifted. If that happens, stop accepting inputs
-
-            var textBox = (TextBox)sender;
-            var hotkeyContainer = HKTContainers[textBox];
-            var key = e.Key == Key.System ? e.SystemKey : e.Key;
-
-            if (!hotkeyContainer.AcceptingInputs)
-                return;
-
-            if (hotkeyContainer.ActiveNonModKeys.Contains(key))
+            try
             {
-                hotkeyContainer.ActiveNonModKeys.Remove(key);
-                if (key == hotkeyContainer.LastPressedKey)
+                // if not accepting inputs, do nothing
+                // if accepting inputs, check if the last non-mod key has been lifted. If that happens, stop accepting inputs
+                var textBox = (TextBox)sender;
+                var hotkeyContainer = HKTContainers[textBox];
+                var key = e.Key == Key.System ? e.SystemKey : e.Key;
+
+                if (!hotkeyContainer.AcceptingInputs)
+                    return;
+
+                if (hotkeyContainer.ActiveNonModKeys.Contains(key))
                 {
-                    DeactivateHotkeyTextbox(textBox);
+                    hotkeyContainer.ActiveNonModKeys.Remove(key);
+                    if (key == hotkeyContainer.LastPressedKey)
+                    {
+                        DeactivateHotkeyTextbox(textBox);
+                    }
+                }
+                if (hotkeyContainer.ActiveModKeys.Contains(key))
+                {
+                    // glitch: shift release event doesnt fire if both shifts are being pressed and only one is released
+                    hotkeyContainer.ActiveModKeys.Remove(key);
+                    textBox.Text = HotkeyProcessor.GetKeyInputText(hotkeyContainer.LastPressedKey, hotkeyContainer.ActiveModKeys);
                 }
             }
-            if (hotkeyContainer.ActiveModKeys.Contains(key))
+            catch (Exception error)
             {
-                // glitch: shift release event doesnt fire if both shifts are being pressed and only one is released
-                hotkeyContainer.ActiveModKeys.Remove(key);
-                    textBox.Text = HotkeyProcessor.GetKeyInputText(hotkeyContainer.LastPressedKey, hotkeyContainer.ActiveModKeys);
+                ErrorMessageHandler(error);
             }
         }
 
@@ -429,16 +477,23 @@ namespace RapidSynthesis
         /// <param name="txb"></param>
         private void ActivateHotkeyTextbox(TextBox txb)
         {
-            var key = HKTContainers[txb].LastPressedKey;
-            var modKeys = HKTContainers[txb].ActiveModKeys;
-            HKTContainers[txb] = new HotkeyContainer();
-            HKTContainers[txb].AcceptingInputs = true;
-            HKTContainers[txb].LastSetKey = key;
-            HKTContainers[txb].LastSetModKeys = modKeys;
-            txb.Background = HKTBrushes[HotkeyStates.ACTIVE];
-            txb.Text = "Enter Keybind...";
+            try
+            {
+                var key = HKTContainers[txb].LastPressedKey;
+                var modKeys = HKTContainers[txb].ActiveModKeys;
+                HKTContainers[txb] = new HotkeyContainer();
+                HKTContainers[txb].AcceptingInputs = true;
+                HKTContainers[txb].LastSetKey = key;
+                HKTContainers[txb].LastSetModKeys = modKeys;
+                txb.Background = HKTBrushes[HotkeyStates.ACTIVE];
+                txb.Text = "Enter Keybind...";
 
-            DisableTabbing();
+                DisableTabbing();
+            }
+            catch (Exception error)
+            {
+                ErrorMessageHandler(error);
+            }
         }
 
         /// <summary>
@@ -447,17 +502,24 @@ namespace RapidSynthesis
         /// <param name="txb"></param>
         private void DeactivateHotkeyTextbox(TextBox txb)
         {
-            if (HKTContainers[txb].AcceptingInputs)
+            try
             {
-                HKTContainers[txb].AcceptingInputs = false;
-                txb.Background = HKTBrushes[HotkeyStates.FOCUSED];
-                if (HKTContainers[txb].LastPressedKey == Key.None)
+                if (HKTContainers[txb].AcceptingInputs)
                 {
-                    HKTContainers[txb].LastPressedKey = HKTContainers[txb].LastSetKey;
-                    HKTContainers[txb].ActiveModKeys = HKTContainers[txb].LastSetModKeys;
+                    HKTContainers[txb].AcceptingInputs = false;
+                    txb.Background = HKTBrushes[HotkeyStates.FOCUSED];
+                    if (HKTContainers[txb].LastPressedKey == Key.None)
+                    {
+                        HKTContainers[txb].LastPressedKey = HKTContainers[txb].LastSetKey;
+                        HKTContainers[txb].ActiveModKeys = HKTContainers[txb].LastSetModKeys;
+                    }
+                    txb.Text = HotkeyProcessor.GetKeyInputText(HKTContainers[txb].LastPressedKey, HKTContainers[txb].ActiveModKeys);
+                    EnableTabbing();
                 }
-                txb.Text = HotkeyProcessor.GetKeyInputText(HKTContainers[txb].LastPressedKey, HKTContainers[txb].ActiveModKeys);
-                EnableTabbing();
+            }
+            catch (Exception error)
+            {
+                ErrorMessageHandler(error);
             }
         }
 
@@ -468,8 +530,15 @@ namespace RapidSynthesis
         /// <param name="e"></param>
         private void HotkeyTextboxGainFocus(object sender, RoutedEventArgs e)
         {
-            var txb = (TextBox)sender;
-            txb.Background = HKTBrushes[HotkeyStates.FOCUSED];
+            try
+            {
+                var txb = (TextBox)sender;
+                txb.Background = HKTBrushes[HotkeyStates.FOCUSED];
+            }
+            catch (Exception error)
+            {
+                ErrorMessageHandler(error);
+            }
         }
 
         /// <summary>
@@ -479,10 +548,17 @@ namespace RapidSynthesis
         /// <param name="e"></param>
         private void HotkeyTextboxLoseFocus(object sender, RoutedEventArgs e)
         {
-            var txb = (TextBox)sender;
-            DeactivateHotkeyTextbox(txb);
-            txb.Background = HKTBrushes[HotkeyStates.UNFOCUSED];
-            EnableTabbing();
+            try
+            {
+                var txb = (TextBox)sender;
+                DeactivateHotkeyTextbox(txb);
+                txb.Background = HKTBrushes[HotkeyStates.UNFOCUSED];
+                EnableTabbing();
+            }
+            catch (Exception error)
+            {
+                ErrorMessageHandler(error);
+            }
         }
         #endregion
 
@@ -498,28 +574,36 @@ namespace RapidSynthesis
         /// <param name="e"></param>
         private void SetTimeValue(object sender, KeyEventArgs e)
         {
-            var tbx = (TextBox)sender;
-            var container = TimerContainers[tbx];
-            int keyValue = 0;
-            if (TimeInputProcessor.TryGetNumber(e.Key, ref keyValue))
+            try
             {
-                var currentTime = container.Timer;
-                // if freshly focused, reset the timer on input
-                if (container.FreshFocus)
-                    currentTime = 0;
+                var tbx = (TextBox)sender;
+                var container = TimerContainers[tbx];
+                int keyValue = 0;
+                if (TimeInputProcessor.TryGetNumber(e.Key, ref keyValue))
+                {
+                    var currentTime = container.Timer;
+                    // if freshly focused, reset the timer on input
+                    if (container.FreshFocus)
+                        currentTime = 0;
 
-                int newTime;
-                if (container.Limit)
-                {
-                    newTime = (currentTime % 10) * 10 + keyValue;
-                } else
-                {
-                    newTime = (currentTime) * 10 + keyValue;
-                    newTime %= 1000;
+                    int newTime;
+                    if (container.Limit)
+                    {
+                        newTime = (currentTime % 10) * 10 + keyValue;
+                    }
+                    else
+                    {
+                        newTime = (currentTime) * 10 + keyValue;
+                        newTime %= 1000;
+                    }
+                    container.Timer = newTime;
+                    tbx.Text = newTime.ToString();
+                    container.FreshFocus = false;
                 }
-                container.Timer = newTime;
-                tbx.Text = newTime.ToString();
-                container.FreshFocus = false;
+            }
+            catch (Exception error)
+            {
+                ErrorMessageHandler(error);
             }
         }
 
@@ -530,12 +614,19 @@ namespace RapidSynthesis
         /// <param name="e"></param>
         private void TimeGetFocus(object sender, RoutedEventArgs e)
         {
-            var tbx = (TextBox)sender;
-            var container = TimerContainers[tbx];
-            // Set fresh focus to true
-            container.FreshFocus = true;
-            // Modify display
-            tbx.Background = TimeBrushes[TimeStates.FOCUSED];
+            try
+            {
+                var tbx = (TextBox)sender;
+                var container = TimerContainers[tbx];
+                // Set fresh focus to true
+                container.FreshFocus = true;
+                // Modify display
+                tbx.Background = TimeBrushes[TimeStates.FOCUSED];
+            }
+            catch (Exception error)
+            {
+                ErrorMessageHandler(error);
+            }
         }
 
         /// <summary>
@@ -545,9 +636,16 @@ namespace RapidSynthesis
         /// <param name="e"></param>
         private void TimeLostFocus(object sender, RoutedEventArgs e)
         {
-            var tbx = (TextBox)sender;
-            // Modify display
-            tbx.Background = TimeBrushes[TimeStates.UNFOCUSED];
+            try
+            {
+                var tbx = (TextBox)sender;
+                // Modify display
+                tbx.Background = TimeBrushes[TimeStates.UNFOCUSED];
+            }
+            catch (Exception error)
+            {
+                ErrorMessageHandler(error);
+            }
         }
         #endregion
 
@@ -573,35 +671,42 @@ namespace RapidSynthesis
         #region Set Presets Methods
         private void SetAllHoykeys(Profile profile)
         {
-            // Set Macro 1
-            SetHotkeyState(TXBMacro1Key, profile.Macro1);
-            SetTimeState(TXBMacro1Timer, profile.Macro1Time);
-            // Set Macro 2
-            SetHotkeyState(TXBMacro2Key, profile.Macro2);
-            SetTimeState(TXBMacro2Timer, profile.Macro2Time);
-            CHBMacro2.IsChecked = profile.Macro2Check;
-            // Set Macro 3
-            SetHotkeyState(TXBMacro3Key, profile.Macro3);
-            SetTimeState(TXBMacro3Timer, profile.Macro3Time);
-            CHBMacro3.IsChecked = profile.Macro3Check;
-            // Set Food
-            SetHotkeyState(TXBFoodKey, profile.Food);
-            CHBFood.IsChecked = profile.FoodCheck;
-            // Set Syrup
-            SetHotkeyState(TXBSyrupKey, profile.Syrup);
-            CHBSyrup.IsChecked = profile.SyrupCheck;
-            // Set Select
-            SetHotkeyState(TXBConfirmKey, profile.Select);
-            // Set Cancel
-            SetHotkeyState(TXBCancelKey, profile.Cancel);
-            // Settings
-            CHBCollectableCraft.IsChecked = profile.Collectable;
-            if (profile.FoodDuration == 30)
-                RDFood30.IsChecked = true;
-            else if (profile.FoodDuration == 40)
-                RDFood40.IsChecked = true;
-            else
-                RDFood45.IsChecked = true;
+            try
+            {
+                // Set Macro 1
+                SetHotkeyState(TXBMacro1Key, profile.Macro1);
+                SetTimeState(TXBMacro1Timer, profile.Macro1Time);
+                // Set Macro 2
+                SetHotkeyState(TXBMacro2Key, profile.Macro2);
+                SetTimeState(TXBMacro2Timer, profile.Macro2Time);
+                CHBMacro2.IsChecked = profile.Macro2Check;
+                // Set Macro 3
+                SetHotkeyState(TXBMacro3Key, profile.Macro3);
+                SetTimeState(TXBMacro3Timer, profile.Macro3Time);
+                CHBMacro3.IsChecked = profile.Macro3Check;
+                // Set Food
+                SetHotkeyState(TXBFoodKey, profile.Food);
+                CHBFood.IsChecked = profile.FoodCheck;
+                // Set Syrup
+                SetHotkeyState(TXBSyrupKey, profile.Syrup);
+                CHBSyrup.IsChecked = profile.SyrupCheck;
+                // Set Select
+                SetHotkeyState(TXBConfirmKey, profile.Select);
+                // Set Cancel
+                SetHotkeyState(TXBCancelKey, profile.Cancel);
+                // Settings
+                CHBCollectableCraft.IsChecked = profile.Collectable;
+                if (profile.FoodDuration == 30)
+                    RDFood30.IsChecked = true;
+                else if (profile.FoodDuration == 40)
+                    RDFood40.IsChecked = true;
+                else
+                    RDFood45.IsChecked = true;
+            }
+            catch (Exception error)
+            {
+                ErrorMessageHandler(error);
+            }
         }
 
         /// <summary>
@@ -612,11 +717,18 @@ namespace RapidSynthesis
         /// <param name="pressedModKeys"></param>
         private void SetHotkeyState(TextBox hotkeyBox, HotkeyContainer container)
         {
-            HKTContainers[hotkeyBox] = container;
-            if (container != null)
-                hotkeyBox.Text = HotkeyProcessor.GetKeyInputText(container.LastPressedKey, container.ActiveModKeys);
-            else
-                hotkeyBox.Text = "";
+            try
+            {
+                HKTContainers[hotkeyBox] = container;
+                if (container != null)
+                    hotkeyBox.Text = HotkeyProcessor.GetKeyInputText(container.LastPressedKey, container.ActiveModKeys);
+                else
+                    hotkeyBox.Text = "";
+            }
+            catch (Exception error)
+            {
+                ErrorMessageHandler(error);
+            }
         }
 
         /// <summary>
@@ -626,111 +738,184 @@ namespace RapidSynthesis
         /// <param name="timer"></param>
         private void SetTimeState(TextBox timeBox, int timer)
         {
-            var container = TimerContainers[timeBox];
-            timer = Math.Max(0, Math.Min(timer, 99));
-            container.Timer = timer;
-            timeBox.Text = timer.ToString();
-            
-        }
-        #endregion
-
-        #region UI Updates During Crafting
-        public void UpdateCraftingLabel(string text)
-        {
-            LBLUpdate.Content = text;
+            try
+            {
+                var container = TimerContainers[timeBox];
+                timer = Math.Max(0, Math.Min(timer, 99));
+                container.Timer = timer;
+                timeBox.Text = timer.ToString();
+            }
+            catch (Exception error)
+            {
+                ErrorMessageHandler(error);
+            }
         }
         #endregion
 
         #region Setting Crafting Button States
         private void SetCraftingStatus(SystemStates state)
         {
-            SystemState = state;
-            BTNCraft.Background = MainButtonBrushes[SystemState];
+            try
+            {
+                SystemState = state;
+                BTNCraft.Style = MainButtonStyles[SystemState];
+                BTNCraft.Content = MainButtonText[SystemState];
+            }
+            catch (Exception error)
+            {
+                ErrorMessageHandler(error);
+            }
         }
         #endregion
 
         #region Full Winodws Methods
         private void DisableTabbing()
         {
-            KeyboardNavigation.SetTabNavigation(MainWindowGrid, KeyboardNavigationMode.None);
+            try
+            {
+                KeyboardNavigation.SetTabNavigation(MainWindowGrid, KeyboardNavigationMode.None);
+            }
+            catch (Exception error)
+            {
+                ErrorMessageHandler(error);
+            }
         }
         private void EnableTabbing()
         {
-            KeyboardNavigation.SetTabNavigation(MainWindowGrid, KeyboardNavigationMode.Continue);
-        }
-
-        private void TEST_Click(object sender, RoutedEventArgs e)
-        {
-            KeyInputEngine.SendKeysToGame(HKTContainers[TXBMacro1Key].Keys(), HKTContainers[TXBMacro1Key].ModKeys());
+            try
+            {
+                KeyboardNavigation.SetTabNavigation(MainWindowGrid, KeyboardNavigationMode.Continue);
+            }
+            catch (Exception error)
+            {
+                ErrorMessageHandler(error);
+            }
         }
         #endregion
 
         #region Save and Load Profile System
         private void GetProfiles()
         {
-            var profileNameList = ProfileManager.GetProfilesList();
-            CMBProfileList.ItemsSource = profileNameList;
+            try
+            {
+                var profileNameList = ProfileManager.GetProfilesList();
+                CMBProfileList.ItemsSource = profileNameList;
+            }
+            catch (Exception error)
+            {
+                ErrorMessageHandler(error);
+            }
         }
 
         private void LoadProfile(string name)
         {
-            if (String.IsNullOrEmpty(name))
-                return;
-            var profileToLoad = ProfileManager.LoadProfile(name);
-            SetAllHoykeys(profileToLoad);
-            CMBProfileList.SelectedItem = name;
+            try
+            {
+                if (String.IsNullOrEmpty(name))
+                    return;
+
+                var profileToLoad = ProfileManager.LoadProfile(name);
+                if (profileToLoad == null)
+                    return;
+
+                SetAllHoykeys(profileToLoad);
+                CMBProfileList.SelectedItem = name;
+            }
+            catch (Exception error)
+            {
+                ErrorMessageHandler(error);
+            }
         }
 
         private void LoadDefaultProfile()
         {
-            if (ProfileManager.VerifyDefaultProfile())
-                LoadProfile(ProfileManager.DefaultProfile);
-            else
-                SetDefaultValues();
+            try
+            {
+                if (ProfileManager.VerifyDefaultProfile())
+                    LoadProfile(ProfileManager.DefaultProfile);
+                else
+                    SetDefaultValues();
+            }
+            catch (Exception error)
+            {
+                ErrorMessageHandler(error);
+            }
         }
 
         private void BTNSave_Click(object sender, RoutedEventArgs e)
         {
-            var saveDialog = new SaveDialog();
-            saveDialog.Owner = Application.Current.MainWindow;
-            if (saveDialog.ShowDialog() == true)
+            try
             {
-                var name = saveDialog.SaveName;
-                var newProfile = BuildProfileFromCurrent();
-                ProfileManager.SaveProfile(name, newProfile);
-                GetProfiles();
-                CMBProfileList.SelectedItem = name;
+                var saveDialog = new SaveDialog();
+                saveDialog.Owner = Application.Current.MainWindow;
+                if (saveDialog.ShowDialog() == true)
+                {
+                    var name = saveDialog.SaveName;
+                    var newProfile = BuildProfileFromCurrent();
+                    ProfileManager.SaveProfile(name, newProfile);
+                    GetProfiles();
+                    CMBProfileList.SelectedItem = name;
+                }
+            }
+            catch (Exception error)
+            {
+                ErrorMessageHandler(error);
             }
         }
 
         private void BTNLoad_Click(object sender, RoutedEventArgs e)
         {
-            var profileToLoad = CMBProfileList.SelectedItem.ToString();
-            LoadProfile(profileToLoad);
+            try
+            {
+                if (CMBProfileList.SelectedItem == null)
+                    return;
+                var profileToLoad = CMBProfileList.SelectedItem.ToString();
+                LoadProfile(profileToLoad);
+            }
+            catch (Exception error)
+            {
+                ErrorMessageHandler(error);
+            }
         }
 
         private void BTNDelete_Click(object sender, RoutedEventArgs e)
         {
-            var currentIndex = CMBProfileList.SelectedIndex;
-            if (currentIndex == -1)
-                return;
-            var profileToDelete = CMBProfileList.SelectedItem.ToString();
-            ProfileManager.DeleteProfile(profileToDelete);
-            GetProfiles();
-            CMBProfileList.SelectedIndex = Math.Min(currentIndex, CMBProfileList.Items.Count - 1);
+            try
+            {
+                var currentIndex = CMBProfileList.SelectedIndex;
+                if (currentIndex == -1)
+                    return;
+                var profileToDelete = CMBProfileList.SelectedItem.ToString();
+                ProfileManager.DeleteProfile(profileToDelete);
+                GetProfiles();
+                CMBProfileList.SelectedIndex = Math.Min(currentIndex, CMBProfileList.Items.Count - 1);
+            }
+            catch (Exception error)
+            {
+                ErrorMessageHandler(error);
+            }
         }
 
         private Profile BuildProfileFromCurrent()
         {
-            return new Profile(
-                HKTContainers[TXBMacro1Key], TimerContainers[TXBMacro1Timer].Timer,
-                HKTContainers[TXBMacro2Key], TimerContainers[TXBMacro2Timer].Timer, (bool)CHBMacro2.IsChecked,
-                HKTContainers[TXBMacro3Key], TimerContainers[TXBMacro3Timer].Timer, (bool)CHBMacro3.IsChecked,
-                HKTContainers[TXBFoodKey], (bool)CHBFood.IsChecked,
-                HKTContainers[TXBSyrupKey], (bool)CHBSyrup.IsChecked,
-                HKTContainers[TXBConfirmKey], HKTContainers[TXBCancelKey],
-                (bool)CHBCollectableCraft.IsChecked, FoodTimer
-            );
+            try
+            {
+                var profile = new Profile(
+                    HKTContainers[TXBMacro1Key], TimerContainers[TXBMacro1Timer].Timer,
+                    HKTContainers[TXBMacro2Key], TimerContainers[TXBMacro2Timer].Timer, (bool)CHBMacro2.IsChecked,
+                    HKTContainers[TXBMacro3Key], TimerContainers[TXBMacro3Timer].Timer, (bool)CHBMacro3.IsChecked,
+                    HKTContainers[TXBFoodKey], (bool)CHBFood.IsChecked,
+                    HKTContainers[TXBSyrupKey], (bool)CHBSyrup.IsChecked,
+                    HKTContainers[TXBConfirmKey], HKTContainers[TXBCancelKey],
+                    (bool)CHBCollectableCraft.IsChecked, FoodTimer
+                );
+                return profile;
+            }
+            catch (Exception error)
+            {
+                ErrorMessageHandler(error);
+            }
+            return null;
         }
         #endregion
 

@@ -403,17 +403,124 @@
 
         <!--#region Button Style-->
 
-        <!-- IDLE -->
-        <SolidColorBrush x:Key="Button.Static.Background" Color="#121212"/>
+        <!-- Required states: Base, ActiveCrafting, Processing -->
+
+        <!-- Crafting -->
+        <SolidColorBrush x:Key="Button.Crafting.Static.Background" Color="#4f0c1d"/>
+        <SolidColorBrush x:Key="Button.Crafting.Static.Border" Color="#DCEDFF"/>
+        <SolidColorBrush x:Key="Button.Crafting.MouseOver.Background" Color="#6b1027"/>
+        <SolidColorBrush x:Key="Button.Crafting.MouseOver.Border" Color="#DCEDFF"/>
+        <SolidColorBrush x:Key="Button.Crafting.Pressed.Background" Color="#380815"/>
+        <SolidColorBrush x:Key="Button.Crafting.Pressed.Border" Color="#DCEDFF"/>
+        <SolidColorBrush x:Key="Button.Crafting.Disabled.Background" Color="#FFF4F4F4"/>
+        <SolidColorBrush x:Key="Button.Crafting.Disabled.Border" Color="#DCEDFF"/>
+        <SolidColorBrush x:Key="Button.Crafting.Disabled.Foreground" Color="#FF838383"/>
+        <Style x:Key="ButtonStyleCrafting" TargetType="{x:Type Button}" x:Name="ButtonStyleCrafting">
+            <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
+            <Setter Property="Background" Value="{StaticResource Button.Crafting.Static.Background}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Button.Crafting.Static.Border}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="true">
+                            <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsDefaulted" Value="true">
+                                <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                            </Trigger>
+                            <Trigger Property="IsFocused" Value="true">
+                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Crafting.MouseOver.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Crafting.MouseOver.Border}"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Crafting.MouseOver.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Crafting.MouseOver.Border}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Crafting.Pressed.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Crafting.Pressed.Border}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Crafting.Disabled.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Crafting.Disabled.Border}"/>
+                                <Setter Property="TextElement.Foreground" TargetName="contentPresenter" Value="{StaticResource Button.Crafting.Disabled.Foreground}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Processing -->
+        <SolidColorBrush x:Key="Button.Processing.Static.Background" Color="#4f4f4f"/>
+        <SolidColorBrush x:Key="Button.Processing.Static.Border" Color="#DCEDFF"/>
+        <SolidColorBrush x:Key="Button.Processing.MouseOver.Background" Color="#666666"/>
+        <SolidColorBrush x:Key="Button.Processing.MouseOver.Border" Color="#DCEDFF"/>
+        <SolidColorBrush x:Key="Button.Processing.Pressed.Background" Color="#4d4d4d"/>
+        <SolidColorBrush x:Key="Button.Processing.Pressed.Border" Color="#DCEDFF"/>
+        <SolidColorBrush x:Key="Button.Processing.Disabled.Background" Color="#FFF4F4F4"/>
+        <SolidColorBrush x:Key="Button.Processing.Disabled.Border" Color="#DCEDFF"/>
+        <SolidColorBrush x:Key="Button.Processing.Disabled.Foreground" Color="#FF838383"/>
+        <Style x:Key="ButtonStyleProcessing" TargetType="{x:Type Button}" x:Name="ButtonStyleProcessing">
+            <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
+            <Setter Property="Background" Value="{StaticResource Button.Processing.Static.Background}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Button.Processing.Static.Border}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="true">
+                            <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsDefaulted" Value="true">
+                                <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                            </Trigger>
+                            <Trigger Property="IsFocused" Value="true">
+                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Processing.MouseOver.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Processing.MouseOver.Border}"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Processing.MouseOver.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Processing.MouseOver.Border}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Processing.Pressed.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Processing.Pressed.Border}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Processing.Disabled.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Processing.Disabled.Border}"/>
+                                <Setter Property="TextElement.Foreground" TargetName="contentPresenter" Value="{StaticResource Button.Processing.Disabled.Foreground}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+        <!-- Idle -->
+        <SolidColorBrush x:Key="Button.Static.Background" Color="#201834"/>
         <SolidColorBrush x:Key="Button.Static.Border" Color="#DCEDFF"/>
-        <SolidColorBrush x:Key="Button.MouseOver.Background" Color="#292929"/>
+        <SolidColorBrush x:Key="Button.MouseOver.Background" Color="#2f2842"/>
         <SolidColorBrush x:Key="Button.MouseOver.Border" Color="#DCEDFF"/>
-        <SolidColorBrush x:Key="Button.Pressed.Background" Color="#5c5863"/>
+        <SolidColorBrush x:Key="Button.Pressed.Background" Color="#231e30"/>
         <SolidColorBrush x:Key="Button.Pressed.Border" Color="#DCEDFF"/>
         <SolidColorBrush x:Key="Button.Disabled.Background" Color="#FFF4F4F4"/>
         <SolidColorBrush x:Key="Button.Disabled.Border" Color="#DCEDFF"/>
         <SolidColorBrush x:Key="Button.Disabled.Foreground" Color="#FF838383"/>
-        <Style x:Key="ButtonStyleIdle" TargetType="{x:Type Button}">
+        <Style x:Key="ButtonStyleIdle" TargetType="{x:Type Button}" x:Name="ButtonStyleIdle">
             <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
             <Setter Property="Background" Value="{StaticResource Button.Static.Background}"/>
             <Setter Property="BorderBrush" Value="{StaticResource Button.Static.Border}"/>
@@ -432,6 +539,10 @@
                             <Trigger Property="IsDefaulted" Value="true">
                                 <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
                             </Trigger>
+                            <Trigger Property="IsFocused" Value="true">
+                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.MouseOver.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.MouseOver.Border}"/>
+                            </Trigger>
                             <Trigger Property="IsMouseOver" Value="true">
                                 <Setter Property="Background" TargetName="border" Value="{StaticResource Button.MouseOver.Background}"/>
                                 <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.MouseOver.Border}"/>
@@ -444,55 +555,6 @@
                                 <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Disabled.Background}"/>
                                 <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Disabled.Border}"/>
                                 <Setter Property="TextElement.Foreground" TargetName="contentPresenter" Value="{StaticResource Button.Disabled.Foreground}"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-
-        <!-- Crafting -->
-        <SolidColorBrush x:Key="Button.Craft.Static.Background" Color="#201834"/>
-        <SolidColorBrush x:Key="Button.Craft.Static.Border" Color="#DCEDFF"/>
-        <SolidColorBrush x:Key="Button.Craft.MouseOver.Background" Color="#2f2842"/>
-        <SolidColorBrush x:Key="Button.Craft.MouseOver.Border" Color="#DCEDFF"/>
-        <SolidColorBrush x:Key="Button.Craft.Pressed.Background" Color="#231e30"/>
-        <SolidColorBrush x:Key="Button.Craft.Pressed.Border" Color="#DCEDFF"/>
-        <SolidColorBrush x:Key="Button.Craft.Disabled.Background" Color="#FFF4F4F4"/>
-        <SolidColorBrush x:Key="Button.Craft.Disabled.Border" Color="#DCEDFF"/>
-        <SolidColorBrush x:Key="Button.Craft.Disabled.Foreground" Color="#FF838383"/>
-        <Style x:Key="ButtonStyleCrafting" TargetType="{x:Type Button}">
-            <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
-            <Setter Property="Background" Value="{StaticResource Button.Craft.Static.Background}"/>
-            <Setter Property="BorderBrush" Value="{StaticResource Button.Craft.Static.Border}"/>
-            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="Padding" Value="1"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type Button}">
-                        <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="true">
-                            <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsDefaulted" Value="true">
-                                <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
-                            </Trigger>
-                            <Trigger Property="IsMouseOver" Value="true">
-                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Craft.MouseOver.Background}"/>
-                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Craft.MouseOver.Border}"/>
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="true">
-                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Craft.Pressed.Background}"/>
-                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Craft.Pressed.Border}"/>
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="false">
-                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Craft.Disabled.Background}"/>
-                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Craft.Disabled.Border}"/>
-                                <Setter Property="TextElement.Foreground" TargetName="contentPresenter" Value="{StaticResource Button.Craft.Disabled.Foreground}"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -524,146 +586,146 @@
         </Grid.ColumnDefinitions>
 
         <!-- MACRO 1 -->
-        <Label x:Name="LabelMacros" Content="Macros" HorizontalAlignment="Left" Margin="10,0.8,0,0" VerticalAlignment="Top" Height="25" Width="75" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Padding="0" VerticalContentAlignment="Center" FontSize="20" FontWeight="Bold" Grid.Row="1" Foreground="#FFDCEDFF">
+        <Label x:Name="LabelMacros" Content="Macros" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" Height="25" Width="75" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Padding="0" VerticalContentAlignment="Center" FontSize="20" FontWeight="Bold" Grid.Row="1" Foreground="#FFDCEDFF">
             <Label.Effect>
                 <DropShadowEffect ShadowDepth="1"/>
             </Label.Effect>
         </Label>
-        <Label x:Name="LabelMacrosTime" Content="Macro Time (sec)" Margin="200,0.8,0,0" VerticalAlignment="Top" Height="25" FontFamily="/RapidSynthesis;component/Resources/Fonts/#Sen" Padding="0" VerticalContentAlignment="Bottom" HorizontalContentAlignment="Right" Grid.Row="1" HorizontalAlignment="Left" Width="110" FontSize="11" Foreground="#FFDCEDFF">
+        <Label x:Name="LabelMacrosTime" Content="Macro Time (sec)" Margin="200,0,0,0.3" VerticalAlignment="Top" Height="25" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Padding="0" VerticalContentAlignment="Bottom" HorizontalContentAlignment="Right" Grid.Row="1" HorizontalAlignment="Left" Width="110" FontSize="11" Foreground="#FFDCEDFF">
             <Label.Effect>
                 <DropShadowEffect ShadowDepth="1"/>
             </Label.Effect>
         </Label>
-        <Label x:Name="LabelMacro1" Content="Macro 1" HorizontalAlignment="Left" Margin="10,25.8,0,0" VerticalAlignment="Top" Height="25" Width="75" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Padding="0" VerticalContentAlignment="Center" FontSize="17" Grid.Row="1" Foreground="#FFDCEDFF">
+        <Label x:Name="LabelMacro1" Content="Macro 1" HorizontalAlignment="Left" Margin="10,25,0,0" VerticalAlignment="Top" Height="25" Width="75" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Padding="0" VerticalContentAlignment="Center" FontSize="17" Grid.Row="1" Foreground="#FFDCEDFF">
             <Label.Effect>
                 <DropShadowEffect ShadowDepth="1"/>
             </Label.Effect>
         </Label>
-        <TextBox x:Name="TXBMacro1Key" HorizontalAlignment="Left" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Height="25" Margin="105,25.8,0,0" VerticalAlignment="Top" Width="170" IsReadOnly="True" PreviewKeyDown="HotkeyKeyDown" PreviewKeyUp="HotkeyKeyUp" GotFocus="HotkeyTextboxGainFocus" LostFocus="HotkeyTextboxLoseFocus" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" MaxLines="1" Grid.Row="1" Opacity="0.9" Background="#FFDCEDFF" TextChanged="InputTextChange" FontSize="16" MouseDoubleClick="HotkeyInputDoubleClick"/>
-        <TextBox x:Name="TXBMacro1Timer" HorizontalAlignment="Left" Height="25" Margin="280,25.8,0,0" TextWrapping="Wrap" Text="00" VerticalAlignment="Top" Width="30" IsReadOnly="True" KeyDown="SetTimeValue" GotFocus="TimeGetFocus" LostFocus="TimeLostFocus" FontFamily="/RapidSynthesis;component/Resources/Fonts/#Sen" HorizontalContentAlignment="Center" VerticalContentAlignment="Bottom" FontSize="16" Grid.Row="1" Opacity="0.9" Background="#FFDCEDFF"/>
+        <TextBox x:Name="TXBMacro1Key" HorizontalAlignment="Left" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Height="25" Margin="105,25,0,0" VerticalAlignment="Top" Width="170" IsReadOnly="True" PreviewKeyDown="HotkeyKeyDown" PreviewKeyUp="HotkeyKeyUp" GotFocus="HotkeyTextboxGainFocus" LostFocus="HotkeyTextboxLoseFocus" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" MaxLines="1" Grid.Row="1" Opacity="0.9" Background="#FFDCEDFF" TextChanged="InputTextChange" FontSize="16" MouseDoubleClick="HotkeyInputDoubleClick"/>
+        <TextBox x:Name="TXBMacro1Timer" HorizontalAlignment="Left" Height="25" Margin="280,25,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="30" IsReadOnly="True" KeyDown="SetTimeValue" GotFocus="TimeGetFocus" LostFocus="TimeLostFocus" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" HorizontalContentAlignment="Center" VerticalContentAlignment="Bottom" FontSize="16" Grid.Row="1" Opacity="0.9" Background="#FFDCEDFF"/>
 
         <!-- MACRO 2 -->
-        <Label x:Name="LabelMacro2" Content="Macro 2" HorizontalAlignment="Left" Margin="10,55.8,0,0" VerticalAlignment="Top" Height="25" Width="75" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Padding="0" VerticalContentAlignment="Center" FontSize="17" Grid.Row="1" Foreground="#FFDCEDFF">
+        <Label x:Name="LabelMacro2" Content="Macro 2" HorizontalAlignment="Left" Margin="10,55,0,0" VerticalAlignment="Top" Height="25" Width="75" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Padding="0" VerticalContentAlignment="Center" FontSize="17" Grid.Row="1" Foreground="#FFDCEDFF">
             <Label.Effect>
                 <DropShadowEffect ShadowDepth="1"/>
             </Label.Effect>
         </Label>
-        <CheckBox x:Name="CHBMacro2" Content="" HorizontalAlignment="Left" Margin="85,55.8,0,0" VerticalAlignment="Top" Height="25" Width="20" Checked="CHBMacro2_Checked" Unchecked="CHBMacro2_Checked" FontFamily="/RapidSynthesis;component/Resources/Fonts/#Sen" Padding="0" VerticalContentAlignment="Center" BorderThickness="1" ClipToBounds="True" HorizontalContentAlignment="Center" Grid.Row="1" Opacity="0.9" Background="#FFDCEDFF" GotFocus="CheckFocusGain" LostFocus="CheckFocusLoss"/>
-        <TextBox x:Name="TXBMacro2Key" MouseDoubleClick="HotkeyInputDoubleClick" TextChanged="InputTextChange" HorizontalAlignment="Left" Height="25" Margin="105,55.8,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="170" IsReadOnly="True" PreviewKeyDown="HotkeyKeyDown" PreviewKeyUp="HotkeyKeyUp" GotFocus="HotkeyTextboxGainFocus" LostFocus="HotkeyTextboxLoseFocus" FontFamily="/RapidSynthesis;component/Resources/Fonts/#Sen" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Grid.Row="1" Opacity="0.9" Background="#FFDCEDFF"/>
-        <TextBox x:Name="TXBMacro2Timer" HorizontalAlignment="Left" Height="25" Margin="280,55.8,0,0" TextWrapping="Wrap" Text="00" VerticalAlignment="Top" Width="30" IsReadOnly="True" KeyDown="SetTimeValue" GotFocus="TimeGetFocus" LostFocus="TimeLostFocus" FontFamily="/RapidSynthesis;component/Resources/Fonts/#Sen" HorizontalContentAlignment="Center" VerticalContentAlignment="Bottom" FontSize="16" Grid.Row="1" Opacity="0.9" Background="#FFDCEDFF"/>
+        <CheckBox x:Name="CHBMacro2" Content="" HorizontalAlignment="Left" Margin="85,55,0,0" VerticalAlignment="Top" Height="25" Width="20" Checked="CHBMacro2_Checked" Unchecked="CHBMacro2_Checked" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Padding="0" VerticalContentAlignment="Center" BorderThickness="1" ClipToBounds="True" HorizontalContentAlignment="Center" Grid.Row="1" Opacity="0.9" Background="#FFDCEDFF" GotFocus="CheckFocusGain" LostFocus="CheckFocusLoss"/>
+        <TextBox x:Name="TXBMacro2Key" MouseDoubleClick="HotkeyInputDoubleClick" TextChanged="InputTextChange" HorizontalAlignment="Left" Height="25" Margin="105,55,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="170" IsReadOnly="True" PreviewKeyDown="HotkeyKeyDown" PreviewKeyUp="HotkeyKeyUp" GotFocus="HotkeyTextboxGainFocus" LostFocus="HotkeyTextboxLoseFocus" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Grid.Row="1" Opacity="0.9" Background="#FFDCEDFF" IsEnabled="False"/>
+        <TextBox x:Name="TXBMacro2Timer" HorizontalAlignment="Left" Height="25" Margin="280,55,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="30" IsReadOnly="True" KeyDown="SetTimeValue" GotFocus="TimeGetFocus" LostFocus="TimeLostFocus" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" HorizontalContentAlignment="Center" VerticalContentAlignment="Bottom" FontSize="16" Grid.Row="1" Opacity="0.9" Background="#FFDCEDFF" IsEnabled="False"/>
 
         <!-- MACRO 3 -->
-        <Label x:Name="LabelMacro3" Content="Macro 3" HorizontalAlignment="Left" Margin="10,85.8,0,0" VerticalAlignment="Top" Height="25" Width="75" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Padding="0" VerticalContentAlignment="Center" FontSize="17" Grid.Row="1" Foreground="#FFDCEDFF">
+        <Label x:Name="LabelMacro3" Content="Macro 3" HorizontalAlignment="Left" Margin="10,85,0,0" VerticalAlignment="Top" Height="25" Width="75" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Padding="0" VerticalContentAlignment="Center" FontSize="17" Grid.Row="1" Foreground="#FFDCEDFF">
             <Label.Effect>
                 <DropShadowEffect ShadowDepth="1"/>
             </Label.Effect>
         </Label>
-        <CheckBox x:Name="CHBMacro3" GotFocus="CheckFocusGain" LostFocus="CheckFocusLoss" Content="" HorizontalAlignment="Left" Margin="85,85.8,0,0" VerticalAlignment="Top" Height="25" Width="20" Checked="CHBMacro3_Checked" Unchecked="CHBMacro3_Checked" FontFamily="/RapidSynthesis;component/Resources/Fonts/#Sen" Padding="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.Row="1" Opacity="0.9" Background="#FFDCEDFF"/>
-        <TextBox x:Name="TXBMacro3Key" MouseDoubleClick="HotkeyInputDoubleClick" TextChanged="InputTextChange" HorizontalAlignment="Left" Height="25" Margin="105,85.8,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="170" IsReadOnly="True" PreviewKeyDown="HotkeyKeyDown" PreviewKeyUp="HotkeyKeyUp" GotFocus="HotkeyTextboxGainFocus" LostFocus="HotkeyTextboxLoseFocus" FontFamily="/RapidSynthesis;component/Resources/Fonts/#Sen" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Grid.Row="1" Opacity="0.9" Background="#FFDCEDFF"/>
-        <TextBox x:Name="TXBMacro3Timer" HorizontalAlignment="Left" Height="25" Margin="280,85.8,0,0" TextWrapping="Wrap" Text="00" VerticalAlignment="Top" Width="30" IsReadOnly="True" KeyDown="SetTimeValue" GotFocus="TimeGetFocus" LostFocus="TimeLostFocus" FontFamily="/RapidSynthesis;component/Resources/Fonts/#Sen" HorizontalContentAlignment="Center" VerticalContentAlignment="Bottom" FontSize="16" Grid.Row="1" Opacity="0.9" Background="#FFDCEDFF"/>
+        <CheckBox x:Name="CHBMacro3" GotFocus="CheckFocusGain" LostFocus="CheckFocusLoss" Content="" HorizontalAlignment="Left" Margin="85,85,0,0" VerticalAlignment="Top" Height="25" Width="20" Checked="CHBMacro3_Checked" Unchecked="CHBMacro3_Checked" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Padding="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.Row="1" Opacity="0.9" Background="#FFDCEDFF"/>
+        <TextBox x:Name="TXBMacro3Key" MouseDoubleClick="HotkeyInputDoubleClick" TextChanged="InputTextChange" HorizontalAlignment="Left" Height="25" Margin="105,85,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="170" IsReadOnly="True" PreviewKeyDown="HotkeyKeyDown" PreviewKeyUp="HotkeyKeyUp" GotFocus="HotkeyTextboxGainFocus" LostFocus="HotkeyTextboxLoseFocus" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Grid.Row="1" Opacity="0.9" Background="#FFDCEDFF" IsEnabled="False"/>
+        <TextBox x:Name="TXBMacro3Timer" HorizontalAlignment="Left" Height="25" Margin="280,85,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="30" IsReadOnly="True" KeyDown="SetTimeValue" GotFocus="TimeGetFocus" LostFocus="TimeLostFocus" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" HorizontalContentAlignment="Center" VerticalContentAlignment="Bottom" FontSize="16" Grid.Row="1" Opacity="0.9" Background="#FFDCEDFF" IsEnabled="False"/>
 
         <!-- Food -->
-        <Label x:Name="LabelConsumables" Content="Consumables" HorizontalAlignment="Left" Margin="10,120.8,0,0" VerticalAlignment="Top" Height="25" Width="129" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Padding="0" VerticalContentAlignment="Center" FontSize="20" FontWeight="Bold" Grid.Row="1" Foreground="#FFDCEDFF">
+        <Label x:Name="LabelConsumables" Content="Consumables" HorizontalAlignment="Left" Margin="10,120,0,0" VerticalAlignment="Top" Height="25" Width="129" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Padding="0" VerticalContentAlignment="Center" FontSize="20" FontWeight="Bold" Grid.Row="1" Foreground="#FFDCEDFF">
             <Label.Effect>
                 <DropShadowEffect ShadowDepth="1"/>
             </Label.Effect>
         </Label>
-        <Label x:Name="LabelFoodTime" Content="Time Remaining (min)" Margin="200,120.8,0,0" VerticalAlignment="Top" Height="25" FontFamily="/RapidSynthesis;component/Resources/Fonts/#Sen" Padding="0" VerticalContentAlignment="Bottom" HorizontalContentAlignment="Right" FontSize="10" Grid.Row="1" HorizontalAlignment="Left" Width="110" Foreground="#FFDCEDFF">
+        <Label x:Name="LabelFoodTime" Content="Time Remaining (min)" Margin="200,120,0,0" VerticalAlignment="Top" Height="25" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Padding="0" VerticalContentAlignment="Bottom" HorizontalContentAlignment="Right" FontSize="10" Grid.Row="1" HorizontalAlignment="Left" Width="110" Foreground="#FFDCEDFF">
             <Label.Effect>
                 <DropShadowEffect ShadowDepth="1"/>
             </Label.Effect>
         </Label>
-        <Label x:Name="LabelFood" Content="Food" HorizontalAlignment="Left" Margin="10,145.8,0,0" VerticalAlignment="Top" Height="25" Width="75" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Padding="0" VerticalContentAlignment="Center" FontSize="17" Grid.Row="1" Foreground="#FFDCEDFF">
+        <Label x:Name="LabelFood" Content="Food" HorizontalAlignment="Left" Margin="10,145,0,0" VerticalAlignment="Top" Height="25" Width="75" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Padding="0" VerticalContentAlignment="Center" FontSize="17" Grid.Row="1" Foreground="#FFDCEDFF">
             <Label.Effect>
                 <DropShadowEffect ShadowDepth="1"/>
             </Label.Effect>
         </Label>
-        <CheckBox x:Name="CHBFood" GotFocus="CheckFocusGain" LostFocus="CheckFocusLoss" Content="" HorizontalAlignment="Left" Margin="85,145.8,0,0" VerticalAlignment="Top" Height="25" Width="20" Checked="CHBFood_Checked" Unchecked="CHBFood_Checked" FontFamily="/RapidSynthesis;component/Resources/Fonts/#Sen" Padding="0" Grid.Row="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Opacity="0.9" Background="#FFDCEDFF"/>
-        <TextBox x:Name="TXBFoodKey" MouseDoubleClick="HotkeyInputDoubleClick" TextChanged="InputTextChange" HorizontalAlignment="Left" Height="25" Margin="105,145.8,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="170" IsReadOnly="True" PreviewKeyDown="HotkeyKeyDown" PreviewKeyUp="HotkeyKeyUp" GotFocus="HotkeyTextboxGainFocus" LostFocus="HotkeyTextboxLoseFocus" FontFamily="/RapidSynthesis;component/Resources/Fonts/#Sen" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" Grid.Row="1" Opacity="0.9" Background="#FFDCEDFF"/>
-        <TextBox x:Name="TXBFoodTimer" HorizontalAlignment="Left" Height="26" Margin="280,145.8,0,0" TextWrapping="Wrap" Text="00" VerticalAlignment="Top" Width="30" IsReadOnly="True" KeyDown="SetTimeValue" GotFocus="TimeGetFocus" LostFocus="TimeLostFocus" FontFamily="/RapidSynthesis;component/Resources/Fonts/#Sen" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" Grid.Row="1" Opacity="0.9" Background="#FFDCEDFF"/>
+        <CheckBox x:Name="CHBFood" GotFocus="CheckFocusGain" LostFocus="CheckFocusLoss" Content="" HorizontalAlignment="Left" Margin="85,145,0,0" VerticalAlignment="Top" Height="25" Width="20" Checked="CHBFood_Checked" Unchecked="CHBFood_Checked" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Padding="0" Grid.Row="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Opacity="0.9" Background="#FFDCEDFF"/>
+        <TextBox x:Name="TXBFoodKey" MouseDoubleClick="HotkeyInputDoubleClick" TextChanged="InputTextChange" HorizontalAlignment="Left" Height="25" Margin="105,145,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="170" IsReadOnly="True" PreviewKeyDown="HotkeyKeyDown" PreviewKeyUp="HotkeyKeyUp" GotFocus="HotkeyTextboxGainFocus" LostFocus="HotkeyTextboxLoseFocus" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" Grid.Row="1" Opacity="0.9" Background="#FFDCEDFF" IsEnabled="False"/>
+        <TextBox x:Name="TXBFoodTimer" HorizontalAlignment="Left" Height="26" Margin="280,145,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="30" IsReadOnly="True" KeyDown="SetTimeValue" GotFocus="TimeGetFocus" LostFocus="TimeLostFocus" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" Grid.Row="1" Opacity="0.9" Background="#FFDCEDFF" IsEnabled="False"/>
 
         <!-- Syrup -->
-        <Label x:Name="LabelSyrup" Content="Syrup" HorizontalAlignment="Left" Margin="10,175.8,0,0" VerticalAlignment="Top" Height="25" Width="75" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Padding="0" VerticalContentAlignment="Center" FontSize="17" Grid.Row="1" Foreground="#FFDCEDFF">
+        <Label x:Name="LabelSyrup" Content="Syrup" HorizontalAlignment="Left" Margin="10,175,0,0" VerticalAlignment="Top" Height="25" Width="75" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Padding="0" VerticalContentAlignment="Center" FontSize="17" Grid.Row="1" Foreground="#FFDCEDFF">
             <Label.Effect>
                 <DropShadowEffect ShadowDepth="1"/>
             </Label.Effect>
         </Label>
-        <CheckBox x:Name="CHBSyrup" GotFocus="CheckFocusGain" LostFocus="CheckFocusLoss" Content="" HorizontalAlignment="Left" Margin="85,175.8,0,0" VerticalAlignment="Top" Height="25" Width="20" Checked="CHBSyrup_Checked" Unchecked="CHBSyrup_Checked" FontFamily="/RapidSynthesis;component/Resources/Fonts/#Sen" Padding="0" Grid.Row="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Opacity="0.9" Background="#FFDCEDFF"/>
-        <TextBox x:Name="TXBSyrupKey" MouseDoubleClick="HotkeyInputDoubleClick" TextChanged="InputTextChange" HorizontalAlignment="Left" Height="25" Margin="105,175.8,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="170" IsReadOnly="True" PreviewKeyDown="HotkeyKeyDown" PreviewKeyUp="HotkeyKeyUp" GotFocus="HotkeyTextboxGainFocus" LostFocus="HotkeyTextboxLoseFocus" FontFamily="/RapidSynthesis;component/Resources/Fonts/#Sen" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" Grid.Row="1" Opacity="0.9" Background="#FFDCEDFF"/>
-        <TextBox x:Name="TXBSyrupTimer" HorizontalAlignment="Left" Height="25" Margin="280,175.8,0,0" TextWrapping="Wrap" Text="00" VerticalAlignment="Top" Width="30" IsReadOnly="True" KeyDown="SetTimeValue" GotFocus="TimeGetFocus" LostFocus="TimeLostFocus" FontFamily="/RapidSynthesis;component/Resources/Fonts/#Sen" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" Grid.Row="1" Opacity="0.9" Background="#FFDCEDFF"/>
+        <CheckBox x:Name="CHBSyrup" GotFocus="CheckFocusGain" LostFocus="CheckFocusLoss" Content="" HorizontalAlignment="Left" Margin="85,175,0,0" VerticalAlignment="Top" Height="25" Width="20" Checked="CHBSyrup_Checked" Unchecked="CHBSyrup_Checked" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Padding="0" Grid.Row="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Opacity="0.9" Background="#FFDCEDFF"/>
+        <TextBox x:Name="TXBSyrupKey" MouseDoubleClick="HotkeyInputDoubleClick" TextChanged="InputTextChange" HorizontalAlignment="Left" Height="25" Margin="105,175,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="170" IsReadOnly="True" PreviewKeyDown="HotkeyKeyDown" PreviewKeyUp="HotkeyKeyUp" GotFocus="HotkeyTextboxGainFocus" LostFocus="HotkeyTextboxLoseFocus" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" Grid.Row="1" Opacity="0.9" Background="#FFDCEDFF" IsEnabled="False"/>
+        <TextBox x:Name="TXBSyrupTimer" HorizontalAlignment="Left" Height="25" Margin="280,175,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="30" IsReadOnly="True" KeyDown="SetTimeValue" GotFocus="TimeGetFocus" LostFocus="TimeLostFocus" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" Grid.Row="1" Opacity="0.9" Background="#FFDCEDFF" IsEnabled="False"/>
 
         <!-- Food Duration -->
-        <Label x:Name="LabelFoodTimer" Content="Food Duration" HorizontalAlignment="Left" Margin="10,205.8,0,0" VerticalAlignment="Top" Height="25" Width="129" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Padding="0" VerticalContentAlignment="Center" FontSize="17" Grid.Row="1" Foreground="#FFDCEDFF">
+        <Label x:Name="LabelFoodTimer" Content="Food Duration" HorizontalAlignment="Left" Margin="10,205,0,0" VerticalAlignment="Top" Height="25" Width="129" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Padding="0" VerticalContentAlignment="Center" FontSize="17" Grid.Row="1" Foreground="#FFDCEDFF">
             <Label.Effect>
                 <DropShadowEffect ShadowDepth="1"/>
             </Label.Effect>
         </Label>
-        <RadioButton x:Name="RDFood30" GotFocus="CheckRadioGain" LostFocus="CheckRadioLoss"  Content="30 Min" HorizontalAlignment="Left" Margin="135,205.6,0,0" VerticalAlignment="Top" Width="55" GroupName="RDFoodTimer" IsChecked="True" Checked="RDFood30_Checked" Height="25" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Grid.Row="1" VerticalContentAlignment="Center" Padding="0,1,0,0" Foreground="#FFDCEDFF" FontSize="13" Background="#FFDCEDFF">
+        <RadioButton x:Name="RDFood30" GotFocus="CheckRadioGain" LostFocus="CheckRadioLoss"  Content="30 Min" HorizontalAlignment="Left" Margin="135,205,0,0" VerticalAlignment="Top" Width="55" GroupName="RDFoodTimer" IsChecked="True" Checked="RDFood30_Checked" Height="25" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Grid.Row="1" VerticalContentAlignment="Center" Padding="0,1,0,0" Foreground="#FFDCEDFF" FontSize="13" Background="#FFDCEDFF">
             <RadioButton.Effect>
-                <DropShadowEffect ShadowDepth="1"/>
+                <DropShadowEffect ShadowDepth="1" BlurRadius="1"/>
             </RadioButton.Effect>
         </RadioButton>
-        <RadioButton x:Name="RDFood40" GotFocus="CheckRadioGain" LostFocus="CheckRadioLoss" Content="40 Min" HorizontalAlignment="Left" Margin="195,205.6,0,0" VerticalAlignment="Top" Width="55" GroupName="RDFoodTimer" Checked="RDFood40_Checked" Height="25" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Grid.Row="1" VerticalContentAlignment="Center" Padding="0,1,0,0" Foreground="#FFDCEDFF" FontSize="13" Background="#FFDCEDFF">
+        <RadioButton x:Name="RDFood40" GotFocus="CheckRadioGain" LostFocus="CheckRadioLoss" Content="40 Min" HorizontalAlignment="Left" Margin="195,205,0,0" VerticalAlignment="Top" Width="55" GroupName="RDFoodTimer" Checked="RDFood40_Checked" Height="25" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Grid.Row="1" VerticalContentAlignment="Center" Padding="0,1,0,0" Foreground="#FFDCEDFF" FontSize="13" Background="#FFDCEDFF">
             <RadioButton.Effect>
-                <DropShadowEffect ShadowDepth="1"/>
+                <DropShadowEffect ShadowDepth="1" BlurRadius="1"/>
             </RadioButton.Effect>
         </RadioButton>
-        <RadioButton x:Name="RDFood45" GotFocus="CheckRadioGain" LostFocus="CheckRadioLoss" Content="45 Min" HorizontalAlignment="Left" Margin="255,205.6,0,0" VerticalAlignment="Top" Width="55" GroupName="RDFoodTimer" Checked="RDFood45_Checked" Height="25" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Grid.Row="1" VerticalContentAlignment="Center" Padding="0,1,0,0" Foreground="#FFDCEDFF" FontSize="13" Background="#FFDCEDFF">
+        <RadioButton x:Name="RDFood45" GotFocus="CheckRadioGain" LostFocus="CheckRadioLoss" Content="45 Min" HorizontalAlignment="Left" Margin="255,205,0,0" VerticalAlignment="Top" Width="55" GroupName="RDFoodTimer" Checked="RDFood45_Checked" Height="25" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Grid.Row="1" VerticalContentAlignment="Center" Padding="0,1,0,0" Foreground="#FFDCEDFF" FontSize="13" Background="#FFDCEDFF">
             <RadioButton.Effect>
-                <DropShadowEffect ShadowDepth="1"/>
+                <DropShadowEffect ShadowDepth="1" BlurRadius="1"/>
             </RadioButton.Effect>
         </RadioButton>
 
         <!-- Confirm -->
-        <Label x:Name="LabelSelectConfirm" Content="Confirm" HorizontalAlignment="Left" Margin="0,24.8,0,0" VerticalAlignment="Top" Height="25" Width="75" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" VerticalContentAlignment="Center" FontSize="17" Grid.Row="1" Grid.Column="1" Padding="0" Foreground="#FFDCEDFF">
+        <Label x:Name="LabelSelectConfirm" Content="Confirm" HorizontalAlignment="Left" Margin="0,25,0,0" VerticalAlignment="Top" Height="25" Width="75" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" VerticalContentAlignment="Center" FontSize="17" Grid.Row="1" Grid.Column="1" Padding="0" Foreground="#FFDCEDFF">
             <Label.Effect>
                 <DropShadowEffect ShadowDepth="1"/>
             </Label.Effect>
         </Label>
-        <TextBox x:Name="TXBConfirmKey" MouseDoubleClick="HotkeyInputDoubleClick" TextChanged="InputTextChange" HorizontalAlignment="Left" Height="25" Margin="75,24.8,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="169" IsReadOnly="True" PreviewKeyDown="HotkeyKeyDown" PreviewKeyUp="HotkeyKeyUp" GotFocus="HotkeyTextboxGainFocus" LostFocus="HotkeyTextboxLoseFocus" FontFamily="/RapidSynthesis;component/Resources/Fonts/#Sen" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.Row="1" Grid.Column="1" FontSize="16" Opacity="0.9" Background="#FFDCEDFF"/>
+        <TextBox x:Name="TXBConfirmKey" MouseDoubleClick="HotkeyInputDoubleClick" TextChanged="InputTextChange" HorizontalAlignment="Left" Height="25" Margin="75,25,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="169" IsReadOnly="True" PreviewKeyDown="HotkeyKeyDown" PreviewKeyUp="HotkeyKeyUp" GotFocus="HotkeyTextboxGainFocus" LostFocus="HotkeyTextboxLoseFocus" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.Row="1" Grid.Column="1" FontSize="16" Opacity="0.9" Background="#FFDCEDFF"/>
 
         <!-- Cancel -->
-        <Label x:Name="LabelCancel" Content="Cancel" HorizontalAlignment="Left" Margin="0,55.8,0,0" VerticalAlignment="Top" Height="25" Width="75" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" VerticalContentAlignment="Center" FontSize="17" Grid.Row="1" Grid.Column="1" Padding="0" Foreground="#FFDCEDFF">
+        <Label x:Name="LabelCancel" Content="Cancel" HorizontalAlignment="Left" Margin="0,55,0,0" VerticalAlignment="Top" Height="25" Width="75" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" VerticalContentAlignment="Center" FontSize="17" Grid.Row="1" Grid.Column="1" Padding="0" Foreground="#FFDCEDFF">
             <Label.Effect>
                 <DropShadowEffect ShadowDepth="1"/>
             </Label.Effect>
         </Label>
-        <TextBox x:Name="TXBCancelKey" MouseDoubleClick="HotkeyInputDoubleClick" TextChanged="InputTextChange" HorizontalAlignment="Left" Height="25" Margin="75,54.8,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="169" IsReadOnly="True" PreviewKeyDown="HotkeyKeyDown" PreviewKeyUp="HotkeyKeyUp" GotFocus="HotkeyTextboxGainFocus" LostFocus="HotkeyTextboxLoseFocus" FontFamily="/RapidSynthesis;component/Resources/Fonts/#Sen" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.Row="1" Grid.Column="1" FontSize="16" Opacity="0.9" Background="#FFDCEDFF"/>
+        <TextBox x:Name="TXBCancelKey" MouseDoubleClick="HotkeyInputDoubleClick" TextChanged="InputTextChange" HorizontalAlignment="Left" Height="25" Margin="75,55,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="169" IsReadOnly="True" PreviewKeyDown="HotkeyKeyDown" PreviewKeyUp="HotkeyKeyUp" GotFocus="HotkeyTextboxGainFocus" LostFocus="HotkeyTextboxLoseFocus" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.Row="1" Grid.Column="1" FontSize="16" Opacity="0.9" Background="#FFDCEDFF" IsEnabled="False"/>
 
         <!-- Settings -->
-        <Label x:Name="LabelSettings" Content="Settings" HorizontalAlignment="Left" Margin="0,71,0,0" VerticalAlignment="Top" Height="25" Width="95" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Padding="0,0,0,1" VerticalContentAlignment="Center" FontSize="20" FontWeight="Bold" Grid.Column="1" Foreground="#FFDCEDFF" Grid.RowSpan="2">
+        <Label x:Name="LabelSettings" Content="Settings" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Top" Height="25" Width="95" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Padding="0,0,0,1" VerticalContentAlignment="Center" FontSize="20" FontWeight="Bold" Grid.Column="1" Foreground="#FFDCEDFF" Grid.Row="1">
             <Label.Effect>
                 <DropShadowEffect ShadowDepth="1"/>
             </Label.Effect>
         </Label>
-        <Label x:Name="LabelCraftCount" Content="Craft Count" HorizontalAlignment="Left" Margin="0,84.8,0,0" VerticalAlignment="Top" Height="25" Width="98" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" VerticalContentAlignment="Center" FontSize="17" Grid.Row="1" Grid.Column="1" Padding="0" Foreground="#FFDCEDFF">
+        <Label x:Name="LabelCraftCount" Content="Craft Count" HorizontalAlignment="Left" Margin="0,85,0,0" VerticalAlignment="Top" Height="25" Width="98" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" VerticalContentAlignment="Center" FontSize="17" Grid.Row="1" Grid.Column="1" Padding="0" Foreground="#FFDCEDFF">
             <Label.Effect>
                 <DropShadowEffect ShadowDepth="1"/>
             </Label.Effect>
         </Label>
-        <CheckBox x:Name="CHBCraftCount" GotFocus="CheckFocusGain" LostFocus="CheckFocusLoss" Content="" HorizontalAlignment="Left" Margin="98,84.8,0,0" VerticalAlignment="Top" Height="25" Width="20" Checked="CHBCraftCount_Checked" Unchecked="CHBCraftCount_Checked" FontFamily="/RapidSynthesis;component/Resources/Fonts/#Sen" Padding="0" Grid.Row="1" Grid.Column="1" VerticalContentAlignment="Center" Opacity="0.9" Background="#FFDCEDFF"/>
-        <TextBox x:Name="TXBCraftCount" HorizontalAlignment="Left" Height="25" Margin="123,84.8,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="59" IsReadOnly="True" KeyDown="SetTimeValue" GotFocus="TimeGetFocus" LostFocus="TimeLostFocus" FontFamily="/RapidSynthesis;component/Resources/Fonts/#Sen" HorizontalContentAlignment="Center" VerticalContentAlignment="Bottom" Grid.Row="1" Grid.Column="1" FontSize="16" Opacity="0.9" Background="#FFDCEDFF"/>
-        <Label x:Name="LabelCollectableCraft" Content="Collectable Craft" HorizontalAlignment="Left" Margin="0,114.8,0,0" VerticalAlignment="Top" Height="25" Width="137" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" VerticalContentAlignment="Center" FontSize="17" Grid.Row="1" Grid.Column="1" Padding="0" Foreground="#FFDCEDFF">
+        <CheckBox x:Name="CHBCraftCount" GotFocus="CheckFocusGain" LostFocus="CheckFocusLoss" Content="" HorizontalAlignment="Left" Margin="105,85,0,0" VerticalAlignment="Top" Height="25" Width="20" Checked="CHBCraftCount_Checked" Unchecked="CHBCraftCount_Checked" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Padding="0" Grid.Row="1" Grid.Column="1" VerticalContentAlignment="Center" Opacity="0.9" Background="#FFDCEDFF"/>
+        <TextBox x:Name="TXBCraftCount" HorizontalAlignment="Left" Height="25" Margin="130,85,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="59" IsReadOnly="True" KeyDown="SetTimeValue" GotFocus="TimeGetFocus" LostFocus="TimeLostFocus" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" HorizontalContentAlignment="Center" VerticalContentAlignment="Bottom" Grid.Row="1" Grid.Column="1" FontSize="16" Opacity="0.9" Background="#FFDCEDFF" IsEnabled="False"/>
+        <Label x:Name="LabelCollectableCraft" Content="Collectable Craft" HorizontalAlignment="Left" Margin="0,115,0,0" VerticalAlignment="Top" Height="25" Width="137" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" VerticalContentAlignment="Center" FontSize="17" Grid.Row="1" Grid.Column="1" Padding="0" Foreground="#FFDCEDFF">
             <Label.Effect>
                 <DropShadowEffect ShadowDepth="1"/>
             </Label.Effect>
         </Label>
-        <CheckBox x:Name="CHBCollectableCraft" GotFocus="CheckFocusGain" LostFocus="CheckFocusLoss" Content="" HorizontalAlignment="Left" Margin="140,114.8,0,0" VerticalAlignment="Top" Height="25" Width="20" FontFamily="/RapidSynthesis;component/Resources/Fonts/#Sen" Grid.Row="1" Grid.Column="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Opacity="0.9" Background="#FFDCEDFF"/>
+        <CheckBox x:Name="CHBCollectableCraft" GotFocus="CheckFocusGain" LostFocus="CheckFocusLoss" Content="" HorizontalAlignment="Left" Margin="145,115,0,0" VerticalAlignment="Top" Height="25" Width="20" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Grid.Row="1" Grid.Column="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Opacity="0.9" Background="#FFDCEDFF"/>
 
         <!-- Profile Systems -->
-        <Label x:Name="LabelProfiles" Content="Profiles" HorizontalAlignment="Left" Margin="0,149.8,0,0" VerticalAlignment="Top" Height="25" Width="95" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Padding="0" VerticalContentAlignment="Center" FontSize="20" FontWeight="Bold" Grid.Row="1" Grid.Column="1" Foreground="#FFDCEDFF">
+        <Label x:Name="LabelProfiles" Content="Profiles" HorizontalAlignment="Left" Margin="0,150,0,0" VerticalAlignment="Top" Height="25" Width="95" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Padding="0" VerticalContentAlignment="Center" FontSize="20" FontWeight="Bold" Grid.Row="1" Grid.Column="1" Foreground="#FFDCEDFF">
             <Label.Effect>
                 <DropShadowEffect ShadowDepth="1"/>
             </Label.Effect>
         </Label>
-        <ComboBox x:Name="CMBProfileList" HorizontalAlignment="Left" Margin="0,174.8,0,0" VerticalAlignment="Top" Width="246" Height="25" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Grid.Row="1" Grid.Column="1" Opacity="0.85" BorderBrush="Black" Foreground="#FFBFDDFD" Background="#FFFF4D4D" Style="{DynamicResource ComboBoxNewStyle}" VerticalContentAlignment="Center" Padding="0" ItemContainerStyle="{DynamicResource ComboBoxItemStyle1}"/>
-        <Button x:Name="BTNSave" Content="Save" HorizontalAlignment="Left" Margin="0,205,0,0" VerticalAlignment="Top" Width="68" Click="BTNSave_Click" Height="25" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Grid.Row="1" Grid.Column="1" Opacity="0.85" Style="{DynamicResource ButtonStyleCrafting}" Foreground="#FFDCEDFF" />
-        <Button x:Name="BTNLoad" Content="Load" HorizontalAlignment="Left" Margin="74,205,0,0" VerticalAlignment="Top" Width="68" Click="BTNLoad_Click" Height="25" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Grid.Row="1" Grid.Column="1" Opacity="0.85" Style="{DynamicResource ButtonStyleCrafting}" Foreground="#FFDCEDFF" />
-        <Button x:Name="BTNDelete" Content="Delete" HorizontalAlignment="Left" Margin="148,205,0,0" VerticalAlignment="Top" Width="68" Click="BTNDelete_Click" Height="25" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Grid.Row="1" Grid.Column="1" Opacity="0.85" Style="{DynamicResource ButtonStyleCrafting}" Foreground="#FFDCEDFF" />
+        <ComboBox x:Name="CMBProfileList" HorizontalAlignment="Left" Margin="0,175,0,0" VerticalAlignment="Top" Width="246" Height="25" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Grid.Row="1" Grid.Column="1" Opacity="0.85" BorderBrush="Black" Foreground="#FFBFDDFD" Background="#FFFF4D4D" Style="{DynamicResource ComboBoxNewStyle}" VerticalContentAlignment="Center" Padding="0" ItemContainerStyle="{DynamicResource ComboBoxItemStyle1}"/>
+        <Button x:Name="BTNSave" Content="Save" HorizontalAlignment="Left" Margin="0,205,0,0" VerticalAlignment="Top" Width="68" Click="BTNSave_Click" Height="25" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Grid.Row="1" Grid.Column="1" Opacity="0.85" Style="{DynamicResource ButtonStyleIdle}" Foreground="#FFDCEDFF" />
+        <Button x:Name="BTNLoad" Content="Load" HorizontalAlignment="Left" Margin="74,205,0,0" VerticalAlignment="Top" Width="68" Click="BTNLoad_Click" Height="25" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Grid.Row="1" Grid.Column="1" Opacity="0.85" Style="{DynamicResource ButtonStyleIdle}" Foreground="#FFDCEDFF" />
+        <Button x:Name="BTNDelete" Content="Delete" HorizontalAlignment="Left" Margin="148,205,0,0" VerticalAlignment="Top" Width="68" Click="BTNDelete_Click" Height="25" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Grid.Row="1" Grid.Column="1" Opacity="0.85" Style="{DynamicResource ButtonStyleIdle}" Foreground="#FFDCEDFF" />
 
 
         <!-- Help -->
-        <Label x:Name="LBLHelp" Content="" Grid.Column="1" Margin="221,204.6,0,0" VerticalAlignment="Top" Height="25" HorizontalAlignment="Left" Width="25" MouseEnter="LBLHelp_MouseEnter" MouseLeave="LBLHelp_MouseLeave" MouseDown="LBLHelp_MouseDown" MouseUp="LBLHelp_MouseUp" Grid.Row="1">
+        <Label x:Name="LBLHelp" Content="" Grid.Column="1" Margin="221,205,0,0" VerticalAlignment="Top" Height="25" HorizontalAlignment="Left" Width="25" MouseEnter="LBLHelp_MouseEnter" MouseLeave="LBLHelp_MouseLeave" MouseDown="LBLHelp_MouseDown" MouseUp="LBLHelp_MouseUp" Grid.Row="1" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen">
             <Label.Background>
                 <ImageBrush ImageSource="Resources/Images/Background/InfoUnhighlighted.png">
                     <ImageBrush.RelativeTransform>
@@ -677,25 +739,26 @@
                 </ImageBrush>
             </Label.Background>
         </Label>
-        
+
         <!-- Buttons -->
-        <Button x:Name="BTNCraft" Content="Start Craft" HorizontalAlignment="Left" Margin="10,10,0,0" Width="100" Click="BTNCraftInitiate" FontFamily="/RapidSynthesis;component/Resources/Fonts/#Sen" Grid.Row="2" Height="70" VerticalAlignment="Top" Style="{DynamicResource ButtonStyleCrafting}" FontSize="18" Padding="0" Foreground="#FFDCEDFF"/>
+        <Button x:Name="BTNCraft" Content="Start" HorizontalAlignment="Left" Margin="10,10,0,0" Width="100" Click="BTNCraftInitiate" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Grid.Row="2" Height="70" VerticalAlignment="Top" Style="{DynamicResource ButtonStyleIdle}" FontSize="18" Padding="0" Foreground="#FFDCEDFF"/>
 
         <!-- Status -->
-        <ProgressBar x:Name="PGBOverall" HorizontalAlignment="Left" Height="20" Margin="115,10,0,0" VerticalAlignment="Top" Width="195" Maximum="1000" Background="#FF2B2B2B" FontFamily="/RapidSynthesis;component/Resources/Fonts/#Sen" Grid.Row="2" BorderBrush="{x:Null}" Foreground="#FF00FF7A"/>
-        <ProgressBar x:Name="PGBCraft" HorizontalAlignment="Left" Height="20" Margin="115,35,0,0" VerticalAlignment="Top" Width="195" Maximum="1000" FontFamily="/RapidSynthesis;component/Resources/Fonts/#Sen" Grid.Row="2" Background="#FF2B2B2B" Foreground="#FF00B1FF" BorderBrush="{x:Null}"/>
-        <ProgressBar x:Name="PGBMacro" HorizontalAlignment="Left" Margin="115,60,0,0" Width="195" Maximum="1000" FontFamily="/RapidSynthesis;component/Resources/Fonts/#Sen" Height="20" VerticalAlignment="Top" Grid.Row="2" Background="#FF2B2B2B" Foreground="#FF7400FF" BorderBrush="{x:Null}"/>
-        <Label x:Name="LBLUpdate" Content="Label" HorizontalAlignment="Left" Margin="0,10,0,0" VerticalAlignment="Top" Background="Black" Height="25" Width="246" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Grid.Row="2" Grid.Column="1" Padding="2,1,2,0" VerticalContentAlignment="Center" Foreground="#FFDCEDFF" Opacity="0.75"/>
-        <Label x:Name="LBLCraftNumber" Content="Crafted: 99/99" Margin="0,10,10,0" VerticalAlignment="Top" Background="#7FFFFFFF" Height="20" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Grid.Row="2" Padding="0,1,5,0" VerticalContentAlignment="Center" Foreground="Black" HorizontalContentAlignment="Right" HorizontalAlignment="Right" Width="90" BorderThickness="1"/>
-        <Label x:Name="LBLUpdateFooter" Content="" HorizontalAlignment="Left" Margin="0,35,0,0" VerticalAlignment="Top" Background="Black" Height="25" Width="246" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Grid.Row="2" Grid.Column="1" Padding="2,0,2,1" Foreground="#FFDCEDFF" Opacity="0.75" VerticalContentAlignment="Center"/>
+        <ProgressBar x:Name="PGBOverall" HorizontalAlignment="Left" Height="20" Margin="115,10,0,0" VerticalAlignment="Top" Width="195" Maximum="1000" Background="#FF2B2B2B" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Grid.Row="2" BorderBrush="{x:Null}" Foreground="#FFA60732"/>
+        <ProgressBar x:Name="PGBCraft" HorizontalAlignment="Left" Height="20" Margin="115,35,0,0" VerticalAlignment="Top" Width="195" Maximum="1000" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Grid.Row="2" Background="#FF2B2B2B" Foreground="#FF00B1FF" BorderBrush="{x:Null}"/>
+        <ProgressBar x:Name="PGBMacro" HorizontalAlignment="Left" Margin="115,60,0,0" Width="195" Maximum="1000" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Height="20" VerticalAlignment="Top" Grid.Row="2" Background="#FF2B2B2B" Foreground="#FF7400FF" BorderBrush="{x:Null}"/>
+        <Label x:Name="LBLBackdrop" Content="" HorizontalAlignment="Left" Margin="0,10.4,0,0" VerticalAlignment="Top" Background="Black" Height="69" Width="246" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Grid.Row="2" Grid.Column="1" Padding="2,0" VerticalContentAlignment="Center" Foreground="#FFDCEDFF" Opacity="0.75"/>
+        <Label x:Name="LBLUpdate" Content="" HorizontalAlignment="Left" Margin="0,10,0,0" VerticalAlignment="Top" Background="Black" Height="20" Width="246" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Grid.Row="2" Grid.Column="1" Padding="2,0" VerticalContentAlignment="Center" Foreground="#FFDCEDFF" Opacity="0.75"/>
+        <Label x:Name="LBLCraftNumber" Content="Crafted: 99/99" Margin="0,10,10,0" VerticalAlignment="Top" Background="#7FFFFFFF" Height="20" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Grid.Row="2" Padding="0,1,5,0" VerticalContentAlignment="Center" Foreground="Black" HorizontalContentAlignment="Right" HorizontalAlignment="Right" Width="90" BorderThickness="1" Visibility="Hidden"/>
+        <Label x:Name="LBLUpdateFooter" Content="" HorizontalAlignment="Left" Margin="0,35,0,0" VerticalAlignment="Top" Background="Black" Height="20" Width="246" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Grid.Row="2" Grid.Column="1" Padding="2,0" Foreground="#FFDCEDFF" Opacity="0.75" VerticalContentAlignment="Center"/>
         <Label x:Name="LabelTitle" Content="AutoSynthesis" Margin="10,10,10,0" VerticalAlignment="Top" Height="55" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Padding="0" VerticalContentAlignment="Center" FontSize="32" FontWeight="Bold" Foreground="#FFDCEDFF" Grid.ColumnSpan="2" HorizontalContentAlignment="Center">
             <Label.Effect>
                 <DropShadowEffect ShadowDepth="1"/>
             </Label.Effect>
         </Label>
-        <Label x:Name="LBLTimerMacro" Content="Macro 3: 0:00" Margin="0,60,10,0" Grid.Row="2" VerticalAlignment="Top" Height="20" Padding="0,1,5,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" BorderThickness="1" HorizontalAlignment="Right" Width="90" Background="#7FFFFFFF"/>
-        <Label x:Name="LBLTimerCraft" Content="Craft 999: 0:00" Margin="0,35,10,0" Grid.Row="2" VerticalAlignment="Top" Height="20" Padding="0,1,5,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" BorderThickness="1" HorizontalAlignment="Right" Width="90" Background="#7FFFFFFF"/>
-        <Label x:Name="LBLFoodSyrupTimer" Content="Next Food: 00:00             Next Syrup: 00:00" HorizontalAlignment="Left" Margin="0,60,0,0" VerticalAlignment="Top" Background="Black" Height="20" Width="246" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Grid.Row="2" Grid.Column="1" Padding="2,0" VerticalContentAlignment="Center" Foreground="#FFDCEDFF" Opacity="0.75"/>
-        
+        <Label x:Name="LBLTimerMacro" Content="Macro 3: 0:00" Margin="0,60,10,0" Grid.Row="2" VerticalAlignment="Top" Height="20" Padding="0,1,5,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" BorderThickness="1" HorizontalAlignment="Right" Width="90" Background="#7FFFFFFF" Visibility="Hidden"/>
+        <Label x:Name="LBLTimerCraft" Content="Craft 999: 0:00" Margin="0,35,10,0" Grid.Row="2" VerticalAlignment="Top" Height="20" Padding="0,1,5,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" BorderThickness="1" HorizontalAlignment="Right" Width="90" Background="#7FFFFFFF" Visibility="Hidden"/>
+        <Label x:Name="LBLFoodSyrupTimer" Content="" HorizontalAlignment="Left" Margin="0,60,0,0" VerticalAlignment="Top" Background="Black" Height="20" Width="246" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Grid.Row="2" Grid.Column="1" Padding="2,0" VerticalContentAlignment="Center" Foreground="#FFDCEDFF" Opacity="0.75"/>
+
     </Grid>
 </Window>

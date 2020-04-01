@@ -17,7 +17,7 @@ namespace RapidSynthesis
     {
         #region Properties and Consts
         private static Dictionary<string, Profile> Profiles { get; set; }
-        private static string Directory { get; set; }
+        public static string Directory { get; set; }
         public static string DefaultProfile { get; set; }
 
         private const string DEFAULT = "DFLT:";
@@ -67,10 +67,17 @@ namespace RapidSynthesis
                 {
                     var newLine = line.Replace(PROFILE, "");
                     var splits = newLine.Split(new string[] { ":::" }, StringSplitOptions.None);
-                    var name = splits[0];
-                    var profileString = splits[1];
-                    var newProfile = new Profile(profileString);
-                    Profiles.Add(name, newProfile);
+                    if (splits.Length > 0)
+                    {
+                        var name = splits[0];
+                        string profileString;
+                        if (splits.Length > 1)
+                            profileString = splits[1];
+                        else
+                            profileString = "";
+                        var newProfile = new Profile(profileString);
+                        Profiles.Add(name, newProfile);
+                    }
                 }
             }
         }
@@ -128,7 +135,7 @@ namespace RapidSynthesis
         #endregion
 
         #region File Save and Read Methods
-        private static void WriteToFile(string content) 
+        public static void WriteToFile(string content) 
         {
             File.WriteAllText(Directory, content);
         }

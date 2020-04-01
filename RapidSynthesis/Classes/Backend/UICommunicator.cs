@@ -30,6 +30,8 @@ namespace RapidSynthesis
         public static ProgressBar ProgressCraft { get; set; }
         public static ProgressBar ProgressMacro { get; set; }
 
+        public static Action<Exception> ErrorMessageHandler { get; set; }
+
         private static double ProgressCraftTimeDuration { get; set; }
         private static DateTime ProgressCraftTime { get; set; }
         private static double ProgressMacroTimeDuration { get; set; }
@@ -51,6 +53,9 @@ namespace RapidSynthesis
 
         private static CancellationTokenSource OverallCancellationToken { get; set; }
         private static CancellationTokenSource TimedCancellationToken { get; set; }
+
+        private static string PreviousUpdate2Message { get; set; }
+        private static int PreviousUpdate2Count { get; set; }
         #endregion
 
         #region Setup Methods
@@ -76,6 +81,7 @@ namespace RapidSynthesis
             MacroNumber = 0;
             FoodEnabled = false;
             SyrupEnabled = false;
+            PreviousUpdate2Message = "";
         }
         #endregion
 
@@ -147,6 +153,16 @@ namespace RapidSynthesis
 
         public static void UpdateStatus2(string text)
         {
+            var match = text == PreviousUpdate2Message;
+            PreviousUpdate2Message = text;
+            if (match)
+            {
+                PreviousUpdate2Count++;
+                text += "(" + PreviousUpdate2Count + ")";
+            } else
+            {
+                PreviousUpdate2Count = 1;
+            }
             Action action = () => { UpdateLabel2.Content = text; };
             DispatchActionLabel(UpdateLabel2, action);
         }
@@ -182,25 +198,32 @@ namespace RapidSynthesis
 
             Action action = () =>
             {
-                SetProgressbarLabelVisible();
-
-                while (!token.IsCancellationRequested)
+                try
                 {
-                    // Update Craft Timer
-                    UpdateTimerProgressBar(ProgressCraft, ProgressCraftTime, ProgressCraftTimeDuration);
-                    UpdateCraftTimerText();
+                    SetProgressbarLabelVisible();
 
-                    // Update Macro Timer
-                    UpdateTimerProgressBar(ProgressMacro, ProgressMacroTime, ProgressMacroTimeDuration);
-                    UpdateMacroTimerText();
+                    while (!token.IsCancellationRequested)
+                    {
+                        // Update Craft Timer
+                        UpdateTimerProgressBar(ProgressCraft, ProgressCraftTime, ProgressCraftTimeDuration);
+                        UpdateCraftTimerText();
 
-                    // Update Food Label
-                    UpdateFoodSyrupLabel();
+                        // Update Macro Timer
+                        UpdateTimerProgressBar(ProgressMacro, ProgressMacroTime, ProgressMacroTimeDuration);
+                        UpdateMacroTimerText();
 
-                    Thread.Sleep(TICK_TIME);
+                        // Update Food Label
+                        UpdateFoodSyrupLabel();
+
+                        Thread.Sleep(TICK_TIME);
+                    }
+
+                    SetProgressbarLabelVisible(false);
                 }
-
-                SetProgressbarLabelVisible(false);
+                catch (Exception e)
+                {
+                    ErrorMessageHandler(e);
+                }
             };
             Task.Run(action, token);
         }
@@ -303,18 +326,6 @@ namespace RapidSynthesis
 
         }
 
-        private static void SetLabelVisibility(Visibility setting)
-        {
-
-            Action action = () =>
-            {
-                CraftsCompletedLabel.Visibility = setting;
-                MacroTimerLabel.Visibility = setting;
-                CraftTimerLabel.Visibility = setting;
-            };
-            MacroTimerLabel.Dispatcher.Invoke(action);
-        }
-
         private static void UpdateTimerProgressBar(ProgressBar prog, DateTime time, double duration)
         {
             // Update Progress Bar
@@ -341,7 +352,6 @@ namespace RapidSynthesis
             return DateTime.Compare(target, NullDateTime) == 0;
         }
 
-
         private static void SmoothProgressUpdate(ProgressBar prog, double targetValue)
         {
             // Create cancellation token
@@ -350,18 +360,26 @@ namespace RapidSynthesis
 
             Action action = () =>
             {
-                var currentValue = GetProgressBarValue(prog);
-
-                // Per tick, get value closer to target
-                while (currentValue < targetValue)
+                try
                 {
-                    if (token.IsCancellationRequested)
-                        break;
-                    var newValue = (targetValue - currentValue) / 4 + currentValue;
-                    UpdateProgressBar(prog, newValue);
-                    Thread.Sleep(TICK_TIME);
-                    currentValue = GetProgressBarValue(prog);
+                    var currentValue = GetProgressBarValue(prog);
+
+                    // Per tick, get value closer to target
+                    while (currentValue < targetValue)
+                    {
+                        if (token.IsCancellationRequested)
+                            break;
+                        var newValue = (targetValue - currentValue) / 4 + currentValue;
+                        UpdateProgressBar(prog, newValue);
+                        Thread.Sleep(TICK_TIME);
+                        currentValue = GetProgressBarValue(prog);
+                    }
                 }
+                catch (Exception e)
+                {
+                    ErrorMessageHandler(e);
+                }
+
             };
             Task.Run(action, token);
         }

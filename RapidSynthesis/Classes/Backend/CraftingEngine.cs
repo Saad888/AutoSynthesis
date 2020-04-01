@@ -17,10 +17,9 @@ namespace RapidSynthesis
         public static DateTime NextSyrupUse { get; set; }
         public static CancellationTokenSource Cts { get; set; }
         private static Action EndCraftCallback { get; set; }
+        public static Action<Exception> ErrorMessageHandler { get; set; }
 
         private const int CONSUMABLE_MARGIN_IN_MINUTES = 2;
-        private const int STANDARD_FOOD_TIME = 30;
-        private const int EXTENDED_FOOD_TIME = 40;
         private const int STANDARD_SYRUP_TIME = 15;
         private const int STANDARD_MENU_DELAY = 1500;
         private const int STANDARD_ANIMATION_DELAY = 2000;
@@ -30,16 +29,18 @@ namespace RapidSynthesis
 
         #region System Methods
         public static void InitiateCraftingEngine(Dictionary<HKType, Hotkey> hotKeyDictionary,
-            SettingsContainer userSettings, Action endCraftCallback)
+            SettingsContainer userSettings, Action endCraftCallback, Action<Exception> errorMessageHandler)
         {
             // Ensure craft is not already happening
             if (CraftingActive)
             {
                 throw new DuplicateCraftingAttemptedException();
             }
+            Logger.Write("Preparing Crafting");
             CraftingActive = true;
 
             EndCraftCallback = endCraftCallback;
+            ErrorMessageHandler = errorMessageHandler;
 
             // Load process or throw error if process does not exist
             ProcessManager.LoadProcess();
@@ -95,6 +96,7 @@ namespace RapidSynthesis
             {
                 // Set crafting parameters
                 UICommunicator.ResetValues();
+                UICommunicator.ErrorMessageHandler = ErrorMessageHandler;
                 UICommunicator.UpdateStatus("Setting up for Crafting...");
                 UICommunicator.StartTimedProgressBarUpdates();
                 UICommunicator.UpdateCompletedUIInfo(0, Settings.CraftCount);
@@ -112,7 +114,7 @@ namespace RapidSynthesis
                     UICommunicator.UpdateSyrup(NextSyrupUse);
                 }
 
-
+                Logger.Write("Initiating Crafting");
 
                 // If crafts remaining was 0, loop infinitley
                 // If not, craft until quota is met
@@ -150,14 +152,11 @@ namespace RapidSynthesis
                     Break(STANDARD_ANIMATION_DELAY);
 
                     craftCount += 1;
-
                 }
             } 
             catch (Exception e) when (!(e is CraftCancelRequest))
             {
-                Console.WriteLine("ERROR");
-                Console.WriteLine(e.Message);
-                throw e;
+                ErrorMessageHandler(e);
             } 
             finally
             {
@@ -177,7 +176,11 @@ namespace RapidSynthesis
         private static void CheckCancelRequest()
         {
             if (Cts.IsCancellationRequested)
+            {
+                Logger.Write("Crafting Cancelled");
                 throw new CraftCancelRequest();
+            }
+
         }
         #endregion
 
@@ -186,7 +189,7 @@ namespace RapidSynthesis
         {
             if (hotkey == null)
                 return;
-
+            Logger.Write("Sending Macro " + macroNumber);
             // UI message: MACRO NUMBER macroNumber
             UICommunicator.UpdateMacroUIInfo(macroNumber, hotkey.TimerInMiliseconds);
             SendInput(hotkey);
@@ -196,6 +199,8 @@ namespace RapidSynthesis
         {
             if (Settings.CollectableCraft == false)
                 return;
+
+            Logger.Write("Accepting Collectable Craft");
 
             UICommunicator.UpdateStatus("Accepting Collectable Craft...");
             Break(STANDARD_MENU_DELAY);
@@ -215,6 +220,7 @@ namespace RapidSynthesis
             if (!useFood && !useSyrup)
                 return;
             UICommunicator.UpdateStatus("Refreshing Consumables...");
+            Logger.Write("Refreshing Consumables");
 
             // enter a craft and leave it out
             Break(500);
@@ -228,6 +234,7 @@ namespace RapidSynthesis
             if (useFood)
             {
                 UICommunicator.UpdateStatus("Using Food...");
+                Logger.Write("Using Food");
                 SendInput(HotkeySet[HKType.Food]);
                 NextFoodUse = CalculateNextConsumableUse(Settings.FoodDuration);
                 UICommunicator.UpdateFood(NextFoodUse);
@@ -235,6 +242,7 @@ namespace RapidSynthesis
             if (useSyrup)
             {
                 UICommunicator.UpdateStatus("Using Syrup...");
+                Logger.Write("Using Syrup");
                 SendInput(HotkeySet[HKType.Syrup]);
                 NextSyrupUse = CalculateNextConsumableUse(STANDARD_SYRUP_TIME);
                 UICommunicator.UpdateSyrup(NextSyrupUse);
@@ -246,6 +254,7 @@ namespace RapidSynthesis
             if ((Settings.CraftCount == 0) || (craftCount < Settings.CraftCount))
             {
                 UICommunicator.UpdateStatus("Preparing Next Craft...");
+                Logger.Write("Resetting Craft Cycle");
                 SendInput(HotkeySet[HKType.Confirm], 3);
             }
         }
@@ -273,6 +282,7 @@ namespace RapidSynthesis
         #region Timing Methods
         private static void Break(int time)
         {
+            UICommunicator.UpdateStatus2("Waiting...");
             SleepThread(time);
         }
 
@@ -283,12 +293,14 @@ namespace RapidSynthesis
                 UICommunicator.UpdateStatus2("Sending \"" + hotkey.ToString() + "\"");
                 KeyInputEngine.SendKeysToGame(hotkey.KeyCode, hotkey.ModKeyCodes);
                 SleepThread(hotkey.TimerInMiliseconds);
+
             }
         }
 
         private static void SleepThread(int timeInMilliseconds)
         {
             var targetTimeEnd = DateTime.Now.AddMilliseconds(timeInMilliseconds);
+            Logger.Write("Sleeping Thread for " + timeInMilliseconds);
             while (DateTime.Now <= targetTimeEnd)
             {
                 CheckCancelRequest();
