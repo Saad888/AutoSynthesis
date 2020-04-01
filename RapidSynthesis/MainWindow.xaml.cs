@@ -18,25 +18,15 @@ using RapidSynthesis.Windows;
 
 namespace RapidSynthesis
 {
-    // keycodes being eaten
-    // https://stackoverflow.com/questions/1458748/wpf-onkeydown-not-being-called-for-space-key-in-control-derived-from-wpf-text
-    // brush colors:
-    // https://stackoverflow.com/questions/979876/set-background-color-of-wpf-textbox-in-c-sharp-code
-
     // GLITCHES:
     // Trying to start the craft when the game isnt running means the thread isnt ending, meaning it crashes even when the game is launched after
 
     // TO DO: High priority
-    // Make error messages more descriptive
-    // Set process to detect ffxiv dx9 as well
     // Force application to detect that its launched in admin mode
 
 
     // TO DO: (Low priority)
-    // See ProcessManager for ToDo's (?)
     // Create proper readme
-    // Implement a proper logger
-    // Design a logo
     // Sign EXE
     // Setup installer
 
@@ -305,6 +295,8 @@ namespace RapidSynthesis
                         hotkeys.Add(HKType.Cancel, null);
 
                     // Settings
+                    if ((bool)CHBCraftCount.IsChecked && TimerContainers[TXBCraftCount].Timer == 0)
+                        throw new InvalidUserParametersException("Craft Count must be greater than 0");
                     var craftCount = (bool)CHBCraftCount.IsChecked ? TimerContainers[TXBCraftCount].Timer : 0;
                     settings = new SettingsContainer(
                         craftCount,
@@ -333,7 +325,7 @@ namespace RapidSynthesis
                 }
                 catch (ProcessMissingException)
                 {
-                    MessageBox.Show("FFXIV Was Not Detected! Please ensure the game is running.");
+                    MessageBox.Show("FFXIV Was Not Detected. Please ensure the game is running.");
                     SetCraftingStatus(SystemStates.IDLE);
                     return;
                 }
@@ -362,11 +354,11 @@ namespace RapidSynthesis
         {
             if (hotkeyContainer.LastPressedKey == Key.None)
             {
-                throw new InvalidUserParametersException(source + " Hotkey not set correctly");
+                throw new InvalidUserParametersException(source + " Hotkey not set correctly.");
             }
             if (timeInput != null && timeInput.Timer == 0)
             {
-                throw new InvalidUserParametersException(source + " Timer is set to 0");
+                throw new InvalidUserParametersException(source + " Timer must be higher than 0.");
             }
         }
         #endregion

@@ -15,6 +15,7 @@ namespace RapidSynthesis
     {
         #region private fields and properties
         private static readonly string finalFantasyXIVProcessName = "ffxiv_dx11";
+        private static readonly string finalFantasyXIVProcessNameDX9 = "ffxiv";
         private static IntPtr GameProcessPtr { get; set; }
         #endregion
 
@@ -25,7 +26,7 @@ namespace RapidSynthesis
 
         public static Process GameProcess;
 
-        public static void LoadProcess()
+        public static void LoadProcess(bool dx9 = false)
         {  
             // find all processes matching either FFXIV or notepad, depending on debugging enabled
             Process[] foundProcesses;
@@ -33,8 +34,11 @@ namespace RapidSynthesis
             foundProcesses = Process.GetProcessesByName(finalFantasyXIVProcessName);
             GameProcessPtr = IntPtr.Zero;
 
-            if (foundProcesses.Count() == 0)
+            if (foundProcesses.Count() == 0 && !dx9)
+                LoadProcess(true);
+            else if (foundProcesses.Count() == 0 && dx9)
                 throw new ProcessMissingException();
+
             GameProcess = foundProcesses.First();
         }
 

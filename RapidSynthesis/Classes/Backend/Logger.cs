@@ -39,6 +39,7 @@ namespace RapidSynthesis
             output += FlatLine;
             output += e.Message + Environment.NewLine;
             output += e.StackTrace + Environment.NewLine;
+            Console.WriteLine(output);
             output += FlatLine;
             output += currentProfile + Environment.NewLine;
             output += FlatLine;

@@ -82,6 +82,10 @@ namespace RapidSynthesis
             FoodEnabled = false;
             SyrupEnabled = false;
             PreviousUpdate2Message = "";
+            ProgressCraftTime = new DateTime();
+            ProgressCraftTimeDuration = 0;
+            ProgressMacroTime = new DateTime();
+            ProgressMacroTimeDuration = 0;
         }
         #endregion
 
@@ -172,10 +176,12 @@ namespace RapidSynthesis
             TimedCancellationToken.Cancel();
             if (OverallCancellationToken != null)
                 OverallCancellationToken.Cancel();
+            UpdateStatus2("");
             DropProgressToZero();
             UpdateProgressBar(ProgressOverall, 0);
             UpdateProgressBar(ProgressCraft, 0);
             UpdateProgressBar(ProgressMacro, 0);
+            FoodSyrupLabel.Dispatcher.Invoke(() => { FoodSyrupLabel.Content = ""; });
         }
         #endregion
 

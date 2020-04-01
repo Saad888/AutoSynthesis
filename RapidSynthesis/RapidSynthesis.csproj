@@ -144,5 +144,11 @@
   <ItemGroup>
     <Resource Include="Resources\Images\Background\InfoPressed.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icon\Icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icon\Icon - Copy.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

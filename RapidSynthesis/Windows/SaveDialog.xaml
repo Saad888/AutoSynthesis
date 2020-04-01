@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RapidSynthesis.Windows"
         mc:Ignorable="d"
-        Title="Save Profile" Height="83.4" Width="270" ResizeMode="NoResize" ShowInTaskbar="False" WindowStyle="ToolWindow" WindowStartupLocation="CenterOwner" Loaded="Window_Loaded" Background="#FF221632">
+        Title="Save Profile" Height="83.4" Width="270" ResizeMode="NoResize" ShowInTaskbar="False" WindowStyle="ToolWindow" WindowStartupLocation="CenterOwner" Loaded="Window_Loaded" Background="#FF221632" Icon="/AutoSynthesis;component/Resources/Icon/Icon.png">
     <Window.Resources>
         <Style x:Key="FocusVisual">
             <Setter Property="Control.Template">

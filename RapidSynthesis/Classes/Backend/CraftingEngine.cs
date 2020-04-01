@@ -24,7 +24,8 @@ namespace RapidSynthesis
         private const int STANDARD_MENU_DELAY = 1500;
         private const int STANDARD_ANIMATION_DELAY = 2000;
         private const int STANDARD_TICK_TIME = 50;
-        private static int craftCount = 0;
+        private static int CraftCount = 0;
+        private static int TotalCount = 0;
         #endregion
 
         #region System Methods
@@ -36,39 +37,32 @@ namespace RapidSynthesis
             {
                 throw new DuplicateCraftingAttemptedException();
             }
-            Logger.Write("Preparing Crafting");
-            CraftingActive = true;
-
-            EndCraftCallback = endCraftCallback;
-            ErrorMessageHandler = errorMessageHandler;
-
-            // Load process or throw error if process does not exist
-            ProcessManager.LoadProcess();
-
-            // Verify hotkeys are built correctly
-            if (hotKeyDictionary[HKType.Macro1] == null)
+            try
             {
-                throw new InvalidUserParametersException("Macro 1 is Null");
-            }
-            if (hotKeyDictionary[HKType.Confirm] == null)
-            {
-                throw new InvalidUserParametersException("Confirm is Null");
-            }
-            if ((hotKeyDictionary[HKType.Food] != null ||
-                hotKeyDictionary[HKType.Syrup] != null) &&
-                hotKeyDictionary[HKType.Cancel] == null)
-            {
-                throw new InvalidUserParametersException("Cancel is Null");
-            }
 
-            // Store values
-            HotkeySet = hotKeyDictionary;
-            Settings = userSettings;
+                Logger.Write("Preparing Crafting");
+                CraftingActive = true;
 
-            // Run crafting system on a new thread
-            Cts = new CancellationTokenSource();
-            var token = Cts.Token;
-            Task.Run(() => RunCraftingEngine(token), token);
+                EndCraftCallback = endCraftCallback;
+                ErrorMessageHandler = errorMessageHandler;
+
+                // Load process or throw error if process does not exist
+                ProcessManager.LoadProcess();
+
+                // Store values
+                HotkeySet = hotKeyDictionary;
+                Settings = userSettings;
+
+                // Run crafting system on a new thread
+                Cts = new CancellationTokenSource();
+                var token = Cts.Token;
+                Task.Run(() => RunCraftingEngine(token), token);
+            }
+            catch (Exception e)
+            {
+                CraftingActive = false;
+                throw e;
+            }
         }
 
         public static void CancelCrafting()
@@ -102,7 +96,8 @@ namespace RapidSynthesis
                 UICommunicator.UpdateCompletedUIInfo(0, Settings.CraftCount);
 
 
-                craftCount = 1;
+                CraftCount = 1;
+                TotalCount = 0;
                 if (HotkeySet[HKType.Food] != null)
                 {
                     NextFoodUse = CalculateNextConsumableUse(Settings.StartingFoodTime);
@@ -118,10 +113,10 @@ namespace RapidSynthesis
 
                 // If crafts remaining was 0, loop infinitley
                 // If not, craft until quota is met
-                while ((Settings.CraftCount == 0) || (craftCount <= Settings.CraftCount))
+                while ((Settings.CraftCount == 0) || (CraftCount <= Settings.CraftCount))
                 {
                     // UI MESSAGE: Set timer for overall craft
-                    UICommunicator.UpdateCraftUIInfo(craftCount, Settings.CraftCount);
+                    UICommunicator.UpdateCraftUIInfo(CraftCount, Settings.CraftCount);
 
                     // Begin Craft Timer:
                     RunCraftProgressBar();
@@ -136,7 +131,8 @@ namespace RapidSynthesis
                     SendMacroInput(HotkeySet[HKType.Macro3], 3);
 
                     // Update UI Message
-                    UICommunicator.UpdateCompletedUIInfo(craftCount, Settings.CraftCount);
+                    TotalCount = CraftCount;
+                    UICommunicator.UpdateCompletedUIInfo(TotalCount, Settings.CraftCount);
 
                     // Collectable Menu Option
                     SendCollectableConfirmationInput();
@@ -151,7 +147,7 @@ namespace RapidSynthesis
                     PrepareNextCraftInput();
                     Break(STANDARD_ANIMATION_DELAY);
 
-                    craftCount += 1;
+                    CraftCount += 1;
                 }
             } 
             catch (Exception e) when (!(e is CraftCancelRequest))
@@ -167,8 +163,11 @@ namespace RapidSynthesis
         private static void EndCraftingProcess()
         { 
             // ALL CLEANUP
-            UICommunicator.UpdateStatus("Craft Finished!");
             UICommunicator.EndAllProgress();
+            UICommunicator.UpdateStatus("Crafting Finished!");
+            var craftCompleted = "Completed ";
+            craftCompleted += Settings.CraftCount > 0 ? $"{TotalCount}/{Settings.CraftCount}" : $"{TotalCount}";
+            UICommunicator.UpdateStatus2(craftCompleted);
             CraftingActive = false;
             EndCraftCallback.Invoke();
         }
@@ -210,7 +209,7 @@ namespace RapidSynthesis
 
         private static void SendFoodAndSyrupInput()
         {
-            if ((Settings.CraftCount != 0) && (craftCount < Settings.CraftCount))
+            if ((Settings.CraftCount != 0) && (CraftCount < Settings.CraftCount))
                 return;
                 // check if timers is passed
             bool useFood = (HotkeySet[HKType.Food] != null && DateTime.Compare(NextFoodUse, DateTime.Now) <= 0);
@@ -251,7 +250,7 @@ namespace RapidSynthesis
 
         private static void PrepareNextCraftInput()
         {
-            if ((Settings.CraftCount == 0) || (craftCount < Settings.CraftCount))
+            if ((Settings.CraftCount == 0) || (CraftCount < Settings.CraftCount))
             {
                 UICommunicator.UpdateStatus("Preparing Next Craft...");
                 Logger.Write("Resetting Craft Cycle");
