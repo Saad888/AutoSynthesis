@@ -1,10 +1,12 @@
 # **AutoSynthesis**
 ---
-Auto-crafter for Final Fantasy XIV. This application will repeat a craft by sending blind inputs into the game. The app will hit up to three in-game macros, accept collectable crafts (if enabled), reset food and/or syrup (if enabled), and begin the next craft. Users can also set exactly how many items they want the app to craft, or they can let is run indefinitley. The app also runs in the background without requiring window focus on either the app or the game. 
+Auto-crafter for Final Fantasy XIV. This application will automatically repeat crafting the same item by sending blind inputs into the game. The app can hit up to three in-game macros, accept collectable crafts (if enabled), reset food and/or syrup (if enabled), and will automatically start the next craft. Users can also set exactly how many items they want the app to craft, or they can let is run indefinitley. The app also runs in the background without requiring window focus on either the app or the game. 
 
-This application runs by blindly sending inputs into the game. It does not attach to the process, read any network data, or have any direct interactions with the game itself, it will simply send keystrokes into the game. As such, it relies on the user setting up the craft correctly and ensuring all inputs on the app are set correctly. If the cycle desyncs at any point because of an event in the game that would interupting crafting (e.g. running out of material or gear breaking), the app will not be aware and will continue to attempt crafting until the user interjects. 
 
 ![AutoSynthesis Overview](https://github.com/Saad888/AutoSynthesis/blob/master/RapidSynthesis/Resources/ReadMe%20Images/Full%20UI.PNG)
+
+
+This application runs by blindly sending inputs into the game. It does not attach to the process, read any network data, or have any direct interactions with the game itself, it will simply send keystrokes into the game. As such, it relies on the user setting up the craft correctly and ensuring all inputs on the app are set correctly. If the cycle desyncs at any point because of an event in the game (e.g. running out of material), the app will not be aware and will continue to attempt crafting until the user interjects. 
 
 ---
 
