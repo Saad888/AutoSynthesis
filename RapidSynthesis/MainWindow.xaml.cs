@@ -21,13 +21,9 @@ namespace RapidSynthesis
     // GLITCHES:
     // Trying to start the craft when the game isnt running means the thread isnt ending, meaning it crashes even when the game is launched after
 
-    // TO DO: High priority
-    // Force application to detect that its launched in admin mode
-
 
     // TO DO: (Low priority)
     // Create proper readme
-    // Sign EXE
     // Setup installer
 
     /// <summary>

@@ -209,7 +209,7 @@ namespace RapidSynthesis
 
         private static void SendFoodAndSyrupInput()
         {
-            if ((Settings.CraftCount != 0) && (CraftCount < Settings.CraftCount))
+            if ((Settings.CraftCount != 0) && (CraftCount >= Settings.CraftCount))
                 return;
                 // check if timers is passed
             bool useFood = (HotkeySet[HKType.Food] != null && DateTime.Compare(NextFoodUse, DateTime.Now) <= 0);
