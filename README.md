@@ -10,16 +10,16 @@ This application runs by blindly sending inputs into the game. It does not attac
 ---
 
 ## Table of Contents:
-2. Using the App
+1. Using the App
    - Setting Up the Game
    - Macros
    - Consumables
    - Settings
    - Profiles
    - Starting Crafting
-5. Reading the Crafting Window
-6. Installation and Setup
-7. F.A.Q.
+2. Reading the Crafting Window
+3. Installation and Setup
+4. F.A.Q.
 
 ---
 
