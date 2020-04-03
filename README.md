@@ -26,7 +26,9 @@ This application runs by blindly sending inputs into the game. It does not attac
 ## 1. Using the App
 
 ### Setting Up the Game
-Before starting the crafting from the app, the game needs to be set up. Autosynthesis begins assuming that a craft has been initiated. In other words, the first action AutoSynthesis does is the first Macro. Before hitting the "Start Crafting" button, make sure your chracter is crouched down ready to craft. AutoSynthesis also requires key inputs, so any macros, food/syrup, etc. must have keyboard shortcuts associated with them 
+Before starting the crafting from the app, the game needs to be in the right state. Before hitting the "Start Crafting" button, make sure your chracter is crouched down ready to craft. The first action that the app will do is the first Macro, so ensure that your character is currently in the crafting state and not in the crafting window. 
+
+AutoSynthesis also requires key inputs, so any macros, food/syrup, etc. must have keybinds associated with them registered properly.
 
 ### Macros  
 ![Macros](https://github.com/Saad888/AutoSynthesis/blob/master/RapidSynthesis/Resources/ReadMe%20Images/Macros.png)  
