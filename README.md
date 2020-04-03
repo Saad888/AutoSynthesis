@@ -62,7 +62,7 @@ Here you can save, load, and delete profiles for your settings, to make it easie
 ### Starting and Stopping Crafting
 Once all your settings have been set correctly, *and your character in game is crouched ready to craft*, press the "Start" button to begin.      
 
-To stop crafting, simply press the button once again. Pressing the button once will cause the process to finish the existing craft before terminating. Pressing the button a second time will immediatly cancel the process. 
+To stop crafting, simply press the button once again. Pressing the button once will cause the process to finish the current craft before stoping. Pressing the button a second time will immediatly cancel the process. 
 
 ---
 ## 3. Reading the Crafting Window
