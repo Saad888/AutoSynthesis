@@ -26,23 +26,24 @@ This application runs by blindly sending inputs into the game. It does not attac
 ## 1. Using the App
 
 ### Setting Up the Game
-Before starting the crafting from the app, the game needs to be in the right state. Before hitting the "Start Crafting" button, make sure your chracter is crouched down ready to craft. The first action that the app will do is the first Macro, so ensure that your character is currently in the crafting state and not in the crafting window. 
+Before starting the crafting from the app, the game needs to be in the right state.  The first action that the app will do is the first Macro, so before hitting the "Start Crafting" button, make sure your character is crouched down ready to craft and not in the crafting window, like so:
+[Image
 
 AutoSynthesis also requires key inputs, so any macros, food/syrup, etc. must have keybinds associated with them registered properly.
 
 ### Macros  
 ![Macros](https://github.com/Saad888/AutoSynthesis/blob/master/RapidSynthesis/Resources/ReadMe%20Images/Macros.png)  
 You can program the app to hit up to three macros. You *must* enter a keybind and timer for at least one macro.  
-1. Registering a keybind: Either **Double Click** or click on and hit **Enter**/**Space** when the keybind textboxes are highlighted. Once the textbox turns red, press any key (along with any modifiers, like Shift, Control, or Alt) to register the keybinds associated with those Macros in game.   
+1. Registering a keybind: Either **Double Click**, or click once and hit **Enter**/**Space** on the large textboxes. Once the textbox turns red, press any key (along with any modifiers, like Shift, Control, or Alt) to register the keybinds associated with those Macros in game.   
 2. Setting the timer: Either click on or tab over to the timer textboxes next to the keybind selections and enter a the duration of the macro in **seconds**.   
 3. If you wish to use *two* or *three* macros, you must also enable them by clicking on the checkboxes next to the labels.  
 
 ### Consumables
 ![Consumables](https://github.com/Saad888/AutoSynthesis/blob/master/RapidSynthesis/Resources/ReadMe%20Images/Consumables.png)  
-You can *optionally* enable these settings to refresh your consumables as they run out. For the sake of safety, consuamables will be flagged to refresh within two minutes of expiring. They will be refreshed between crafts.   
+You can enable these refresh your consumables as they run out. They will be refreshed between crafts.   
 NOTE: Activating either of these means you will need to register a keybind for "Cancel", see the Settings section below.   
-1. If using either food or syrups, click on the checkbox to enable them during the craft. 
-1. Registering a keybind: Either **Double Click** on the textbox or click on the textbox and hit **Enter**/**Space**. Once the textbox turns red, press any key (along with any modifiers, like Shift, Control, or Alt) to register the keybinds associated with the consumable in game.
+1. If using either food or syrups, click on the checkbox to enable. 
+2. Registering a keybind: Either **Double Click** on the textbox or click on the textbox and hit **Enter**/**Space**. Once the textbox turns red, press any key (along with any modifiers, like Shift, Control, or Alt) to register the keybinds associated with the consumable in game.
 2. Setting the timer: Either click on or tab over to the timer textboxes next to the keybind selections and enter the remaining duration of the consumable in **minutes**.
 3. Because food durations can vary based on FC and Squadron buffs, select the duration that food will last when it is refreshed.
 
