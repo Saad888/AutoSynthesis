@@ -411,6 +411,7 @@
         <SolidColorBrush x:Key="Button.Crafting.Static.Border" Color="#DCEDFF"/>
         <SolidColorBrush x:Key="Button.Crafting.MouseOver.Background" Color="#991436"/>
         <SolidColorBrush x:Key="Button.Crafting.MouseOver.Border" Color="#DCEDFF"/>
+        <SolidColorBrush x:Key="Button.Crafting.Focused.Border" Color="#a2cefc"/>
         <SolidColorBrush x:Key="Button.Crafting.Pressed.Background" Color="#380815"/>
         <SolidColorBrush x:Key="Button.Crafting.Pressed.Border" Color="#DCEDFF"/>
         <SolidColorBrush x:Key="Button.Crafting.Disabled.Background" Color="#FFF4F4F4"/>
@@ -434,6 +435,9 @@
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsDefaulted" Value="true">
                                 <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                            </Trigger>
+                            <Trigger Property="IsFocused" Value="true">
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Crafting.Focused.Border}"/>
                             </Trigger>
                             <Trigger Property="IsMouseOver" Value="true">
                                 <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Crafting.MouseOver.Background}"/>
@@ -512,6 +516,7 @@
         <SolidColorBrush x:Key="Button.Static.Border" Color="#DCEDFF"/>
         <SolidColorBrush x:Key="Button.MouseOver.Background" Color="#2f2842"/>
         <SolidColorBrush x:Key="Button.MouseOver.Border" Color="#DCEDFF"/>
+        <SolidColorBrush x:Key="Button.Focus.Border" Color="#a2cefc"/>
         <SolidColorBrush x:Key="Button.Pressed.Background" Color="#231e30"/>
         <SolidColorBrush x:Key="Button.Pressed.Border" Color="#DCEDFF"/>
         <SolidColorBrush x:Key="Button.Disabled.Background" Color="#FFF4F4F4"/>
@@ -537,8 +542,7 @@
                                 <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
                             </Trigger>
                             <Trigger Property="IsFocused" Value="true">
-                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.MouseOver.Background}"/>
-                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.MouseOver.Border}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Focus.Border}"/>
                             </Trigger>
                             <Trigger Property="IsMouseOver" Value="true">
                                 <Setter Property="Background" TargetName="border" Value="{StaticResource Button.MouseOver.Background}"/>

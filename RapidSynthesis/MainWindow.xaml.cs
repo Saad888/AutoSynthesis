@@ -20,15 +20,8 @@ namespace RapidSynthesis
 {
     // GLITCHES:
     // Trying to start the craft when the game isnt running means the thread isnt ending, meaning it crashes even when the game is launched after
-
-
-    // TO DO: (Low priority)
     // Create proper readme
     // Setup installer
-
-
-    // When pressing button, flag to cancel after this craft finishes. Press again to hard cancel. 
-    //      Add an override for the label so you can explicitly say "Ending after this craft" then break the override
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -64,6 +57,7 @@ namespace RapidSynthesis
             IDLE,
             PREPARINGCCRAFT,
             ACTIVECRAFTING,
+            COMPLETINGFINALCRAFT,
             CANCELLINGCRAFT
         }
         private SystemStates SystemState { get; set; }
@@ -71,8 +65,8 @@ namespace RapidSynthesis
         private Dictionary<SystemStates, string> MainButtonText { get; set; }
         public Action<Exception> ErrorMessageHandler { get; set; }
         public Action<int, int> GetFoodAndSyrupTimings { get; set; }
-        private System.Windows.Forms.NotifyIcon ni { get; set; }
-        private bool ni_flagged { get; set; } = true;
+        private System.Windows.Forms.NotifyIcon Notify { get; set; }
+        private bool NotifyFlagged { get; set; } = true;
         #endregion
 
         #region Brush Colors
@@ -105,10 +99,10 @@ namespace RapidSynthesis
 
         private void SetupSystemTray()
         {
-            ni = new System.Windows.Forms.NotifyIcon();
-            ni.Icon = new System.Drawing.Icon("Icon.ico"); 
-            ni.Visible = true;
-            ni.Click +=
+            Notify = new System.Windows.Forms.NotifyIcon();
+            Notify.Icon = new System.Drawing.Icon("Icon.ico"); 
+            Notify.Visible = true;
+            Notify.Click +=
                 delegate (object sender, EventArgs args)
                 {
                     this.Show();
@@ -159,6 +153,7 @@ namespace RapidSynthesis
                 { SystemStates.IDLE, Resources["ButtonStyleIdle"] as Style },
                 { SystemStates.PREPARINGCCRAFT,Resources["ButtonStyleProcessing"] as Style },
                 { SystemStates.ACTIVECRAFTING, Resources["ButtonStyleCrafting"] as Style },
+                { SystemStates.COMPLETINGFINALCRAFT, Resources["ButtonStyleCrafting"] as Style },
                 { SystemStates.CANCELLINGCRAFT, Resources["ButtonStyleProcessing"] as Style }
             };
 
@@ -168,6 +163,7 @@ namespace RapidSynthesis
                 { SystemStates.IDLE, "Start" },
                 { SystemStates.PREPARINGCCRAFT, "Preparing..." },
                 { SystemStates.ACTIVECRAFTING, "Crafting" },
+                { SystemStates.COMPLETINGFINALCRAFT, "Ending..." },
                 { SystemStates.CANCELLINGCRAFT, "Ending..." }
             };
         }
@@ -373,6 +369,13 @@ namespace RapidSynthesis
 
             }
             else if (SystemState == SystemStates.ACTIVECRAFTING)
+            {
+                // Cancel the craft
+                SetCraftingStatus(SystemStates.CANCELLINGCRAFT);
+                CraftingEngine.CancelCrafting();
+                SetCraftingStatus(SystemStates.COMPLETINGFINALCRAFT);
+            }
+            else if (SystemState == SystemStates.COMPLETINGFINALCRAFT)
             {
                 // Cancel the craft
                 SetCraftingStatus(SystemStates.CANCELLINGCRAFT);
@@ -1078,10 +1081,10 @@ namespace RapidSynthesis
             var lbl = (Label)sender;
             lbl.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), "Resources/Images/Buttons/Minimize to Tray Hover.png")));
             Hide();
-            if (ni_flagged)
+            if (NotifyFlagged)
             {
-                ni_flagged = false;
-                ni.ShowBalloonTip(3000, "", "AutoSynthesis is still running in the system tray.", System.Windows.Forms.ToolTipIcon.None);
+                NotifyFlagged = false;
+                Notify.ShowBalloonTip(3000, "", "AutoSynthesis is still running in the system tray.", System.Windows.Forms.ToolTipIcon.None);
             }
         }
         #endregion

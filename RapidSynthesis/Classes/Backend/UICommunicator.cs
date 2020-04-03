@@ -56,6 +56,8 @@ namespace RapidSynthesis
 
         private static string PreviousUpdate2Message { get; set; }
         private static int PreviousUpdate2Count { get; set; }
+
+        private static bool UpdateOverride { get; set; }
         #endregion
 
         #region Setup Methods
@@ -86,6 +88,7 @@ namespace RapidSynthesis
             ProgressCraftTimeDuration = 0;
             ProgressMacroTime = new DateTime();
             ProgressMacroTimeDuration = 0;
+            UpdateOverride = false;
         }
         #endregion
 
@@ -149,10 +152,21 @@ namespace RapidSynthesis
             NextSyrup = nextSyrup;
         }
 
-        public static void UpdateStatus(string text)
+        public static void UpdateStatus(string text, bool overrideLabel = false)
         {
+            if (UpdateOverride)
+                return;
+
+            if (overrideLabel)
+                UpdateOverride = true;
+
             Action action = () => { UpdateLabel.Content = text; };
             DispatchActionLabel(UpdateLabel, action);
+        }
+
+        public static void UpdateOverrideReset()
+        {
+            UpdateOverride = false;
         }
 
         public static void UpdateStatus2(string text)
@@ -176,6 +190,7 @@ namespace RapidSynthesis
             TimedCancellationToken.Cancel();
             if (OverallCancellationToken != null)
                 OverallCancellationToken.Cancel();
+            UpdateOverrideReset();
             UpdateStatus2("");
             DropProgressToZero();
             UpdateProgressBar(ProgressOverall, 0);
@@ -284,7 +299,18 @@ namespace RapidSynthesis
             if (difference.TotalMilliseconds < 0)
                 return longFormat ? "00:00" : "0:00";
             else
-                return longFormat ? difference.ToString(@"mm\:ss") : difference.ToString(@"m\:ss");
+            {
+                if (difference.Hours == 0)
+                {
+                    return longFormat ? difference.ToString(@"mm\:ss") : difference.ToString(@"m\:ss");
+                }
+                else
+                {
+                    var minutes = difference.Hours * 60 + difference.Minutes;
+                    var seconds = difference.Seconds;
+                    return longFormat ? minutes.ToString("00") + ":" + seconds.ToString("00") : minutes + ":" + seconds;
+                }
+            }
         }
 
         private static void SetProgressbarLabelVisible(bool setToVisible = true)
