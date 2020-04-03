@@ -18,6 +18,7 @@ namespace RapidSynthesis
         public static CancellationTokenSource Cts { get; set; }
         private static Action EndCraftCallback { get; set; }
         public static Action<Exception> ErrorMessageHandler { get; set; }
+        private static Action<int, int> SetFoodAndSyrupTimings { get; set; }
 
         private const int CONSUMABLE_MARGIN_IN_MINUTES = 2;
         private const int STANDARD_SYRUP_TIME = 15;
@@ -30,7 +31,7 @@ namespace RapidSynthesis
 
         #region System Methods
         public static void InitiateCraftingEngine(Dictionary<HKType, Hotkey> hotKeyDictionary,
-            SettingsContainer userSettings, Action endCraftCallback, Action<Exception> errorMessageHandler)
+            SettingsContainer userSettings, Action endCraftCallback, Action<Exception> errorMessageHandler, Action<int, int> setFoodAndSyrupTimings)
         {
             // Ensure craft is not already happening
             if (CraftingActive)
@@ -45,6 +46,7 @@ namespace RapidSynthesis
 
                 EndCraftCallback = endCraftCallback;
                 ErrorMessageHandler = errorMessageHandler;
+                SetFoodAndSyrupTimings = setFoodAndSyrupTimings;
 
                 // Load process or throw error if process does not exist
                 ProcessManager.LoadProcess();
@@ -169,6 +171,11 @@ namespace RapidSynthesis
             craftCompleted += Settings.CraftCount > 0 ? $"{TotalCount}/{Settings.CraftCount}" : $"{TotalCount}";
             UICommunicator.UpdateStatus2(craftCompleted);
             CraftingActive = false;
+
+            var foodRemaining = (int)(NextFoodUse.AddMinutes(CalculateFoodSyrupMargin()) - DateTime.Now).TotalMinutes;
+            var syrupRemaining = (int)(NextSyrupUse.AddMinutes(CalculateFoodSyrupMargin()) - DateTime.Now).TotalMinutes;
+            SetFoodAndSyrupTimings.Invoke(foodRemaining, syrupRemaining);
+
             EndCraftCallback.Invoke();
         }
 
@@ -260,7 +267,18 @@ namespace RapidSynthesis
 
         private static DateTime CalculateNextConsumableUse(int timeRemainingInMinutes)
         {
-            return DateTime.Now.AddMinutes(timeRemainingInMinutes - CONSUMABLE_MARGIN_IN_MINUTES);
+            var timeMargin = CalculateFoodSyrupMargin();
+            return DateTime.Now.AddMinutes(timeRemainingInMinutes - timeMargin);
+        }
+
+        private static double CalculateFoodSyrupMargin()
+        {
+            double totalTime = HotkeySet[HKType.Macro1].TimerInMiliseconds;
+            if (HotkeySet[HKType.Macro2] != null)
+                totalTime += HotkeySet[HKType.Macro2].TimerInMiliseconds;
+            if (HotkeySet[HKType.Macro3] != null)
+                totalTime += HotkeySet[HKType.Macro3].TimerInMiliseconds;
+            return totalTime / (1000 * 60) + 0.25;
         }
 
         #endregion

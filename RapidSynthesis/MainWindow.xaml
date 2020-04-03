@@ -409,7 +409,7 @@
         <!-- Crafting -->
         <SolidColorBrush x:Key="Button.Crafting.Static.Background" Color="#4f0c1d"/>
         <SolidColorBrush x:Key="Button.Crafting.Static.Border" Color="#DCEDFF"/>
-        <SolidColorBrush x:Key="Button.Crafting.MouseOver.Background" Color="#6b1027"/>
+        <SolidColorBrush x:Key="Button.Crafting.MouseOver.Background" Color="#991436"/>
         <SolidColorBrush x:Key="Button.Crafting.MouseOver.Border" Color="#DCEDFF"/>
         <SolidColorBrush x:Key="Button.Crafting.Pressed.Background" Color="#380815"/>
         <SolidColorBrush x:Key="Button.Crafting.Pressed.Border" Color="#DCEDFF"/>
@@ -434,10 +434,6 @@
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsDefaulted" Value="true">
                                 <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
-                            </Trigger>
-                            <Trigger Property="IsFocused" Value="true">
-                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Crafting.MouseOver.Background}"/>
-                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Crafting.MouseOver.Border}"/>
                             </Trigger>
                             <Trigger Property="IsMouseOver" Value="true">
                                 <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Crafting.MouseOver.Background}"/>
@@ -599,7 +595,7 @@
                 <DropShadowEffect ShadowDepth="1"/>
             </Label.Effect>
         </Label>
-        <Label x:Name="LabelMacrosTime" Content="Macro Time (sec)" Margin="200,0,0,0.3" VerticalAlignment="Top" Height="25" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Padding="0" VerticalContentAlignment="Bottom" HorizontalContentAlignment="Right" Grid.Row="1" HorizontalAlignment="Left" Width="110" FontSize="11" Foreground="#FFDCEDFF">
+        <Label x:Name="LabelMacrosTime" Content="Macro Time (sec)" Margin="200,0,0,0.3" VerticalAlignment="Top" Height="25" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Padding="0" VerticalContentAlignment="Bottom" HorizontalContentAlignment="Right" Grid.Row="1" HorizontalAlignment="Left" Width="110" Foreground="#FFDCEDFF">
             <Label.Effect>
                 <DropShadowEffect ShadowDepth="1"/>
             </Label.Effect>
@@ -638,7 +634,7 @@
                 <DropShadowEffect ShadowDepth="1"/>
             </Label.Effect>
         </Label>
-        <Label x:Name="LabelFoodTime" Content="Time Remaining (min)" Margin="200,120,0,0" VerticalAlignment="Top" Height="25" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Padding="0" VerticalContentAlignment="Bottom" HorizontalContentAlignment="Right" FontSize="10" Grid.Row="1" HorizontalAlignment="Left" Width="110" Foreground="#FFDCEDFF">
+        <Label x:Name="LabelFoodTime" Content="Time Remaining (min)" Margin="167,119.6,0,0" VerticalAlignment="Top" Height="25" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Padding="0" VerticalContentAlignment="Bottom" HorizontalContentAlignment="Right" Grid.Row="1" HorizontalAlignment="Left" Width="143" Foreground="#FFDCEDFF">
             <Label.Effect>
                 <DropShadowEffect ShadowDepth="1"/>
             </Label.Effect>
@@ -726,10 +722,10 @@
                 <DropShadowEffect ShadowDepth="1"/>
             </Label.Effect>
         </Label>
-        <ComboBox x:Name="CMBProfileList" HorizontalAlignment="Left" Margin="0,175,0,0" VerticalAlignment="Top" Width="246" Height="25" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Grid.Row="1" Grid.Column="1" Opacity="0.85" BorderBrush="Black" Foreground="#FFBFDDFD" Background="#FFFF4D4D" Style="{DynamicResource ComboBoxNewStyle}" VerticalContentAlignment="Center" Padding="0" ItemContainerStyle="{DynamicResource ComboBoxItemStyle1}"/>
-        <Button x:Name="BTNSave" Content="Save" HorizontalAlignment="Left" Margin="0,205,0,0" VerticalAlignment="Top" Width="68" Click="BTNSave_Click" Height="25" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Grid.Row="1" Grid.Column="1" Opacity="0.85" Style="{DynamicResource ButtonStyleIdle}" Foreground="#FFDCEDFF" />
-        <Button x:Name="BTNLoad" Content="Load" HorizontalAlignment="Left" Margin="74,205,0,0" VerticalAlignment="Top" Width="68" Click="BTNLoad_Click" Height="25" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Grid.Row="1" Grid.Column="1" Opacity="0.85" Style="{DynamicResource ButtonStyleIdle}" Foreground="#FFDCEDFF" />
-        <Button x:Name="BTNDelete" Content="Delete" HorizontalAlignment="Left" Margin="148,205,0,0" VerticalAlignment="Top" Width="68" Click="BTNDelete_Click" Height="25" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Grid.Row="1" Grid.Column="1" Opacity="0.85" Style="{DynamicResource ButtonStyleIdle}" Foreground="#FFDCEDFF" />
+        <ComboBox x:Name="CMBProfileList" HorizontalAlignment="Left" Margin="0,175,0,0" VerticalAlignment="Top" Width="246" Height="25" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Grid.Row="1" Grid.Column="1" Opacity="0.85" BorderBrush="Black" Foreground="#FFBFDDFD" Background="#FFFF4D4D" Style="{DynamicResource ComboBoxNewStyle}" VerticalContentAlignment="Center" Padding="0" ItemContainerStyle="{DynamicResource ComboBoxItemStyle1}" FontSize="14"/>
+        <Button x:Name="BTNSave" Content="Save" HorizontalAlignment="Left" Margin="0,205,0,0" VerticalAlignment="Top" Width="68" Click="BTNSave_Click" Height="25" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Grid.Row="1" Grid.Column="1" Opacity="0.85" Style="{DynamicResource ButtonStyleIdle}" Foreground="#FFDCEDFF" FontSize="14" />
+        <Button x:Name="BTNLoad" Content="Load" HorizontalAlignment="Left" Margin="74,205,0,0" VerticalAlignment="Top" Width="68" Click="BTNLoad_Click" Height="25" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Grid.Row="1" Grid.Column="1" Opacity="0.85" Style="{DynamicResource ButtonStyleIdle}" Foreground="#FFDCEDFF" FontSize="14" />
+        <Button x:Name="BTNDelete" Content="Delete" HorizontalAlignment="Left" Margin="148,205,0,0" VerticalAlignment="Top" Width="68" Click="BTNDelete_Click" Height="25" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" Grid.Row="1" Grid.Column="1" Opacity="0.85" Style="{DynamicResource ButtonStyleIdle}" Foreground="#FFDCEDFF" FontSize="14" />
 
 
         <!-- Help -->
@@ -766,6 +762,11 @@
         <Label Content="" HorizontalAlignment="Left" Margin="140,12,0,0" VerticalAlignment="Top" Height="55" Width="55">
             <Label.Background>
                 <ImageBrush ImageSource="Resources/Icon/Icon.png"/>
+            </Label.Background>
+        </Label>
+        <Label x:Name="Minimize_Label" Content="" Grid.Column="1" HorizontalAlignment="Left" Margin="238,2,0,0" VerticalAlignment="Top" Width="15" Height="15" Opacity="0.5" MouseEnter="MinimizeLabelMouseEnter" MouseLeave="MinimizeLabelMouseExit" MouseDown="MinimizeLabelMouseDown" MouseUp="MinimizeLabelMouseUp" ToolTip="Minimize To Tray">
+            <Label.Background>
+                <ImageBrush ImageSource="Resources/Images/Buttons/Minimize to Tray.png"/>
             </Label.Background>
         </Label>
 

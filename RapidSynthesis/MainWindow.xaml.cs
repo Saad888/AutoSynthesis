@@ -24,14 +24,7 @@ namespace RapidSynthesis
 
     // TO DO: (Low priority)
     // Create proper readme
-    // Minimize to tray button
     // Setup installer
-    // Set food timer to be calcualted dynamically based on craft timer
-    // Increase text size for a few things: Profile buttons, save profile text 
-    // Set it so that food and syrup timings get set automatically if they were being used when hitting crafting buttons
-    // Add a longer delay before starting the next craft, lower FPS doesnt seem to be able to handle (or the game is garbage)
-    // Button style isnt changing based on mouse being over it for some reason
-    // Increase text size on "Time reminaing (min) and Macro Time (sec)
 
 
     // When pressing button, flag to cancel after this craft finishes. Press again to hard cancel. 
@@ -77,6 +70,9 @@ namespace RapidSynthesis
         private Dictionary<SystemStates, Style> MainButtonStyles { get; set; }
         private Dictionary<SystemStates, string> MainButtonText { get; set; }
         public Action<Exception> ErrorMessageHandler { get; set; }
+        public Action<int, int> GetFoodAndSyrupTimings { get; set; }
+        private System.Windows.Forms.NotifyIcon ni { get; set; }
+        private bool ni_flagged { get; set; } = true;
         #endregion
 
         #region Brush Colors
@@ -92,6 +88,8 @@ namespace RapidSynthesis
             SetContainerValues();
             SetUIDictionaries();
             SetErrorAction();
+            SetupSystemTray();
+            SetupFoodAndSyrupTimings();
             
             // Set up UICommunicator
             UICommunicator.ConnectUI(LBLCraftNumber, LBLUpdate, LBLUpdateFooter, LBLTimerCraft, LBLTimerMacro, 
@@ -105,6 +103,18 @@ namespace RapidSynthesis
             LoadDefaultProfile();
         }
 
+        private void SetupSystemTray()
+        {
+            ni = new System.Windows.Forms.NotifyIcon();
+            ni.Icon = new System.Drawing.Icon("Icon.ico"); 
+            ni.Visible = true;
+            ni.Click +=
+                delegate (object sender, EventArgs args)
+                {
+                    this.Show();
+                    this.WindowState = WindowState.Normal;
+                };
+        }
 
         private void SetContainerValues()
         {
@@ -206,6 +216,24 @@ namespace RapidSynthesis
                     profile = f.Message;
                 }
                 Logger.ErrorHandler(e, profile);
+            };
+        }
+
+        private void SetupFoodAndSyrupTimings()
+        {
+            GetFoodAndSyrupTimings = (int foodTime, int syrupTime) =>
+            {
+                foodTime = Math.Max(0, foodTime);
+                syrupTime = Math.Max(0, syrupTime);
+
+                var FoodTimeContainer = TimerContainers[TXBFoodTimer];
+                var SyrupTimeContainer = TimerContainers[TXBSyrupTimer];
+
+                FoodTimeContainer.Timer = foodTime;
+                SyrupTimeContainer.Timer = syrupTime;
+
+                TXBFoodTimer.Dispatcher.Invoke(() => { TXBFoodTimer.Text = foodTime.ToString(); });
+                TXBSyrupTimer.Dispatcher.Invoke(() => { TXBSyrupTimer.Text = syrupTime.ToString(); });
             };
         }
         #endregion
@@ -327,7 +355,7 @@ namespace RapidSynthesis
                 };
                 try
                 {
-                    CraftingEngine.InitiateCraftingEngine(hotkeys, settings, action, ErrorMessageHandler);
+                    CraftingEngine.InitiateCraftingEngine(hotkeys, settings, action, ErrorMessageHandler, GetFoodAndSyrupTimings);
                     SetCraftingStatus(SystemStates.ACTIVECRAFTING);
                 }
                 catch (ProcessMissingException)
@@ -1023,6 +1051,38 @@ namespace RapidSynthesis
             lbl.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), "Resources/Images/Background/InfoHighlighted.png")));
             lbl.Background.RelativeTransform = helpScale;
             System.Diagnostics.Process.Start(URL);
+        }
+        #endregion
+
+        #region Minimize To Tray
+        private void MinimizeLabelMouseEnter(object sender, MouseEventArgs e)
+        {
+            var lbl = (Label)sender;
+            lbl.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), "Resources/Images/Buttons/Minimize to Tray Hover.png")));
+        }
+
+        private void MinimizeLabelMouseExit(object sender, MouseEventArgs e)
+        {
+            var lbl = (Label)sender;
+            lbl.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), "Resources/Images/Buttons/Minimize to Tray.png")));
+        }
+
+        private void MinimizeLabelMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            var lbl = (Label)sender;
+            lbl.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), "Resources/Images/Buttons/Minimize to Tray Pressed.png")));
+        }
+
+        private void MinimizeLabelMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            var lbl = (Label)sender;
+            lbl.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), "Resources/Images/Buttons/Minimize to Tray Hover.png")));
+            Hide();
+            if (ni_flagged)
+            {
+                ni_flagged = false;
+                ni.ShowBalloonTip(3000, "", "AutoSynthesis is still running in the system tray.", System.Windows.Forms.ToolTipIcon.None);
+            }
         }
         #endregion
     }

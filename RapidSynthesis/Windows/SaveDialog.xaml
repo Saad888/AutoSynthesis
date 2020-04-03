@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RapidSynthesis.Windows"
         mc:Ignorable="d"
-        Title="Save Profile" Height="83.4" Width="270" ResizeMode="NoResize" ShowInTaskbar="False" WindowStyle="ToolWindow" WindowStartupLocation="CenterOwner" Loaded="Window_Loaded" Background="#FF221632" Icon="/AutoSynthesis;component/Resources/Icon/Icon.png">
+        Title="Save Profile" SizeToContent="WidthAndHeight" ResizeMode="NoResize" ShowInTaskbar="False" WindowStyle="ToolWindow" WindowStartupLocation="CenterOwner" Loaded="Window_Loaded" Background="#FF221632" Icon="/AutoSynthesis;component/Resources/Icon/Icon.png">
     <Window.Resources>
         <Style x:Key="FocusVisual">
             <Setter Property="Control.Template">
@@ -64,13 +64,13 @@
         </Style>
     </Window.Resources>
 
-    <Grid Margin="0,0,0,0">
+    <Grid Margin="0,0,0,0" Height="52" Width="280">
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <Label Content="Chose a name for the profile..." HorizontalAlignment="Left" VerticalAlignment="Top" Height="26" Width="265" Margin="0" Foreground="#FFDCEDFF" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" VerticalContentAlignment="Center" Padding="5,0,0,3"/>
-        <TextBox x:Name="TXBName" HorizontalAlignment="Left" Height="23" Margin="5,0,0,5.4" TextWrapping="Wrap" VerticalAlignment="Bottom" Width="190" Background="#FFDCEDFF" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-        <Button x:Name="BTNConfirm" Content="Save" HorizontalAlignment="Right" Margin="0,0,5,5.4" VerticalAlignment="Bottom" Width="50" Click="BTNConfirm_Click" Height="23" Style="{DynamicResource ButtonStyle1}" Foreground="#FFDCEDFF" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen"/>
+        <Label Content="Chose a name for the profile..." HorizontalAlignment="Left" VerticalAlignment="Top" Height="26" Width="265" Margin="0" Foreground="#FFDCEDFF" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" VerticalContentAlignment="Center" Padding="5,0,0,3" FontSize="16"/>
+        <TextBox x:Name="TXBName" HorizontalAlignment="Left" Height="23" Margin="5,0,0,5" TextWrapping="Wrap" VerticalAlignment="Bottom" Width="190" Background="#FFDCEDFF" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="14"/>
+        <Button x:Name="BTNConfirm" Content="Save" HorizontalAlignment="Right" Margin="0,0,5,5" VerticalAlignment="Bottom" Width="72" Click="BTNConfirm_Click" Height="23" Style="{DynamicResource ButtonStyle1}" Foreground="#FFDCEDFF" FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" FontSize="14"/>
 
     </Grid>
 </Window>

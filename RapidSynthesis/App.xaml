@@ -5,5 +5,6 @@
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <FontFamily x:Key="Sen">pack://application:,,,/Resources/Fonts/#Sen Regular</FontFamily>
+        <Image x:Key="icon" Source="icon.ico"></Image>
     </Application.Resources>
 </Application>
