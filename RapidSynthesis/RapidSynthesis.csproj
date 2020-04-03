@@ -164,9 +164,6 @@
     <Resource Include="Resources\Icon\Icon - Copy.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Icon-Copy.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Icon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

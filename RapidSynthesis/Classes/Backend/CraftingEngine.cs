@@ -21,7 +21,7 @@ namespace RapidSynthesis
 
         private const int CONSUMABLE_MARGIN_IN_MINUTES = 2;
         private const int STANDARD_SYRUP_TIME = 15;
-        private const int STANDARD_MENU_DELAY = 1500;
+        private const int STANDARD_MENU_DELAY = 2000;
         private const int STANDARD_ANIMATION_DELAY = 2000;
         private const int STANDARD_TICK_TIME = 50;
         private static int CraftCount = 0;

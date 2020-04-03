@@ -24,7 +24,18 @@ namespace RapidSynthesis
 
     // TO DO: (Low priority)
     // Create proper readme
+    // Minimize to tray button
     // Setup installer
+    // Set food timer to be calcualted dynamically based on craft timer
+    // Increase text size for a few things: Profile buttons, save profile text 
+    // Set it so that food and syrup timings get set automatically if they were being used when hitting crafting buttons
+    // Add a longer delay before starting the next craft, lower FPS doesnt seem to be able to handle (or the game is garbage)
+    // Button style isnt changing based on mouse being over it for some reason
+    // Increase text size on "Time reminaing (min) and Macro Time (sec)
+
+
+    // When pressing button, flag to cancel after this craft finishes. Press again to hard cancel. 
+    //      Add an override for the label so you can explicitly say "Ending after this craft" then break the override
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
