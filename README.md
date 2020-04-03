@@ -26,7 +26,7 @@ This application runs by blindly sending inputs into the game. It does not attac
 ---
 
 ## 1. Basics of the Interface
-[IMAGE]
+![Legend](https://github.com/Saad888/AutoSynthesis/blob/master/RapidSynthesis/Resources/ReadMe%20Images/Legends.png)
 
 1. Settings for using Macros
 2. Settings for consumables
@@ -42,14 +42,14 @@ This application runs by blindly sending inputs into the game. It does not attac
 Before starting the crafting from the app, the game needs to be set up. Autosynthesis begins assuming that a craft has been initiated. In other words, the first action AutoSynthesis does is the first Macro. Before hitting the "Start Crafting" button, make sure your chracter is crouched down ready to craft. AutoSynthesis also requires key inputs, so any macros, food/syrup, etc. must have keyboard shortcuts associated with them 
 
 ### Macros
-[Image]
+![Macros](https://github.com/Saad888/AutoSynthesis/blob/master/RapidSynthesis/Resources/ReadMe%20Images/Macros.png)
 You can program the app to hit up to three macros. You *must* enter a keybind and timer for at least one macro.  
 1. Registering a keybind: Either **Double Click** or click on and hit **Enter**/**Space** when the keybind textboxes are highlighted. Once the textbox turns red, press any key (along with any modifiers, like Shift, Control, or Alt) to register the keybinds associated with those Macros in game.   
 2. Setting the timer: Either click on or tab over to the timer textboxes next to the keybind selections and enter a the duration of the macro in **seconds**.   
 3. If you wish to use *two* or *three* macros, you must also enable them by clicking on the checkboxes next to the labels.  
 
 ### Consumables
-[Image]  
+![Consumables](https://github.com/Saad888/AutoSynthesis/blob/master/RapidSynthesis/Resources/ReadMe%20Images/Consumables.png)
 You can *optionally* enable these settings to refresh your consumables as they run out. For the sake of safety, consuamables will be flagged to refresh within two minutes of expiring. They will be refreshed between crafts.   
 NOTE: Activating either of these means you will need to register a keybind for "Cancel", see the Settings section below.   
 1. If using either food or syrups, click on the checkbox to enable them during the craft. 
@@ -58,7 +58,7 @@ NOTE: Activating either of these means you will need to register a keybind for "
 3. Because food durations can vary based on FC and Squadron buffs, select the duration that food will last when it is refreshed.
 
 ### Settings
-[Image]   
+![Settings](https://github.com/Saad888/AutoSynthesis/blob/master/RapidSynthesis/Resources/ReadMe%20Images/Settings.png)
 Here is where you will apply various settings related to the crafting itself.   
 1. Registering a keybind: Either **Double Click** on the textbox or click on the textbox and hit **Enter**/**Space**. Once the textbox turns red, press any key (along with any modifiers, like Shift, Control, or Alt) to register the keybinds associated with "Confirm" and "Cancel".
 2. Here you can set an specfic number of items to be crafted. If left unchecked, the autocrafter will simply keep attempting to craft until inturrupted by the user. 
@@ -66,17 +66,16 @@ Here is where you will apply various settings related to the crafting itself.
 NOTE: The keybinds for "Confirm" and "Cancel" in game can be found under Keybind > System. "Cancel" only needs to be set if using a consumable.   
 
 ### Profiles
-[Images]
+![Profiles](https://github.com/Saad888/AutoSynthesis/blob/master/RapidSynthesis/Resources/ReadMe%20Images/Profiles.PNG)
 Here you can save, load, and delete profiles for your settings, to make it easier to swap between setttings when working on different crafts.   
 
 ### Starting Crafting
-[Images]
 Once all your settings have been set correctly, *and your character in game is crouched ready to craft*, press the Start Crafting button to begin.      
 To stop crafting, simply press the button once again. 
 
 ---
 ## 3. Reading the Crafting Window
-[Image]
+![Crafting Progress](https://github.com/Saad888/AutoSynthesis/blob/master/RapidSynthesis/Resources/ReadMe%20Images/Crafting.PNG)
 1. **Progress Bars**: These give a visual indicator for the crafting progress.   
    - The first bar displays your overall progress (the number of crafts completed overall).   
    - The second bar displays progress for a single craft.  
