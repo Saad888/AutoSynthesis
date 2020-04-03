@@ -16,7 +16,7 @@ This application runs by blindly sending inputs into the game. It does not attac
    - Consumables
    - Settings
    - Profiles
-   - Starting Crafting
+   - Starting and Stopping Crafting
 2. Reading the Crafting Window
 3. Installation and Setup
 4. F.A.Q.
@@ -59,9 +59,10 @@ NOTE: The keybinds for "Confirm" and "Cancel" in game can be found under Keybind
 ![Profiles](https://github.com/Saad888/AutoSynthesis/blob/master/RapidSynthesis/Resources/ReadMe%20Images/Profiles.PNG)  
 Here you can save, load, and delete profiles for your settings, to make it easier to swap between setttings when working on different crafts.   
 
-### Starting Crafting
-Once all your settings have been set correctly, *and your character in game is crouched ready to craft*, press the Start Crafting button to begin.      
-To stop crafting, simply press the button once again. 
+### Starting and Stopping Crafting
+Once all your settings have been set correctly, *and your character in game is crouched ready to craft*, press the "Start" button to begin.      
+
+To stop crafting, simply press the button once again. Pressing the button once will cause the process to finish the existing craft before terminating. Pressing the button a second time will immediatly cancel the process. 
 
 ---
 ## 3. Reading the Crafting Window
