@@ -44,12 +44,12 @@ You can enable these refresh your consumables as they run out. They will be refr
 NOTE: Activating either of these means you will need to register a keybind for "Cancel", see the Settings section below.   
 1. If using either food or syrups, click on the checkbox to enable. 
 2. Registering a keybind: Either **Double Click** on the textbox or click on the textbox and hit **Enter**/**Space**. Once the textbox turns red, press any key (along with any modifiers, like Shift, Control, or Alt) to register the keybinds associated with the consumable in game.
-2. Setting the timer: Either click on or tab over to the timer textboxes next to the keybind selections and enter the remaining duration of the consumable in **minutes**.
+2. Setting the timer: Either click on or tab over to the timer textboxes next to the keybind selections and enter the remaining duration of your *current active buffs* in **minutes**.
 3. Because food durations can vary based on FC and Squadron buffs, select the duration that food will last when it is refreshed.
 
 ### Settings
-![Settings](https://github.com/Saad888/AutoSynthesis/blob/master/RapidSynthesis/Resources/ReadMe%20Images/Settings.png) 
-Here is where you will apply various settings related to the crafting itself.   
+![Settings](https://github.com/Saad888/AutoSynthesis/blob/master/RapidSynthesis/Resources/ReadMe%20Images/Settings.png)  
+Here is where you will apply various settings related to the crafting itself.    
 1. Registering a keybind: Either **Double Click** on the textbox or click on the textbox and hit **Enter**/**Space**. Once the textbox turns red, press any key (along with any modifiers, like Shift, Control, or Alt) to register the keybinds associated with "Confirm" and "Cancel".
 2. Here you can set an specfic number of items to be crafted. If left unchecked, the autocrafter will simply keep attempting to craft until inturrupted by the user. 
 3. Enabling this setting wil linstruct the autocrafter to automatically accept the window prompt for collectable crafting after the craft is complete. 
