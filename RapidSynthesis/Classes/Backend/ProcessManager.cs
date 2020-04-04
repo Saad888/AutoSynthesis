@@ -26,17 +26,19 @@ namespace RapidSynthesis
 
         public static Process GameProcess;
 
-        public static void LoadProcess(bool dx9 = false)
+        public static void LoadProcess()
         {  
             // find all processes matching either FFXIV or notepad, depending on debugging enabled
             Process[] foundProcesses;
             Process.GetProcesses();
-            foundProcesses = Process.GetProcessesByName(finalFantasyXIVProcessName);
             GameProcessPtr = IntPtr.Zero;
 
-            if (foundProcesses.Count() == 0 && !dx9)
-                LoadProcess(true);
-            else if (foundProcesses.Count() == 0 && dx9)
+            foundProcesses = Process.GetProcessesByName(finalFantasyXIVProcessName);
+
+            if (foundProcesses.Count() == 0)
+                foundProcesses = Process.GetProcessesByName(finalFantasyXIVProcessNameDX9);
+
+            if (foundProcesses.Count() == 0)
                 throw new ProcessMissingException();
 
             GameProcess = foundProcesses.First();

@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:RapidSynthesis"
         xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2" x:Class="RapidSynthesis.MainWindow"
         mc:Ignorable="d"
-        Title="MainWindow" 
+        Title="AutoSynthesis" 
         SizeToContent="WidthAndHeight" ResizeMode="CanMinimize" HorizontalAlignment="Center" VerticalAlignment="Center" Icon="Resources/Icon/Icon.png">
     <Window.Resources>
         <Style x:Key="FocusVisual">

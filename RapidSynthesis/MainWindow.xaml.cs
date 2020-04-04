@@ -18,6 +18,10 @@ using RapidSynthesis.Windows;
 
 namespace RapidSynthesis
 {
+    // TODO:
+    // Update Readme (especially with images post changes)
+    // Update version 
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
