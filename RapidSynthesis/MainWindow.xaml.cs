@@ -18,11 +18,6 @@ using RapidSynthesis.Windows;
 
 namespace RapidSynthesis
 {
-    // GLITCHES:
-    // Trying to start the craft when the game isnt running means the thread isnt ending, meaning it crashes even when the game is launched after
-    // Create proper readme
-    // Setup installer
-
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
