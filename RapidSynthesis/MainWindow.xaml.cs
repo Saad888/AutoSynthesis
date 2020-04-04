@@ -21,6 +21,9 @@ namespace RapidSynthesis
     // TODO:
     // Update Readme (especially with images post changes)
     // Update version 
+    // Check and see if conflicts happen when inputting commands into other applications
+    // Prevent duplicate versions from launching
+    // Investigate using an MSI launcher if people report issues with admin mode
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml

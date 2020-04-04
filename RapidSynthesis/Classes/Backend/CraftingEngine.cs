@@ -280,7 +280,7 @@ namespace RapidSynthesis
             
             UICommunicator.UpdateStatus("Preparing Next Craft...");
             Logger.Write("Resetting Craft Cycle");
-            SendInput(HotkeySet[HKType.Confirm], 3);
+            SendInput(HotkeySet[HKType.Confirm], 5);
             
         }
 
