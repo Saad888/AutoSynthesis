@@ -78,11 +78,13 @@ To stop crafting, simply press the button once again. Pressing the button once w
    
 ---
 ## 4. Installation and Setup
-// TO DO
+The installation file can be found here:   
+https://autosynthesis.blob.core.windows.net/autosynthesis/setup.exe  
+
 
 ---
 ## 5. F.A.Q.
-
+**1. The app isn't sending inputs into the game**
 
 
 
