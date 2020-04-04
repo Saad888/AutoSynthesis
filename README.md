@@ -84,11 +84,19 @@ https://autosynthesis.blob.core.windows.net/autosynthesis/setup.exe
 
 ---
 ## 5. F.A.Q.
-**1. The app isn't sending inputs into the game**
+**1. The app isn't sending inputs into the game.**   
+- If the game limits FPS when running in the background, this might cause some inputs to get neglected, so ensure to turn that setting off in game. 
+- Its possible the app will need to be launched in Admin mode. This cannot be done with the way the app is currently deployed, if that becomes the case I'll be releasing future updates with a different deployment method that allows for the app to run independatly. 
+
+**2. Does the game need to be in focus?**
+- No
+
+**2. Can I use mouse or controller inputs?**  
+- No, this app only works with Keyboard inputs. 
+
+**3. Where can I find the application files?**
+- Under AppFiles: 
+- C:\Users\<user>\AppData\Local\Apps\2.0
+- Due to the nature of OneClick deployment the installation location is a bit obscure, but the files will be within this folder. 
 
 
-
-FAQ:
-- No controller or mouse inputs, only keyboard
-- Focus on game is not required
-- Lower FPS may cause input issues
