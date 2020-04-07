@@ -80,6 +80,7 @@ To stop crafting, simply press the button once again. Pressing the button once w
 ## 4. Installation and Setup
 The installation file can be found here:   
 https://autosynthesis.blob.core.windows.net/autosynthesis/setup.exe  
+**THIS IS IN BETA, WILL BE REPLACED AND OUTDATED**
 
 
 ---
