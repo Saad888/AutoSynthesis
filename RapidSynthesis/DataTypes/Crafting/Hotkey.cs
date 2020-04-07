@@ -13,7 +13,7 @@ namespace RapidSynthesis
         public VirtualKeyCode[] ModKeyCodes { get; set; }
         public int TimerInMiliseconds { get; set; }
         public string Text { get; set; }
-        private const int DEFAULT_TIMER = 250;
+        private const int DEFAULT_TIMER = 1;
 
 
 

@@ -28,7 +28,7 @@
     <InstallUrl>https://autosynthesis.blob.core.windows.net/autosynthesis/</InstallUrl>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>4</ApplicationRevision>
+    <ApplicationRevision>7</ApplicationRevision>
     <ApplicationVersion>0.1.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -213,6 +213,14 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\Buttons\AlwaysOnTopHoverOn.png" />
+    <Resource Include="Resources\Images\Buttons\AlwaysOnTopHoverOff.png" />
+    <Resource Include="Resources\Images\Buttons\AlwaysOnTopOff.png" />
+    <Resource Include="Resources\Images\Buttons\AlwaysOnTopOn.png" />
+    <Resource Include="Resources\Images\Buttons\AlwaysOnTopPressedOff.png" />
+    <Resource Include="Resources\Images\Buttons\AlwaysOnTopPressedOn.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

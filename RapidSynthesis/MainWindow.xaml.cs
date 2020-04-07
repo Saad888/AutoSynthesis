@@ -15,15 +15,23 @@ using System.Windows.Shapes;
 using WindowsInput.Native;
 using System.Threading;
 using RapidSynthesis.Windows;
+using System.IO;
+using System.Runtime.InteropServices;
 
 namespace RapidSynthesis
 {
     // TODO:
+    // Add button to keep the window on top
+
     // Update Readme (especially with images post changes)
     // Update version 
     // Check and see if conflicts happen when inputting commands into other applications
-    // Prevent duplicate versions from launching
     // Investigate using an MSI launcher if people report issues with admin mode
+
+    // UPDATE ON CRAFT NOT STARTING:
+    // Solution found:
+    // Mouse movement must be stopped when a craft is about to initaite or food is about to be used/cancelled
+    // Set a method in processmanager that will freeze all inputs IF the mouse is over the game OR if the application is in focus in general
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -86,7 +94,8 @@ namespace RapidSynthesis
             SetErrorAction();
             SetupSystemTray();
             SetupFoodAndSyrupTimings();
-            
+            SetAlwaysOnTop();
+
             // Set up UICommunicator
             UICommunicator.ConnectUI(LBLCraftNumber, LBLUpdate, LBLUpdateFooter, LBLTimerCraft, LBLTimerMacro, 
                 LBLFoodSyrupTimer, PGBOverall, PGBCraft, PGBMacro);
@@ -878,7 +887,8 @@ namespace RapidSynthesis
         {
             try
             {
-                var saveDialog = new SaveDialog();
+                var profileName = CMBProfileList.SelectedItem == null ? "" : CMBProfileList.SelectedItem.ToString();
+                var saveDialog = new SaveDialog(profileName);
                 saveDialog.Owner = Application.Current.MainWindow;
                 if (saveDialog.ShowDialog() == true)
                 {
@@ -1088,6 +1098,85 @@ namespace RapidSynthesis
                 NotifyFlagged = false;
                 Notify.ShowBalloonTip(3000, "", "AutoSynthesis is still running in the system tray.", System.Windows.Forms.ToolTipIcon.None);
             }
+        }
+        #endregion
+
+        #region Always On Top
+        private static bool AlwaysOnTopEnabled { get; set; } = false;
+        private static string SettingsFileDirectory { get; set; }
+        private void Window_Deactivated(object sender, EventArgs e)
+        {
+            Window window = (Window)sender;
+            
+            if (AlwaysOnTopEnabled)
+            {
+                window.Topmost = true;
+            } else
+            {
+                window.Topmost = false;
+            }
+        }
+        private void AlwaysOnTopLabelMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            var lbl = (Label)sender;
+            var resourceUrl = AlwaysOnTopEnabled ? "Resources/Images/Buttons/AlwaysOnTopPressedOn.png" : "Resources/Images/Buttons/AlwaysOnTopPressedOff.png";
+            lbl.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), resourceUrl)));
+        }
+
+        private void AlwaysOnTopLabelMouseEnter(object sender, MouseEventArgs e)
+        {
+            var lbl = (Label)sender;
+            var resourceUrl = AlwaysOnTopEnabled ? "Resources/Images/Buttons/AlwaysOnTopHoverOn.png" : "Resources/Images/Buttons/AlwaysOnTopHoverOff.png";
+            lbl.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), resourceUrl)));
+        }
+
+        private void AlwaysOnTopLabelMouseExit(object sender, MouseEventArgs e)
+        {
+            var lbl = (Label)sender;
+            var resourceUrl = AlwaysOnTopEnabled ? "Resources/Images/Buttons/AlwaysOnTopOn.png" : "Resources/Images/Buttons/AlwaysOnTopOff.png";
+            lbl.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), resourceUrl)));
+        }
+
+        private void AlwaysOnTopLabelMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            FlipAlwaysOnTop();
+            var lbl = (Label)sender;
+            var resourceUrl = AlwaysOnTopEnabled ? "Resources/Images/Buttons/AlwaysOnTopHoverOn.png" : "Resources/Images/Buttons/AlwaysOnTopHoverOff.png";
+            lbl.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), resourceUrl)));
+        }
+
+        private void SetAlwaysOnTop()
+        {
+            string path = System.Reflection.Assembly.GetExecutingAssembly().CodeBase;
+            SettingsFileDirectory = System.IO.Path.GetDirectoryName(path).Replace(@"file:\", "") + "Settings.txt";
+            try
+            {
+                AlwaysOnTopEnabled = Convert.ToBoolean(File.ReadAllText(SettingsFileDirectory));
+            } 
+            catch
+            {
+                AlwaysOnTopEnabled = false;
+            }
+            var resourceUrl = AlwaysOnTopEnabled ? "Resources/Images/Buttons/AlwaysOnTopOn.png" : "Resources/Images/Buttons/AlwaysOnTopOff.png";
+            AlwaysOnTop_Label.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), resourceUrl)));
+        }
+
+        private void WriteAlwaysOnTop()
+        {
+            try
+            {
+                File.WriteAllText(SettingsFileDirectory, AlwaysOnTopEnabled.ToString());
+            }
+            catch
+            {
+
+            }
+        }
+
+        private void FlipAlwaysOnTop()
+        {
+            AlwaysOnTopEnabled = !AlwaysOnTopEnabled;
+            WriteAlwaysOnTop();
         }
         #endregion
     }

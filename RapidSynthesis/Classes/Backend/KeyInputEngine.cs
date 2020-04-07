@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using WindowsInput.Native;
+using System.Threading;
 //using WindowsInput;
 
 
-// https://github.com/EasyAsABC123/Keyboard
-// https://stackoverflow.com/questions/13200362/how-to-send-ctrl-shift-alt-key-combinations-to-an-application-window-via-sen
-// APP NEEDS TO RUN IN ADMIN FFS
-// https://archive.codeplex.com/?p=inputsimulator
 
 
 namespace RapidSynthesis 
@@ -62,7 +59,7 @@ namespace RapidSynthesis
                 foreach (var mod in modKeys)
                     modkeyText += " " + mod.ToString();
             }
-            Logger.Write($"Input {key.ToString()}{modkeyText} to Process {ProcessManager.GameProcess.Id}");
+            Logger.Write($"Input {key}{modkeyText} to Process {ProcessManager.GameProcess.Id}");
         }
     }
 }

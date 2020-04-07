@@ -209,8 +209,20 @@ namespace RapidSynthesis
                 return;
             Logger.Write("Sending Macro " + macroNumber);
             // UI message: MACRO NUMBER macroNumber
-            UICommunicator.UpdateMacroUIInfo(macroNumber, hotkey.TimerInMiliseconds);
+            UICommunicator.UpdateMacroUIInfo(macroNumber, hotkey.TimerInMiliseconds, VerifyFinalMacro(macroNumber));
             SendInput(hotkey);
+        }
+
+        private static bool VerifyFinalMacro(int macroNumber)
+        {
+            switch (macroNumber)
+            {
+                case 1:
+                    return (HotkeySet[HKType.Macro2] == null && HotkeySet[HKType.Macro3] == null);
+                case 2:
+                    return (HotkeySet[HKType.Macro3] == null);
+            }
+            return true;
         }
 
         private static void SendCollectableConfirmationInput()
@@ -248,10 +260,35 @@ namespace RapidSynthesis
 
             // enter a craft and leave it out
             Break(500);
-            SendInput(HotkeySet[HKType.Confirm], 3);
-            Break(1000);
-            SendInput(HotkeySet[HKType.Cancel]);
-            SendInput(HotkeySet[HKType.Confirm]);
+
+            try
+            {
+                ProcessManager.DisableInputs();
+                Break(50);
+                SendInput(HotkeySet[HKType.Confirm], 3);
+                Break(50);
+            }
+            finally
+            {
+                ProcessManager.EnableInputs();
+            }
+
+            Break(1500);
+
+            try
+            {
+                ProcessManager.DisableInputs();
+                Break(50);
+                SendInput(HotkeySet[HKType.Confirm]);
+                SendInput(HotkeySet[HKType.Cancel]);
+                SendInput(HotkeySet[HKType.Confirm]);
+                Break(50);
+            }
+            finally
+            {
+                ProcessManager.EnableInputs();
+            }
+
             Break(1500);
 
             // use food and syrup as needed
@@ -280,8 +317,19 @@ namespace RapidSynthesis
             
             UICommunicator.UpdateStatus("Preparing Next Craft...");
             Logger.Write("Resetting Craft Cycle");
-            SendInput(HotkeySet[HKType.Confirm], 5);
-            
+            try
+            {
+                ProcessManager.DisableInputs();
+                Break(50);
+                SendInput(HotkeySet[HKType.Confirm], 3);
+                Break(50);
+            }
+            finally
+            {
+                ProcessManager.EnableInputs();
+            }
+
+
         }
 
         private static DateTime CalculateNextConsumableUse(int timeRemainingInMinutes)

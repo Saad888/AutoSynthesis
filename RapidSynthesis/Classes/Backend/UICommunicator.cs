@@ -58,6 +58,12 @@ namespace RapidSynthesis
         private static int PreviousUpdate2Count { get; set; }
 
         private static bool UpdateOverride { get; set; }
+
+
+        private static string PreviousCraftTimerText { get; set; }
+        private static string PreviousMacroTimerText { get; set; }
+        private static string PreviousFoodSyrupTimerText { get; set; }
+
         #endregion
 
         #region Setup Methods
@@ -89,11 +95,15 @@ namespace RapidSynthesis
             ProgressMacroTime = new DateTime();
             ProgressMacroTimeDuration = 0;
             UpdateOverride = false;
-        }
-        #endregion
+            PreviousCraftTimerText = "";
+            PreviousMacroTimerText = "";
+            PreviousFoodSyrupTimerText = "";
 
-        #region Update Methods (Called by External Functions)
-        public static void UpdateCraftUIInfo(int craftCount, int max)
+    }
+    #endregion
+
+    #region Update Methods (Called by External Functions)
+    public static void UpdateCraftUIInfo(int craftCount, int max)
         {
             // Updates visual display on craft status
             // Label
@@ -126,12 +136,16 @@ namespace RapidSynthesis
             }
         }
 
-        public static void UpdateMacroUIInfo(int macroNumber, int macroTimer)
+        public static void UpdateMacroUIInfo(int macroNumber, int macroTimer, bool finalMacro = false)
         {
             MacroNumber = macroNumber;
             UpdateStatus($"Using Macro {MacroNumber}...");
+
             ProgressMacroTimeDuration = macroTimer;
-            ProgressMacroTime = DateTime.Now.AddMilliseconds(macroTimer);
+            if (!finalMacro)
+                ProgressMacroTime = DateTime.Now.AddMilliseconds(macroTimer);
+            else
+                ProgressMacroTime = ProgressCraftTime;
         }
 
         public static void BeginCraftTimer(int totalTime)
@@ -249,13 +263,17 @@ namespace RapidSynthesis
             Task.Run(action, token);
         }
 
+
         private static void UpdateCraftTimerText()
         {
             var output = "Craft " + CraftNumber + ": ";
             var timer = GetTimeRemainingString(ProgressCraftTime);
             output += timer;
 
-            CraftTimerLabel.Dispatcher.Invoke(() => { CraftTimerLabel.Content = output; });
+            if (output != PreviousCraftTimerText)
+                CraftTimerLabel.Dispatcher.Invoke(() => { CraftTimerLabel.Content = output; });
+
+            PreviousCraftTimerText = output;
         }
 
         private static void UpdateMacroTimerText()
@@ -263,13 +281,20 @@ namespace RapidSynthesis
             var output = "Macro " + MacroNumber + ": ";
             var timer = GetTimeRemainingString(ProgressMacroTime);
             output += timer;
-            MacroTimerLabel.Dispatcher.Invoke(() => { MacroTimerLabel.Content = output; });
+
+            if (output != PreviousMacroTimerText)
+                MacroTimerLabel.Dispatcher.Invoke(() => { MacroTimerLabel.Content = output; });
+
+            PreviousMacroTimerText = output;
         }
 
         private static void UpdateFoodSyrupLabel()
         {
             var output = GetFoodSyrupLabelString();
-            FoodSyrupLabel.Dispatcher.Invoke(() => { FoodSyrupLabel.Content = output; });
+
+            if (output != PreviousFoodSyrupTimerText)
+                FoodSyrupLabel.Dispatcher.Invoke(() => { FoodSyrupLabel.Content = output; });
+            PreviousFoodSyrupTimerText = output;
         }
 
         private static string GetFoodSyrupLabelString()

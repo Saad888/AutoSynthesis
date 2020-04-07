@@ -19,9 +19,10 @@ namespace RapidSynthesis.Windows
     /// </summary>
     public partial class SaveDialog : Window
     {
-        public SaveDialog()
+        public SaveDialog(string initialText)
         {
             InitializeComponent();
+            TXBName.Text = initialText;
         }
 
         public string SaveName
@@ -35,14 +36,17 @@ namespace RapidSynthesis.Windows
             DialogResult = true;
         }
 
-        private void BTNCancel_Click(object sender, RoutedEventArgs e)
-        {
-            DialogResult = false;
-        }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             TXBName.Focus();
+            TXBName.SelectAll();
+        }
+
+        private void TXBName_Press(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter && !String.IsNullOrEmpty(TXBName.Text))
+                DialogResult = true;
         }
     }
 }

@@ -7,7 +7,7 @@
         xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2" x:Class="RapidSynthesis.MainWindow"
         mc:Ignorable="d"
         Title="AutoSynthesis" 
-        SizeToContent="WidthAndHeight" ResizeMode="CanMinimize" HorizontalAlignment="Center" VerticalAlignment="Center" Icon="Resources/Icon/Icon.png">
+        SizeToContent="WidthAndHeight" ResizeMode="CanMinimize" HorizontalAlignment="Center" VerticalAlignment="Center" Icon="Resources/Icon/Icon.png" Deactivated="Window_Deactivated">
     <Window.Resources>
         <Style x:Key="FocusVisual">
             <Setter Property="Control.Template">
@@ -768,9 +768,14 @@
                 <ImageBrush ImageSource="Resources/Icon/Icon.png"/>
             </Label.Background>
         </Label>
-        <Label x:Name="Minimize_Label" Content="" Grid.Column="1" HorizontalAlignment="Left" Margin="238,2,0,0" VerticalAlignment="Top" Width="15" Height="15" Opacity="0.5" MouseEnter="MinimizeLabelMouseEnter" MouseLeave="MinimizeLabelMouseExit" MouseDown="MinimizeLabelMouseDown" MouseUp="MinimizeLabelMouseUp" ToolTip="Minimize To Tray">
+        <Label x:Name="Minimize_Label" Content="" Grid.Column="1" HorizontalAlignment="Left" Margin="221,2,0,0" VerticalAlignment="Top" Width="15" Height="15" Opacity="0.5" MouseEnter="MinimizeLabelMouseEnter" MouseLeave="MinimizeLabelMouseExit" MouseDown="MinimizeLabelMouseDown" MouseUp="MinimizeLabelMouseUp" ToolTip="Minimize To Tray">
             <Label.Background>
                 <ImageBrush ImageSource="Resources/Images/Buttons/Minimize to Tray.png"/>
+            </Label.Background>
+        </Label>
+        <Label x:Name="AlwaysOnTop_Label" Content="" Grid.Column="1" HorizontalAlignment="Left" Margin="238,2,0,0" VerticalAlignment="Top" Width="15" Height="15" Opacity="0.5" MouseEnter="AlwaysOnTopLabelMouseEnter" MouseLeave="AlwaysOnTopLabelMouseExit" MouseDown="AlwaysOnTopLabelMouseDown" MouseUp="AlwaysOnTopLabelMouseUp" ToolTip="Always On Top">
+            <Label.Background>
+                <ImageBrush ImageSource="Resources/Images/Buttons/AlwaysOnTopOff.png"/>
             </Label.Background>
         </Label>
 
