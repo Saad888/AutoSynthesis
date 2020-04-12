@@ -27,7 +27,9 @@ namespace AutoSynthesis
 {
     // TODO:
     // Update Readme (especially with images post changes)
-    // Update version 
+
+    // GLITCHES:
+    // 1. Saving a blank profile name actually saves it
 
     // HOW TO UPDATE:
     // Update version info under AssemblyInfo.cs

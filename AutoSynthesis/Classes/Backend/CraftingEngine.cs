@@ -184,8 +184,8 @@ namespace AutoSynthesis
             UICommunicator.UpdateStatus2(craftCompleted);
             CraftingActive = false;
 
-            var foodRemaining = (int)(NextFoodUse.AddMinutes(CalculateFoodSyrupMargin()) - DateTime.Now).TotalMinutes;
-            var syrupRemaining = (int)(NextSyrupUse.AddMinutes(CalculateFoodSyrupMargin()) - DateTime.Now).TotalMinutes;
+            var foodRemaining = (int)(NextFoodUse - DateTime.Now).TotalMinutes;
+            var syrupRemaining = (int)(NextSyrupUse - DateTime.Now).TotalMinutes;
             SetFoodAndSyrupTimings.Invoke(foodRemaining, syrupRemaining);
 
             EndCraftCallback.Invoke();
@@ -266,6 +266,7 @@ namespace AutoSynthesis
                 ProcessManager.DisableInputs();
                 Break(50);
                 SendInput(HotkeySet[HKType.Confirm], 3);
+                SendInput(HotkeySet[HKType.Cancel]);
                 Break(50);
             }
             finally
@@ -278,7 +279,7 @@ namespace AutoSynthesis
             try
             {
                 ProcessManager.DisableInputs();
-                Break(50);
+                Break(100);
                 SendInput(HotkeySet[HKType.Confirm]);
                 SendInput(HotkeySet[HKType.Cancel]);
                 SendInput(HotkeySet[HKType.Confirm]);
@@ -289,7 +290,7 @@ namespace AutoSynthesis
                 ProcessManager.EnableInputs();
             }
 
-            Break(1500);
+            Break(2000);
 
             // use food and syrup as needed
             if (useFood)

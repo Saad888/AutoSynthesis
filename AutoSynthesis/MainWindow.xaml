@@ -11,7 +11,7 @@
         ResizeMode="CanMinimize" 
         HorizontalAlignment="Center" 
         VerticalAlignment="Center" 
-        Icon="Resources/Icon/Icon.png" Closing="Window_Closing">
+        Icon="Resources/Icon/Icon.png" Closing="Window_Closing" Deactivated="Window_Deactivated">
     <Window.Resources>
         <Style x:Key="FocusVisual">
             <Setter Property="Control.Template">
