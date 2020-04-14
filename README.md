@@ -88,7 +88,6 @@ To stop crafting, simply press the button once again. Pressing the button once w
 ## 4. F.A.Q.
 **1. The app isn't sending inputs into the game.**   
 - If the game limits FPS when running in the background, this might cause some inputs to get neglected, so ensure to turn that setting off in game. 
-- Its possible the app will need to be launched in Admin mode. This cannot be done with the way the app is currently deployed, if that becomes the case I'll be releasing future updates with a different deployment method that allows for the app to run independatly. 
 
 **2. Does the game need to be in focus?**
 - No
