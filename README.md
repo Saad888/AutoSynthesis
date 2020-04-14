@@ -102,5 +102,5 @@ To stop crafting, simply press the button once again. Pressing the button once w
 **4. My crafting is randomly getting cancelled.**
 - The most likely cause for this is your character is selecting an object in the background when a craft is starting. For example it might be selecting the market board if you are crafting near it as a new craft starts. Unfortunately there is no fix for this, you *must* be in a position where nothing else on your screen can be selected and start an event (e.g. no other NPCs, Market Board, Signs, etc.). 
 
-**5. Does this violate ToS?**
+**5. Does this violate FFXIV ToS?**
 - Yes
