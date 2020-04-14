@@ -10,20 +10,27 @@ This application runs by blindly sending inputs into the game. It does not attac
 ---
 
 ## Table of Contents:
-1. Using the App
+1. Installation and Setup
+2. Using the App
    - Setting Up the Game
    - Macros
    - Consumables
    - Settings
    - Profiles
    - Starting and Stopping Crafting
-2. Reading the Crafting Window
-3. Installation and Setup
+3. Reading the Crafting Window
 4. F.A.Q.
+
+
+
+---
+## 1. Installation
+The installation file can be found here:   
+https://autosynthesis.blob.core.windows.net/autosynthesis/Releases/AutoSynthesis_Setup.msi
 
 ---
 
-## 1. Using the App
+## 2. Using the App
 
 ### Setting Up the Game
 Before starting the crafting from the app, the game needs to be in the right state.  The first action that the app will do is the first Macro, so before hitting the "Start Crafting" button, make sure your character is crouched down ready to craft and not in the crafting window, like so:
@@ -76,14 +83,9 @@ To stop crafting, simply press the button once again. Pressing the button once w
    - The second line displays what inputs are being sent into the game.  
    - The third line displays the remaining time on any consumables before they will be flagged to be reused.   
    
----
-## 4. Installation and Setup
-The installation file can be found here:   
-https://autosynthesis.blob.core.windows.net/autosynthesis/Releases/AutoSynthesis_Setup.msi
-
 
 ---
-## 5. F.A.Q.
+## 4. F.A.Q.
 **1. The app isn't sending inputs into the game.**   
 - If the game limits FPS when running in the background, this might cause some inputs to get neglected, so ensure to turn that setting off in game. 
 - Its possible the app will need to be launched in Admin mode. This cannot be done with the way the app is currently deployed, if that becomes the case I'll be releasing future updates with a different deployment method that allows for the app to run independatly. 
