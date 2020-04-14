@@ -20,7 +20,7 @@ This application runs by blindly sending inputs into the game. It does not attac
    - Starting and Stopping Crafting
 3. Reading the Crafting Window
 4. F.A.Q.
-
+5. Contact Info
 
 
 ---
