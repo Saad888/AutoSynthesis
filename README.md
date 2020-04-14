@@ -93,14 +93,14 @@ To stop crafting, simply press the button once again. Pressing the button once w
 **2. Does the game need to be in focus?**
 - No
 
-**2. Can I use mouse or controller inputs?**  
+**3. Can I use mouse or controller inputs?**  
 - No, this app only works with Keyboard inputs. 
 
-**3. My mouse and keyboard freeze for a bit when starting a new craft.**
+**4. My mouse and keyboard freeze for a bit when starting a new craft.**
 - This is intentional. If the game is in focus, or if the game is in the background but the mouse is hovering over the game, mouse inputs must freeze otherwise another craft won't start. This is because if the game detects any mouse movement over the application, it will disable the controller cursor and make it impossible to hit the sequence to start the next craft. It should never freeze for more than 0.1 seconds at a time, so if it ever lasts longer than that please let me know. To avoid this happening, once you start the autocraft either fully minimize the game or move it to another crafting window.
 
-**4. My crafting is randomly getting cancelled.**
+**5. My crafting is randomly getting cancelled.**
 - The most likely cause for this is your character is selecting an object in the background when a craft is starting. For example it might be selecting the market board if you are crafting near it as a new craft starts. Unfortunately there is no fix for this, you *must* be in a position where nothing else on your screen can be selected and start an event (e.g. no other NPCs, Market Board, Signs, etc.). 
 
-**5. Does this violate FFXIV ToS?**
+**6. Does this violate FFXIV ToS?**
 - Yes
