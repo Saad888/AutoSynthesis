@@ -103,3 +103,9 @@ To stop crafting, simply press the button once again. Pressing the button once w
 
 **6. Does this violate FFXIV ToS?**
 - Yes
+
+---
+
+## 5. Contact Info
+
+If you have any questions, comments, feedback, or run into any issues, please contact me either here or on discord (Xaad#1337)
