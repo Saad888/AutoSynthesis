@@ -30,6 +30,8 @@ namespace AutoSynthesis
 
     // GLITCHES:
     // 1. Saving a blank profile name actually saves it
+    // 2. Try doing only two inputs after food or syrup are consumed? Or hit another cancel? Find out a way around the event cancel
+    // 3. Apparently food not going through on another system, invstigate
 
     // HOW TO UPDATE:
     // Update version info under AssemblyInfo.cs
