@@ -26,7 +26,7 @@ This application runs by blindly sending inputs into the game. It does not attac
 ---
 ## 1. Installation
 The installation file can be found here:   
-https://autosynthesis.blob.core.windows.net/autosynthesis/Releases/AutoSynthesis_Setup.msi
+https://1drv.ms/u/s!AgOp7WH2nt22xWup5-lzmc9qMPrk?e=RnOd4N
 
 ---
 
