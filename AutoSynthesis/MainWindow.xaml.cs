@@ -96,7 +96,7 @@ namespace AutoSynthesis
         public MainWindow()
         {
             // Verify Updates
-            CheckForUpdates();
+            //CheckForUpdates();
 
             InitializeComponent();
             SetContainerValues();
