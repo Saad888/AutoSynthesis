@@ -123,7 +123,6 @@ namespace AutoSynthesis
                     UICommunicator.UpdateSyrup(NextSyrupUse);
                 }
 
-                Logger.Write("Initiating Crafting");
 
                 // If crafts remaining was 0, loop infinitley
                 // If not, craft until quota is met
@@ -132,6 +131,9 @@ namespace AutoSynthesis
                     // UI MESSAGE: Set timer for overall craft
                     UICommunicator.UpdateCraftUIInfo(CraftCount, Settings.CraftCount);
 
+                    // Add requested delay
+                    Break(Settings.StartingDelay);
+                    
                     // Begin Craft Timer:
                     RunCraftProgressBar();
 

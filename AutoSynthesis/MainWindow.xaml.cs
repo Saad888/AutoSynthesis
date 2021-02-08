@@ -1,27 +1,18 @@
-﻿using System;
+﻿using AutoSynthesis.Windows;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Net;
-using System.IO;
-using System.Windows;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Reflection;
+using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
-using WindowsInput.Native;
-using System.Threading;
-using AutoSynthesis.Windows;
-using System.Runtime.InteropServices;
-using Newtonsoft.Json;
-using System.Deployment.Application;
-using System.Reflection;
 
 namespace AutoSynthesis
 {
@@ -84,6 +75,7 @@ namespace AutoSynthesis
         public Action<int, int> GetFoodAndSyrupTimings { get; set; }
         private System.Windows.Forms.NotifyIcon Notify { get; set; }
         private bool NotifyFlagged { get; set; } = true;
+        private int StartCraftingDelay { get; set; } = 0;
         #endregion
 
         #region Brush Colors
@@ -104,7 +96,7 @@ namespace AutoSynthesis
             SetErrorAction();
             SetupSystemTray();
             SetupFoodAndSyrupTimings();
-            SetAlwaysOnTop();
+            ReadSettingsFile();
 
             // Set up UICommunicator
             UICommunicator.ConnectUI(LBLCraftNumber, LBLUpdate, LBLUpdateFooter, LBLTimerCraft, LBLTimerMacro, 
@@ -355,7 +347,8 @@ namespace AutoSynthesis
                         (bool)CHBCollectableCraft.IsChecked,
                         FoodTimer,
                         TimerContainers[TXBFoodTimer].Timer,
-                        TimerContainers[TXBSyrupTimer].Timer
+                        TimerContainers[TXBSyrupTimer].Timer, 
+                        StartCraftingDelay * 1000
                     );
                 }
                 catch (InvalidUserParametersException error)
@@ -1161,38 +1154,10 @@ namespace AutoSynthesis
             lbl.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), resourceUrl)));
         }
 
-        private void SetAlwaysOnTop()
-        {
-            string path = Assembly.GetExecutingAssembly().CodeBase;
-            SettingsFileDirectory = System.IO.Path.GetDirectoryName(path).Replace(@"file:\", "") + @"\Settings.txt";
-            try
-            {
-                AlwaysOnTopEnabled = Convert.ToBoolean(File.ReadAllText(SettingsFileDirectory));
-            } 
-            catch
-            {
-                AlwaysOnTopEnabled = false;
-            }
-            var resourceUrl = AlwaysOnTopEnabled ? "Resources/Images/Buttons/AlwaysOnTopOn.png" : "Resources/Images/Buttons/AlwaysOnTopOff.png";
-            AlwaysOnTop_Label.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), resourceUrl)));
-        }
-
-        private void WriteAlwaysOnTop()
-        {
-            try
-            {
-                File.WriteAllText(SettingsFileDirectory, AlwaysOnTopEnabled.ToString());
-            }
-            catch
-            {
-
-            }
-        }
-
         private void FlipAlwaysOnTop()
         {
             AlwaysOnTopEnabled = !AlwaysOnTopEnabled;
-            WriteAlwaysOnTop();
+            WriteSaveSettings();
         }
         #endregion
 
@@ -1248,6 +1213,71 @@ namespace AutoSynthesis
 
         #endregion
 
+        #region Settings
+        private void SettingsEnter(object sender, MouseEventArgs e)
+        {
+            var lbl = (Label)sender;
+            var resourceUrl = "Resources/Images/Buttons/settings-hover.png";
+            lbl.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), resourceUrl)));
+        }
 
+        private void SettingsExit(object sender, MouseEventArgs e)
+        {
+            var lbl = (Label)sender;
+            var resourceUrl = "Resources/Images/Buttons/settings.png";
+            lbl.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), resourceUrl)));
+        }
+
+        private void OpenSettings(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                var settingsDialogue = new Settings(StartCraftingDelay.ToString());
+                settingsDialogue.Owner = Application.Current.MainWindow;
+                if (settingsDialogue.ShowDialog() == true)
+                    StartCraftingDelay = Convert.ToInt32(settingsDialogue.Time);
+                WriteSaveSettings();
+            }
+            catch (Exception error)
+            {
+                ErrorMessageHandler(error);
+            }
+        }
+        #endregion
+
+        #region Settings Saving
+        private void WriteSaveSettings()
+        {
+            try
+            {
+                var text = AlwaysOnTopEnabled.ToString() + "|" + StartCraftingDelay.ToString();
+                File.WriteAllText(SettingsFileDirectory, text);
+            }
+            catch
+            {
+
+            }
+        }
+
+
+        private void ReadSettingsFile()
+        {
+            string path = Assembly.GetExecutingAssembly().CodeBase;
+            SettingsFileDirectory = Path.GetDirectoryName(path).Replace(@"file:\", "") + @"\Settings.txt";
+            try
+            {
+                var fileResult = File.ReadAllText(SettingsFileDirectory).Split('|');
+                AlwaysOnTopEnabled = Convert.ToBoolean(fileResult[0]);
+                StartCraftingDelay = Convert.ToInt32(fileResult[1]);
+            }
+            catch
+            {
+                AlwaysOnTopEnabled = false;
+                StartCraftingDelay = 0;
+            }
+            var resourceUrl = AlwaysOnTopEnabled ? "Resources/Images/Buttons/AlwaysOnTopOn.png" : "Resources/Images/Buttons/AlwaysOnTopOff.png";
+            AlwaysOnTop_Label.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), resourceUrl)));
+        }
+        #endregion
     }
 }

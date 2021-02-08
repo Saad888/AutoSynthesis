@@ -57,7 +57,7 @@
     <TargetZone>LocalIntranet</TargetZone>
   </PropertyGroup>
   <PropertyGroup>
-    <GenerateManifests>true</GenerateManifests>
+    <GenerateManifests>false</GenerateManifests>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
@@ -120,6 +120,9 @@
     <Compile Include="Windows\SaveDialog.xaml.cs">
       <DependentUpon>SaveDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Windows\Settings.xaml.cs">
+      <DependentUpon>Settings.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -149,6 +152,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Windows\SaveDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Settings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -229,6 +236,12 @@
     <Resource Include="Resources\Images\Buttons\AlwaysOnTopOn.png" />
     <Resource Include="Resources\Images\Buttons\AlwaysOnTopPressedOff.png" />
     <Resource Include="Resources\Images\Buttons\AlwaysOnTopPressedOn.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\Buttons\settings.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\Buttons\settings-hover.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

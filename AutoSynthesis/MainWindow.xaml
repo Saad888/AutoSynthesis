@@ -779,6 +779,11 @@
                 <ImageBrush ImageSource="Resources/Images/Buttons/AlwaysOnTopOff.png"/>
             </Label.Background>
         </Label>
+        <Label x:Name="SettingsButton" Content="" Grid.Column="1" HorizontalAlignment="Left" Margin="204,2,0,0" VerticalAlignment="Top" Width="15" Height="15" Opacity="0.5" MouseEnter="SettingsEnter" MouseLeave="SettingsExit" ToolTip="Settings" MouseUp="OpenSettings">
+            <Label.Background>
+                <ImageBrush ImageSource="Resources/Images/Buttons/settings.png"/>
+            </Label.Background>
+        </Label>
 
     </Grid>
 </Window>

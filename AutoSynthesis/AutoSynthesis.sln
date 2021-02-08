@@ -10,9 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		app.manifest = app.manifest
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoSynthesis Updater", "..\AutoSynthesis Updater\AutoSynthesis Updater.csproj", "{6116F2A7-C83A-482A-952A-2086165E558A}"
-EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup", "..\Setup\Setup.vdproj", "{BE9281EC-D3B1-4F12-8339-3D48A71A4228}"
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup1", "..\Setup1\Setup1.vdproj", "{11EC0837-AEB1-4085-9C34-67B1A7F41E77}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,12 +22,8 @@ Global
 		{37621B0A-1275-457E-AFB2-C6BC38CDA2A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{37621B0A-1275-457E-AFB2-C6BC38CDA2A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{37621B0A-1275-457E-AFB2-C6BC38CDA2A1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6116F2A7-C83A-482A-952A-2086165E558A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6116F2A7-C83A-482A-952A-2086165E558A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6116F2A7-C83A-482A-952A-2086165E558A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6116F2A7-C83A-482A-952A-2086165E558A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BE9281EC-D3B1-4F12-8339-3D48A71A4228}.Debug|Any CPU.ActiveCfg = Debug
-		{BE9281EC-D3B1-4F12-8339-3D48A71A4228}.Release|Any CPU.ActiveCfg = Release
+		{11EC0837-AEB1-4085-9C34-67B1A7F41E77}.Debug|Any CPU.ActiveCfg = Debug
+		{11EC0837-AEB1-4085-9C34-67B1A7F41E77}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
