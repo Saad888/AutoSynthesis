@@ -184,7 +184,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="RapidSynthesis_4_TemporaryKey.pfx" />
     <Resource Include="Resources\Fonts\Sen-Regular.ttf" />
   </ItemGroup>
   <ItemGroup>
