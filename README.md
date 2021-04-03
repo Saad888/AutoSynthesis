@@ -1,3 +1,7 @@
+NOTE: Autocrafter is working as of the most recent patch 5.45
+
+---
+
 # **AutoSynthesis** - An FFXIV Auto Crafter
 Auto-crafter for Final Fantasy XIV. This application will automatically repeat crafting the same item by sending blind inputs into the game. The app can hit up to three in-game macros, accept collectable crafts (if enabled), reset food and/or syrup (if enabled), and will automatically start the next craft. Users can also set exactly how many items they want the app to craft, or they can let is run indefinitley. The app also runs in the background without requiring window focus on either the app or the game. 
 
@@ -86,24 +90,27 @@ To stop crafting, simply press the button once again. Pressing the button once w
 
 ---
 ## 4. F.A.Q.
-**1. The app isn't sending inputs into the game.**   
+**1. My craft is getting cancelled after using food or syrup.**
+- The most likely cause for this is your character is selecting an object in the background when a craft is starting. For example it might be selecting the market board if you are crafting near it as a new craft starts. Unfortunately there is no fix for this, you *must* be in a position where nothing else on your screen can be selected and start an event (e.g. no other NPCs, Market Board, Signs, etc.). My recommendation is to be facing a wall or being in a room without other entities.
+
+**2. The app isn't sending inputs into the game.**   
 - If the game limits FPS when running in the background, this might cause some inputs to get neglected, so ensure to turn that setting off in game. 
 - Please check the process name under the details tab for Task Manager, the app is looking for either "ffxiv.exe" or "ffxiv_dx11.exe", if for whatever reason it's neither of these please let me know. 
 - Otherwise, please contact me
 
-**2. Does the game need to be in focus?**
+**3. Does the game need to be in focus?**
 - No, you can use other applications and keep FFXIV minimized. Note I can't guarantee inputs will work 100% of the time but in none of my testing has it failed yet. 
 
-**3. Can I use mouse or controller inputs?**  
+**4. Can I use mouse or controller inputs?**  
 - No, this app only works with Keyboard inputs. 
 
-**4. My mouse and keyboard freeze for a bit when starting a new craft.**
+**5. My mouse and keyboard freeze for a bit when starting a new craft.**
 - This is intentional. If the game is in focus, or if the game is in the background but the mouse is hovering over the game, mouse inputs must freeze otherwise another craft won't start. This is because if the game detects any mouse movement over the application, it will disable the controller cursor and make it impossible to hit the sequence to start the next craft. It should never freeze for more than 0.1 seconds at a time, so if it ever lasts longer than that please let me know. To avoid this happening, once you start the autocraft either fully minimize the game or move it to another monitor.
 
-**5. My crafting is randomly getting cancelled.**
+**6. My crafting is randomly getting cancelled.**
 - The most likely cause for this is your character is selecting an object in the background when a craft is starting. For example it might be selecting the market board if you are crafting near it as a new craft starts. Unfortunately there is no fix for this, you *must* be in a position where nothing else on your screen can be selected and start an event (e.g. no other NPCs, Market Board, Signs, etc.). 
 
-**6. Does this violate FFXIV ToS?**
+**7. Does this violate FFXIV ToS?**
 - Yes
 
 ---
