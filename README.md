@@ -1,4 +1,4 @@
-NOTE: Autocrafter is working as of the most recent patch 5.45
+NOTE: Autocrafter is working as of the most recent patch 5.50
 
 ---
 
