@@ -1,4 +1,5 @@
 NOTE: Autocrafter is working as of the most recent patch 5.57
+ALSO NOTE: XivAlexander seems to break the app. Currently best solution is to launch the game without Alexander when using autocrafter, will look into fixing this in 6.X
 
 ---
 
@@ -118,3 +119,12 @@ To stop crafting, simply press the button once again. Pressing the button once w
 ## 5. Contact Info
 
 If you have any questions, comments, feedback, or run into any issues, please contact me either here or on discord (Xaad#1337)
+
+---
+
+## 6. New Features and ToDo
+
+Currently rolling updates are disabled and so I don't plan on making any new features soon. If EW breaks the app I'll get it fixed with rolling updates enabled, otherwise I'll release a new version early in EW with a few new features
+
+1. Full craft timer
+2. Auto repair sequence
