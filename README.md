@@ -1,4 +1,5 @@
-NOTE: Autocrafter is working as of the most recent patch 5.57
+NOTE: Autocrafter is working as of the most recent patch 5.57  
+
 ALSO NOTE: XivAlexander seems to break the app. Currently best solution is to launch the game without Alexander when using autocrafter, will look into fixing this in 6.X
 
 ---
