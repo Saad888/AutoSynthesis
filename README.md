@@ -129,3 +129,4 @@ Currently rolling updates are disabled and so I don't plan on making any new fea
 
 1. Full craft timer
 2. Auto repair sequence
+3. Windows 7 fix
