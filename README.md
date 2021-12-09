@@ -1,4 +1,5 @@
-6.0 Disclaimer: App should still be working as expected, however please report if you run into any issues 
+Autosynth should be working as of 6.0
+
 WARNING: The app will not work on Windows 7 currently
 
 ---
