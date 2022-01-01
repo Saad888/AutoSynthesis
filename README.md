@@ -119,7 +119,8 @@ To stop crafting, simply press the button once again. Pressing the button once w
 
 ## 5. Contact Info
 
-If you have any questions, comments, feedback, or run into any issues, please contact me either here or on discord (Xaad#1337)
+If you have any questions, comments, feedback, or run into any issues, please contact me either here or on discord (Xaad#1337).
+Also, feel free to follow me on twitter, twitter.com/FeelsXaadMan.
 
 ---
 
