@@ -1,6 +1,6 @@
-Autosynth should be working as of 6.0
+Autosynth should be working as of 6.01. Future patches should not break the application.
 
-WARNING: The app will not work on Windows 7 currently
+WARNING: XIV Alexander can cause the app to break. I have not been able to replicate the cause of this and thus find a fix currently if you run into this issue please run the game without XIV Alexander. Also the app will not work on Windows 7 currently.
 
 ---
 
