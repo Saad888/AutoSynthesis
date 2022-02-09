@@ -1,6 +1,7 @@
 Autosynth should be working as of 6.01. Future patches should not break the application.
 
-WARNING: This application is **not** compatible with current versions of XIV Alexander. Will be looking into this. For now if you want to use autosynth, please disable XIV Alexander.
+WARNING: This application is **not** compatible with current versions of XIV Alexander. Will be looking into this. For now if you want to use autosynth, please disable XIV Alexander or use the NoClippy plugin
+ALSO WARNING: F10 does not seem to be working as a keybind any longer. 
 
 This application also does not work with older versions of windows prior to Windows 10
 
