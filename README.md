@@ -130,8 +130,12 @@ Also, feel free to follow me on twitter, twitter.com/FeelsXaadMan.
 
 ## 6. New Features and ToDo
 
-Currently rolling updates are disabled and so I don't plan on making any new features soon. If EW breaks the app I'll get it fixed with rolling updates enabled, otherwise I'll release a new version early in EW with a few new features
+There are no immediate plans for additional devleopment on this autocrafter, as I really don't have any time. Rolling updates are also currently disabled so a new version would have to be releaased with them enabled before new features can be worked on. If circumstances allow, I might continue development, but as of yet there are no plans. 
+
+Possible future features:
 
 1. Full craft timer
 2. Auto repair sequence
 3. Windows 7 fix
+4. Additional language support
+5. Process ID selection
