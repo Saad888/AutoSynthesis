@@ -139,3 +139,4 @@ Possible future features:
 3. Windows 7 fix
 4. Additional language support
 5. Process ID selection
+6. Sound effect notification for craft completion
