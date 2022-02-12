@@ -1,4 +1,4 @@
-Autosynth should be working as of 6.01. Future patches should not break the application.
+Autosynth should be working as of 6.08. Future patches should not break the application.
 
 WARNING: This application is **not** compatible with current versions of XIV Alexander. Will be looking into this. For now if you want to use autosynth, please disable XIV Alexander or use the NoClippy plugin  
 
