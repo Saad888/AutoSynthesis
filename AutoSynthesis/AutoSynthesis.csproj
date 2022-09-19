@@ -177,6 +177,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
@@ -206,10 +207,9 @@
     <Resource Include="Resources\Icon\Icon.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Icon\Icon - Copy.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Icon.ico" />
+    <None Include="Icon.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Images\Buttons\Minimize to Tray Hover.png" />
