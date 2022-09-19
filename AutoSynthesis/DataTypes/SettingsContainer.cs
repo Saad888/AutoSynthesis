@@ -10,7 +10,7 @@ namespace AutoSynthesis
     {
         // contains settings metadata
         public int CraftCount { get; set; } // Set to 0 if endless craft
-        public int FoodDuration { get; set; } // if 40 min food, true
+        public int FoodDuration { get; set; }
         public bool CollectableCraft { get; set; }
         public int StartingFoodTime { get; set; }
         public int StartingSyrupTime { get; set; }

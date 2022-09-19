@@ -6,8 +6,6 @@
     xmlns:local="clr-namespace:AutoSynthesis.Windows"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="Settings"
-    Width="388"
-    Height="102"
     Background="#FF221632"
     Icon="/AutoSynthesis;component/Resources/Icon/Icon.png"
     Loaded="Window_Loaded"
@@ -92,7 +90,7 @@
             </Setter>
         </Style>
     </Window.Resources>
-    <Grid Margin="10,10,4,12">
+    <Grid Margin="10,10,10,10">
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition />
@@ -104,7 +102,6 @@
         <Label
             Grid.Row="0"
             Grid.Column="0"
-            Grid.ColumnSpan="2"
             HorizontalAlignment="Left"
             Content="Set the delay before starting a craft"
             FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen"

@@ -22,20 +22,27 @@ namespace AutoSynthesis
         #region Properties and Consts
         public static Label UpdateLabel { get; set; }
         public static Label UpdateLabel2 { get; set; }
-        public static Label CraftsCompletedLabel { get; set; }
+        public static Label TotalTimerLabel { get; set; }
         public static Label FoodSyrupLabel { get; set; }
         public static Label CraftTimerLabel { get; set; }
         public static Label MacroTimerLabel { get; set; }
-        public static ProgressBar ProgressOverall { get; set; }
+        public static Label FoodTimerLabel { get; set; }
+        public static ProgressBar ProgressTotal { get; set; }
         public static ProgressBar ProgressCraft { get; set; }
         public static ProgressBar ProgressMacro { get; set; }
 
+        public static ProgressBar ProgressFood { get; set; }
+
         public static Action<Exception> ErrorMessageHandler { get; set; }
 
+        private static double ProgressTotalTimeDuration { get; set; }
         private static double ProgressCraftTimeDuration { get; set; }
+        private static DateTime ProgressTotalTime { get; set; }
         private static DateTime ProgressCraftTime { get; set; }
         private static double ProgressMacroTimeDuration { get; set; }
         private static DateTime ProgressMacroTime { get; set; }
+        private static double ProgressFoodTimeDuration { get; set; }
+        private static DateTime ProgressFoodTime { get; set; }
         private static DateTime NullDateTime { get; set; }
         private static int MacroNumber { get; set; }
         private static int CraftNumber { get; set; }
@@ -60,26 +67,39 @@ namespace AutoSynthesis
         private static bool UpdateOverride { get; set; }
 
 
+        private static string PreviousTotalTimerText { get; set; }
         private static string PreviousCraftTimerText { get; set; }
         private static string PreviousMacroTimerText { get; set; }
+        private static string PreviousFoodTimerText { get; set; }
         private static string PreviousFoodSyrupTimerText { get; set; }
 
         #endregion
 
         #region Setup Methods
-        public static void ConnectUI(Label headerLabel, Label updateLabel, Label updateLabel2, Label craftLabel, 
-                                     Label macroLabel, Label foodSyrupLabel, ProgressBar progressOverall,
-                                     ProgressBar progressCraft, ProgressBar progressMacro)
+        public static void ConnectUI(Label totalLabel, Label updateLabel, Label updateLabel2, Label craftTimerLabel,
+                                     Label macroTimerLabel, Label foodSyrupLabel, Label foodTimerLabel, ProgressBar progressTotal,
+                                     ProgressBar progressCraft, ProgressBar progressMacro, ProgressBar progressFood)
         {
-            CraftsCompletedLabel = headerLabel;
+            TotalTimerLabel = totalLabel;
             UpdateLabel = updateLabel;
             UpdateLabel2 = updateLabel2;
             FoodSyrupLabel = foodSyrupLabel;
-            CraftTimerLabel = craftLabel;
-            MacroTimerLabel = macroLabel;
-            ProgressOverall = progressOverall;
+            CraftTimerLabel = craftTimerLabel;
+            MacroTimerLabel = macroTimerLabel;
+            FoodTimerLabel = foodTimerLabel;
+            ProgressTotal = progressTotal;
             ProgressCraft = progressCraft;
             ProgressMacro = progressMacro;
+            ProgressFood = progressFood;
+
+            TotalTimerLabel.Visibility = Visibility.Hidden;
+            CraftTimerLabel.Visibility = Visibility.Hidden;
+            MacroTimerLabel.Visibility = Visibility.Hidden;
+            FoodTimerLabel.Visibility = Visibility.Hidden;
+
+            updateLabel.Content = "";
+            updateLabel2.Content = "";
+            foodSyrupLabel.Content = "";
         }
 
         public static void ResetValues()
@@ -90,50 +110,29 @@ namespace AutoSynthesis
             FoodEnabled = false;
             SyrupEnabled = false;
             PreviousUpdate2Message = "";
+            ProgressTotalTime = new DateTime();
+            ProgressTotalTimeDuration = 0;
             ProgressCraftTime = new DateTime();
             ProgressCraftTimeDuration = 0;
             ProgressMacroTime = new DateTime();
             ProgressMacroTimeDuration = 0;
+            ProgressFoodTime = new DateTime();
+            ProgressFoodTimeDuration = 0;
             UpdateOverride = false;
             PreviousCraftTimerText = "";
             PreviousMacroTimerText = "";
             PreviousFoodSyrupTimerText = "";
 
-    }
-    #endregion
+        }
+        #endregion
 
-    #region Update Methods (Called by External Functions)
-    public static void UpdateCraftUIInfo(int craftCount, int max)
+        #region Update Methods (Called by External Functions)
+        public static void UpdateCraftUIInfo(int craftCount, int max)
         {
             // Updates visual display on craft status
             // Label
             CraftNumber = craftCount;
             MaxNumber = max;
-        }
-
-        public static void UpdateCompletedUIInfo(int craftCount, int max)
-        {
-            CraftNumber = craftCount;
-            MaxNumber = max;
-            string uiText = $"Crafted: ";
-            string craftCounter = CraftNumber.ToString();
-            if (max != 0)
-                craftCounter += $"/{MaxNumber}";
-
-            if (craftCounter.Length > 5)
-            {
-                UpdateCraftNumberLabel(craftCounter);
-            } else
-            {
-                UpdateCraftNumberLabel(uiText + craftCounter);
-            }
-
-            // Progress Bar
-            if (max > 0)
-            {
-                double p = (double)CraftNumber / MaxNumber;
-                SmoothProgressUpdate(ProgressOverall, p);
-            }
         }
 
         public static void UpdateMacroUIInfo(int macroNumber, int macroTimer, bool finalMacro = false)
@@ -148,10 +147,24 @@ namespace AutoSynthesis
                 ProgressMacroTime = ProgressCraftTime;
         }
 
+        public static void BeginTotalTimer(int totalTime)
+        {
+            ProgressTotalTimeDuration = totalTime;
+            ProgressTotalTime = DateTime.Now.AddMilliseconds(totalTime);
+        }
+
         public static void BeginCraftTimer(int totalTime)
         {
             ProgressCraftTimeDuration = totalTime;
             ProgressCraftTime = DateTime.Now.AddMilliseconds(totalTime);
+        }
+
+        public static void BeginFoodTimer(int totalTime)
+        {
+            FoodEnabled = true;
+            ProgressFoodTimeDuration = totalTime;
+            ProgressFoodTime = DateTime.Now.AddMilliseconds(totalTime);
+            NextFood = DateTime.Now.AddMilliseconds(totalTime);
         }
 
         public static void UpdateFood(DateTime nextFood)
@@ -191,7 +204,8 @@ namespace AutoSynthesis
             {
                 PreviousUpdate2Count++;
                 text += "(" + PreviousUpdate2Count + ")";
-            } else
+            }
+            else
             {
                 PreviousUpdate2Count = 1;
             }
@@ -207,22 +221,11 @@ namespace AutoSynthesis
             UpdateOverrideReset();
             UpdateStatus2("");
             DropProgressToZero();
-            UpdateProgressBar(ProgressOverall, 0);
+            UpdateProgressBar(ProgressTotal, 0);
             UpdateProgressBar(ProgressCraft, 0);
             UpdateProgressBar(ProgressMacro, 0);
             FoodSyrupLabel.Dispatcher.Invoke(() => { FoodSyrupLabel.Content = ""; });
         }
-        #endregion
-
-        #region Label Updates
-        private static void UpdateCraftNumberLabel(string uiText)
-        {
-            // Update label
-            Action action = () => { CraftsCompletedLabel.Content = uiText; };
-            DispatchActionLabel(CraftsCompletedLabel, action);
-            // Update progress bar
-        }
-
         #endregion
 
         #region Progress Bar Updates
@@ -235,10 +238,14 @@ namespace AutoSynthesis
             {
                 try
                 {
-                    SetProgressbarLabelVisible();
+                    SetProgressBarLabelVisible();
 
                     while (!token.IsCancellationRequested)
                     {
+                        // Update Total Craft Timer
+                        UpdateTimerProgressBar(ProgressTotal, ProgressTotalTime, ProgressTotalTimeDuration);
+                        UpdateTotalTimerText();
+
                         // Update Craft Timer
                         UpdateTimerProgressBar(ProgressCraft, ProgressCraftTime, ProgressCraftTimeDuration);
                         UpdateCraftTimerText();
@@ -248,12 +255,15 @@ namespace AutoSynthesis
                         UpdateMacroTimerText();
 
                         // Update Food Label
+                        UpdateTimerProgressBar(ProgressFood, ProgressFoodTime, ProgressFoodTimeDuration);
+                        UpdateFoodTimerText();
+
                         UpdateFoodSyrupLabel();
 
                         Thread.Sleep(TICK_TIME);
                     }
 
-                    SetProgressbarLabelVisible(false);
+                    SetProgressBarLabelVisible(false);
                 }
                 catch (Exception e)
                 {
@@ -263,10 +273,26 @@ namespace AutoSynthesis
             Task.Run(action, token);
         }
 
+        private static void UpdateTotalTimerText()
+        {
+            var output = $"Total: ";
+            var timer = GetTimeRemainingString(ProgressTotalTime);
+            output += timer;
+
+            if (output != PreviousTotalTimerText)
+            {
+                TotalTimerLabel.Dispatcher.Invoke(() => { TotalTimerLabel.Content = output; });
+            }
+
+            PreviousTotalTimerText = output;
+        }
 
         private static void UpdateCraftTimerText()
         {
-            var output = "Craft " + CraftNumber + ": ";
+            var output = $"Craft {CraftNumber}";
+            if (MaxNumber > 0)
+                output += $"/{MaxNumber}";
+            output += ": ";
             var timer = GetTimeRemainingString(ProgressCraftTime);
             output += timer;
 
@@ -286,6 +312,18 @@ namespace AutoSynthesis
                 MacroTimerLabel.Dispatcher.Invoke(() => { MacroTimerLabel.Content = output; });
 
             PreviousMacroTimerText = output;
+        }
+
+        private static void UpdateFoodTimerText()
+        {
+            var output = "Food: ";
+            var timer = GetTimeRemainingString(ProgressFoodTime);
+            output += timer;
+
+            if (output != PreviousFoodTimerText)
+                FoodTimerLabel.Dispatcher.Invoke(() => { FoodTimerLabel.Content = output; });
+
+            PreviousFoodTimerText = output;
         }
 
         private static void UpdateFoodSyrupLabel()
@@ -338,19 +376,22 @@ namespace AutoSynthesis
             }
         }
 
-        private static void SetProgressbarLabelVisible(bool setToVisible = true)
+        private static void SetProgressBarLabelVisible(bool setToVisible = true)
         {
             var startingOpacity = setToVisible ? 0 : 100;
             var visibility = setToVisible ? Visibility.Visible : Visibility.Hidden;
             // Set the labels on and their opacity to 0
-            CraftsCompletedLabel.Dispatcher.Invoke(() => CraftsCompletedLabel.Opacity = startingOpacity);
-            MacroTimerLabel.Dispatcher.Invoke(() => MacroTimerLabel.Opacity = startingOpacity);
+            TotalTimerLabel.Dispatcher.Invoke(() => TotalTimerLabel.Opacity = startingOpacity);
             CraftTimerLabel.Dispatcher.Invoke(() => CraftTimerLabel.Opacity = startingOpacity);
+            MacroTimerLabel.Dispatcher.Invoke(() => MacroTimerLabel.Opacity = startingOpacity);
+            FoodTimerLabel.Dispatcher.Invoke(() => FoodTimerLabel.Opacity = startingOpacity);
             if (setToVisible)
             {
-                CraftsCompletedLabel.Dispatcher.Invoke(() => CraftsCompletedLabel.Visibility = visibility);
-                MacroTimerLabel.Dispatcher.Invoke(() => MacroTimerLabel.Visibility = visibility);
+                TotalTimerLabel.Dispatcher.Invoke(() => TotalTimerLabel.Visibility = visibility);
                 CraftTimerLabel.Dispatcher.Invoke(() => CraftTimerLabel.Visibility = visibility);
+                MacroTimerLabel.Dispatcher.Invoke(() => MacroTimerLabel.Visibility = visibility);
+                if (FoodEnabled)
+                    FoodTimerLabel.Dispatcher.Invoke(() => FoodTimerLabel.Visibility = visibility);
             }
 
             // Fade in Bars on Separate Thread
@@ -363,20 +404,26 @@ namespace AutoSynthesis
                     var prog = i * jump;
                     if (!setToVisible)
                         prog = 1 - prog;
-                    CraftsCompletedLabel.Dispatcher.Invoke(() => CraftsCompletedLabel.Opacity = prog);
-                    MacroTimerLabel.Dispatcher.Invoke(() => MacroTimerLabel.Opacity = prog);
+                    TotalTimerLabel.Dispatcher.Invoke(() => TotalTimerLabel.Opacity = prog);
                     CraftTimerLabel.Dispatcher.Invoke(() => CraftTimerLabel.Opacity = prog);
+                    MacroTimerLabel.Dispatcher.Invoke(() => MacroTimerLabel.Opacity = prog);
+                    if (FoodEnabled)
+                        FoodTimerLabel.Dispatcher.Invoke(() => FoodTimerLabel.Opacity = prog);
                     Thread.Sleep(TICK_TIME);
                 }
-                CraftsCompletedLabel.Dispatcher.Invoke(() => CraftsCompletedLabel.Opacity = 1);
-                MacroTimerLabel.Dispatcher.Invoke(() => MacroTimerLabel.Opacity = 1);
+                TotalTimerLabel.Dispatcher.Invoke(() => TotalTimerLabel.Opacity = 1);
                 CraftTimerLabel.Dispatcher.Invoke(() => CraftTimerLabel.Opacity = 1);
+                MacroTimerLabel.Dispatcher.Invoke(() => MacroTimerLabel.Opacity = 1);
+                if (FoodEnabled)
+                    FoodTimerLabel.Dispatcher.Invoke(() => FoodTimerLabel.Opacity = 1);
 
                 if (!setToVisible)
                 {
-                    CraftsCompletedLabel.Dispatcher.Invoke(() => CraftsCompletedLabel.Visibility = visibility);
-                    MacroTimerLabel.Dispatcher.Invoke(() => MacroTimerLabel.Visibility = visibility);
+                    TotalTimerLabel.Dispatcher.Invoke(() => TotalTimerLabel.Visibility = visibility);
                     CraftTimerLabel.Dispatcher.Invoke(() => CraftTimerLabel.Visibility = visibility);
+                    MacroTimerLabel.Dispatcher.Invoke(() => MacroTimerLabel.Visibility = visibility);
+                    if (FoodEnabled)
+                        FoodTimerLabel.Dispatcher.Invoke(() => FoodTimerLabel.Visibility = visibility);
                 }
             };
             Task.Run(action);
@@ -454,20 +501,24 @@ namespace AutoSynthesis
         private static void DropProgressToZero()
         {
             var tickCount = FADE_TIME / TICK_TIME;
-            var overallProgress = GetProgressBarValue(ProgressOverall);
-            var overallProgressStep = overallProgress / tickCount;
+            var totalProgress = GetProgressBarValue(ProgressTotal);
+            var totalProgressStep = totalProgress / tickCount;
             var craftProgress = GetProgressBarValue(ProgressCraft);
             var craftProgressStep = craftProgress / tickCount;
             var macroProgress = GetProgressBarValue(ProgressMacro);
             var macroProgressStep = macroProgress / tickCount;
+            var foodProgress = GetProgressBarValue(ProgressFood);
+            var foodProgressStep = foodProgress / tickCount;
             for (int i = 0; i < tickCount; i++)
             {
-                overallProgress -= overallProgressStep;
+                totalProgress -= totalProgressStep;
                 craftProgress -= craftProgressStep;
                 macroProgress -= macroProgressStep;
-                UpdateProgressBar(ProgressOverall, overallProgress);
+                foodProgress -= foodProgressStep;
+                UpdateProgressBar(ProgressTotal, totalProgress);
                 UpdateProgressBar(ProgressCraft, craftProgress);
                 UpdateProgressBar(ProgressMacro, macroProgress);
+                UpdateProgressBar(ProgressFood, foodProgress);
                 Thread.Sleep(TICK_TIME);
             }
         }
@@ -486,7 +537,7 @@ namespace AutoSynthesis
 
         private static double GetProgressBarValue(ProgressBar progress)
         {
-            Func<double> func = () => { return (progress.Value/progress.Maximum); };
+            Func<double> func = () => { return (progress.Value / progress.Maximum); };
             var value = progress.Dispatcher.Invoke(func);
             return value;
         }

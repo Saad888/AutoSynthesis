@@ -1130,7 +1130,7 @@
                 x:Name="LabelConsumables"
                 Grid.Row="4"
                 Grid.Column="0"
-                Grid.ColumnSpan="2"
+                Grid.ColumnSpan="4"
                 Padding="5,5,5,5"
                 HorizontalAlignment="Left"
                 Content="Consumables"
@@ -1704,6 +1704,8 @@
                 <RowDefinition />
                 <RowDefinition />
                 <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -1726,11 +1728,10 @@
             <Button
                 x:Name="BTNCraft"
                 Grid.Row="0"
-                Grid.RowSpan="3"
+                Grid.RowSpan="4"
                 Grid.Column="0"
-                MinWidth="100"
                 Margin="2,2,2,2"
-                Padding="5,5,5,5"
+                Padding="25,25,25,25"
                 Click="BTNCraftInitiate"
                 Content="Start"
                 FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen"
@@ -1740,7 +1741,7 @@
 
             <!--  Status  -->
             <ProgressBar
-                x:Name="PGBOverall"
+                x:Name="PGBTotal"
                 Grid.Row="0"
                 Grid.Column="1"
                 Grid.ColumnSpan="2"
@@ -1751,7 +1752,7 @@
                 Foreground="#FFA60732"
                 Maximum="1000" />
             <Label
-                x:Name="LBLCraftNumber"
+                x:Name="LBLTimerTotal"
                 Grid.Row="0"
                 Grid.Column="2"
                 Width="Auto"
@@ -1761,8 +1762,7 @@
                 Background="#7FFFFFFF"
                 Content="Crafted: 99/99"
                 FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen"
-                Foreground="Black"
-                Visibility="Hidden" />
+                Foreground="Black" />
             <ProgressBar
                 x:Name="PGBCraft"
                 Grid.Row="1"
@@ -1784,8 +1784,7 @@
                 Background="#7FFFFFFF"
                 BorderThickness="1"
                 Content="Craft 999: 0:00"
-                FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen"
-                Visibility="Hidden" />
+                FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" />
             <ProgressBar
                 x:Name="PGBMacro"
                 Grid.Row="2"
@@ -1808,8 +1807,30 @@
                 Background="#7FFFFFFF"
                 BorderThickness="1"
                 Content="Macro 3: 0:00"
+                FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" />
+            <ProgressBar
+                x:Name="PGBFood"
+                Grid.Row="3"
+                Grid.Column="1"
+                Grid.ColumnSpan="2"
+                Margin="2,2,2,2"
+                Background="#FF2B2B2B"
+                BorderBrush="{x:Null}"
                 FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen"
-                Visibility="Hidden" />
+                Foreground="#FF7400FF"
+                Maximum="1000" />
+            <Label
+                x:Name="LBLTimerFood"
+                Grid.Row="3"
+                Grid.Column="2"
+                Width="Auto"
+                Margin="2,2,2,2"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Right"
+                Background="#7FFFFFFF"
+                BorderThickness="1"
+                Content="Food: 0:00"
+                FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen" />
 
         </Grid>
 
@@ -1826,7 +1847,9 @@
                 x:Name="LBLUpdate"
                 Grid.Row="0"
                 Grid.Column="0"
+                VerticalContentAlignment="Center"
                 Background="Black"
+                Content="Using Macro 1..."
                 FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen"
                 Foreground="#FFDCEDFF"
                 Opacity="0.75" />
@@ -1834,7 +1857,9 @@
                 x:Name="LBLUpdateFooter"
                 Grid.Row="1"
                 Grid.Column="0"
+                VerticalContentAlignment="Center"
                 Background="Black"
+                Content="Using &quot;NUM 0&quot;"
                 FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen"
                 Foreground="#FFDCEDFF"
                 Opacity="0.75" />
@@ -1842,24 +1867,11 @@
                 x:Name="LBLFoodSyrupTimer"
                 Grid.Row="2"
                 Grid.Column="0"
+                VerticalContentAlignment="Center"
                 Background="Black"
                 FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen"
                 Foreground="#FFDCEDFF"
                 Opacity="0.75" />
         </Grid>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     </Grid>
 </Window>

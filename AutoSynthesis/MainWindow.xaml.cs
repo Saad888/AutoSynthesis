@@ -99,8 +99,8 @@ namespace AutoSynthesis
             ReadSettingsFile();
 
             // Set up UICommunicator
-            UICommunicator.ConnectUI(LBLCraftNumber, LBLUpdate, LBLUpdateFooter, LBLTimerCraft, LBLTimerMacro, 
-                LBLFoodSyrupTimer, PGBOverall, PGBCraft, PGBMacro);
+            UICommunicator.ConnectUI(LBLTimerTotal, LBLUpdate, LBLUpdateFooter, LBLTimerCraft, LBLTimerMacro, LBLFoodSyrupTimer, LBLTimerFood,
+                 PGBTotal, PGBCraft, PGBMacro, PGBFood);
 
             // Set system state
             SystemState = SystemStates.IDLE;
