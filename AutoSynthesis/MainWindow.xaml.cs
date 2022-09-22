@@ -99,8 +99,8 @@ namespace AutoSynthesis
             ReadSettingsFile();
 
             // Set up UICommunicator
-            UICommunicator.ConnectUI(LBLCraftNumber, LBLUpdate, LBLUpdateFooter, LBLTimerCraft, LBLTimerMacro, 
-                LBLFoodSyrupTimer, PGBOverall, PGBCraft, PGBMacro);
+            UICommunicator.ConnectUI(LBLTimerTotal, LBLUpdate, LBLUpdateFooter, LBLTimerCraft, LBLTimerMacro, LBLFoodSyrupTimer, LBLTimerFood,
+                 PGBTotal, PGBCraft, PGBMacro, PGBFood);
 
             // Set system state
             SystemState = SystemStates.IDLE;
@@ -113,7 +113,7 @@ namespace AutoSynthesis
         private void SetupSystemTray()
         {
             Notify = new System.Windows.Forms.NotifyIcon();
-            Notify.Icon = new System.Drawing.Icon("Icon.ico"); 
+            Notify.Icon = new System.Drawing.Icon("Icon.ico");
             Notify.Visible = true;
             Notify.Click +=
                 delegate (object sender, EventArgs args)
@@ -1040,34 +1040,29 @@ namespace AutoSynthesis
         #endregion
 
         #region Help Window
-        private ScaleTransform helpScale = new ScaleTransform(0.9, 0.9, 0.5, 0.5);
         private string URL = "https://github.com/Saad888/AutoSynthesis/blob/master/README.md";
         private void LBLHelp_MouseEnter(object sender, MouseEventArgs e)
         {
-            var lbl = (Label)sender;
-            lbl.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), "Resources/Images/Background/InfoHighlighted.png")));
-            lbl.Background.RelativeTransform = helpScale;
+            var image = (Image)sender;
+            image.Source = new BitmapImage(new Uri("Resources/Images/Background/InfoHighlighted.png", UriKind.Relative));
         }
 
         private void LBLHelp_MouseLeave(object sender, MouseEventArgs e)
         {
-            var lbl = (Label)sender;
-            lbl.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), "Resources/Images/Background/InfoUnhighlighted.png")));
-            lbl.Background.RelativeTransform = helpScale;
+            var image = (Image)sender;
+            image.Source = new BitmapImage(new Uri("Resources/Images/Background/InfoUnhighlighted.png", UriKind.Relative));
         }
 
         private void LBLHelp_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            var lbl = (Label)sender;
-            lbl.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), "Resources/Images/Background/InfoPressed.png")));
-            lbl.Background.RelativeTransform = helpScale;
+            var image = (Image)sender;
+            image.Source = new BitmapImage(new Uri("Resources/Images/Background/InfoPressed.png", UriKind.Relative));
         }
 
         private void LBLHelp_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            var lbl = (Label)sender;
-            lbl.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), "Resources/Images/Background/InfoHighlighted.png")));
-            lbl.Background.RelativeTransform = helpScale;
+            var image = (Image)sender;
+            image.Source = new BitmapImage(new Uri("Resources/Images/Background/InfoHighlighted.png", UriKind.Relative));
             System.Diagnostics.Process.Start(URL);
         }
         #endregion
@@ -1075,26 +1070,26 @@ namespace AutoSynthesis
         #region Minimize To Tray
         private void MinimizeLabelMouseEnter(object sender, MouseEventArgs e)
         {
-            var lbl = (Label)sender;
-            lbl.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), "Resources/Images/Buttons/Minimize to Tray Hover.png")));
+            var image = (Image)sender;
+            image.Source = new BitmapImage(new Uri("Resources/Images/Buttons/Minimize to Tray Hover.png", UriKind.Relative));
         }
 
         private void MinimizeLabelMouseExit(object sender, MouseEventArgs e)
         {
-            var lbl = (Label)sender;
-            lbl.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), "Resources/Images/Buttons/Minimize to Tray.png")));
+            var image = (Image)sender;
+            image.Source = new BitmapImage(new Uri("Resources/Images/Buttons/Minimize to Tray.png", UriKind.Relative));
         }
 
         private void MinimizeLabelMouseDown(object sender, MouseButtonEventArgs e)
         {
-            var lbl = (Label)sender;
-            lbl.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), "Resources/Images/Buttons/Minimize to Tray Pressed.png")));
+            var image = (Image)sender;
+            image.Source = new BitmapImage(new Uri("Resources/Images/Buttons/Minimize to Tray Pressed.png", UriKind.Relative));
         }
 
         private void MinimizeLabelMouseUp(object sender, MouseButtonEventArgs e)
         {
-            var lbl = (Label)sender;
-            lbl.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), "Resources/Images/Buttons/Minimize to Tray Hover.png")));
+            var image = (Image)sender;
+            image.Source = new BitmapImage(new Uri("Resources/Images/Buttons/Minimize to Tray Hover.png", UriKind.Relative));
             Hide();
             if (NotifyFlagged)
             {
@@ -1127,31 +1122,31 @@ namespace AutoSynthesis
         }
         private void AlwaysOnTopLabelMouseDown(object sender, MouseButtonEventArgs e)
         {
-            var lbl = (Label)sender;
+            var image = (Image)sender;
             var resourceUrl = AlwaysOnTopEnabled ? "Resources/Images/Buttons/AlwaysOnTopPressedOn.png" : "Resources/Images/Buttons/AlwaysOnTopPressedOff.png";
-            lbl.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), resourceUrl)));
+            image.Source = new BitmapImage(new Uri(resourceUrl, UriKind.Relative));
         }
 
         private void AlwaysOnTopLabelMouseEnter(object sender, MouseEventArgs e)
         {
-            var lbl = (Label)sender;
+            var image = (Image)sender;
             var resourceUrl = AlwaysOnTopEnabled ? "Resources/Images/Buttons/AlwaysOnTopHoverOn.png" : "Resources/Images/Buttons/AlwaysOnTopHoverOff.png";
-            lbl.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), resourceUrl)));
+            image.Source = new BitmapImage(new Uri(resourceUrl, UriKind.Relative));
         }
 
         private void AlwaysOnTopLabelMouseExit(object sender, MouseEventArgs e)
         {
-            var lbl = (Label)sender;
+            var image = (Image)sender;
             var resourceUrl = AlwaysOnTopEnabled ? "Resources/Images/Buttons/AlwaysOnTopOn.png" : "Resources/Images/Buttons/AlwaysOnTopOff.png";
-            lbl.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), resourceUrl)));
+            image.Source = new BitmapImage(new Uri(resourceUrl, UriKind.Relative));
         }
 
         private void AlwaysOnTopLabelMouseUp(object sender, MouseButtonEventArgs e)
         {
             FlipAlwaysOnTop();
-            var lbl = (Label)sender;
+            var image = (Image)sender;
             var resourceUrl = AlwaysOnTopEnabled ? "Resources/Images/Buttons/AlwaysOnTopHoverOn.png" : "Resources/Images/Buttons/AlwaysOnTopHoverOff.png";
-            lbl.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), resourceUrl)));
+            image.Source = new BitmapImage(new Uri(resourceUrl, UriKind.Relative));
         }
 
         private void FlipAlwaysOnTop()
@@ -1216,16 +1211,16 @@ namespace AutoSynthesis
         #region Settings
         private void SettingsEnter(object sender, MouseEventArgs e)
         {
-            var lbl = (Label)sender;
+            var image = (Image)sender;
             var resourceUrl = "Resources/Images/Buttons/settings-hover.png";
-            lbl.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), resourceUrl)));
+            image.Source = new BitmapImage(new Uri(resourceUrl, UriKind.Relative));
         }
 
         private void SettingsExit(object sender, MouseEventArgs e)
         {
-            var lbl = (Label)sender;
+            var image = (Image)sender;
             var resourceUrl = "Resources/Images/Buttons/settings.png";
-            lbl.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), resourceUrl)));
+            image.Source = new BitmapImage(new Uri(resourceUrl, UriKind.Relative));
         }
 
         private void OpenSettings(object sender, MouseButtonEventArgs e)
@@ -1276,7 +1271,7 @@ namespace AutoSynthesis
                 StartCraftingDelay = 0;
             }
             var resourceUrl = AlwaysOnTopEnabled ? "Resources/Images/Buttons/AlwaysOnTopOn.png" : "Resources/Images/Buttons/AlwaysOnTopOff.png";
-            AlwaysOnTop_Label.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), resourceUrl)));
+            AlwaysOnTop_Label.Source = new BitmapImage(new Uri(resourceUrl, UriKind.Relative));
         }
         #endregion
     }

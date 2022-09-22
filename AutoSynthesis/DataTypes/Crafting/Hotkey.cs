@@ -11,9 +11,9 @@ namespace AutoSynthesis
     {
         public VirtualKeyCode KeyCode { get; set; }
         public VirtualKeyCode[] ModKeyCodes { get; set; }
-        public int TimerInMiliseconds { get; set; }
+        public int TimerInMilliseconds { get; set; }
         public string Text { get; set; }
-        private const int DEFAULT_TIMER = 1;
+        private const int DEFAULT_TIMER = 50;
 
 
 
@@ -21,13 +21,13 @@ namespace AutoSynthesis
         {
             KeyCode = keyCode;
             ModKeyCodes = null;
-            TimerInMiliseconds = timer;
+            TimerInMilliseconds = timer;
         }
         public Hotkey(VirtualKeyCode keyCode, VirtualKeyCode[] modKeyCodes, string text, int timer = DEFAULT_TIMER)
         {
             KeyCode = keyCode;
             ModKeyCodes = modKeyCodes;
-            TimerInMiliseconds = timer;
+            TimerInMilliseconds = timer;
             Text = text;
         }
 
