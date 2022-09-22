@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29613.14
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32901.215
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoSynthesis", "AutoSynthesis.csproj", "{37621B0A-1275-457E-AFB2-C6BC38CDA2A1}"
 EndProject
@@ -9,8 +9,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		app.manifest = app.manifest
 	EndProjectSection
-EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup1", "..\Setup1\Setup1.vdproj", "{11EC0837-AEB1-4085-9C34-67B1A7F41E77}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -22,8 +20,6 @@ Global
 		{37621B0A-1275-457E-AFB2-C6BC38CDA2A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{37621B0A-1275-457E-AFB2-C6BC38CDA2A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{37621B0A-1275-457E-AFB2-C6BC38CDA2A1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{11EC0837-AEB1-4085-9C34-67B1A7F41E77}.Debug|Any CPU.ActiveCfg = Debug
-		{11EC0837-AEB1-4085-9C34-67B1A7F41E77}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
