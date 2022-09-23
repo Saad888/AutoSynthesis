@@ -94,6 +94,7 @@
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition />
+            <RowDefinition />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -108,8 +109,29 @@
             FontSize="16"
             Foreground="#FFDCEDFF" />
         <TextBox
-            x:Name="TXBDelay"
+            x:Name="TXBStartDelay"
             Grid.Row="0"
+            Grid.Column="1"
+            Width="30"
+            Margin="2,2,2,2"
+            HorizontalContentAlignment="Center"
+            VerticalContentAlignment="Center"
+            Background="#FFDCEDFF"
+            FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen"
+            FontSize="14"
+            PreviewTextInput="NumberValidationTextBox"
+            Text="0" />
+        <Label
+            Grid.Row="1"
+            Grid.Column="0"
+            HorizontalAlignment="Left"
+            Content="Set the delay after finishing a craft"
+            FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen"
+            FontSize="16"
+            Foreground="#FFDCEDFF" />
+        <TextBox
+            x:Name="TXBEndDelay"
+            Grid.Row="1"
             Grid.Column="1"
             Width="30"
             Margin="2,2,2,2"
@@ -123,10 +145,11 @@
             TextWrapping="Wrap" />
         <Button
             x:Name="BTNConfirm"
-            Grid.Row="1"
+            Grid.Row="2"
             Grid.Column="0"
             Grid.ColumnSpan="2"
-            Margin="2,2,2,2"
+            Margin="5,5,5,5"
+            Padding="5,5,5,5"
             HorizontalAlignment="Center"
             Click="BTNConfirm_Click"
             Content="Save"

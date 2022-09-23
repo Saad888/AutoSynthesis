@@ -15,8 +15,9 @@ namespace AutoSynthesis
         public int StartingFoodTime { get; set; }
         public int StartingSyrupTime { get; set; }
         public int StartingDelay { get; set; }
+        public int EndingDelay { get; set; }
 
-        public SettingsContainer(int craftCount, bool collectableCraft, int foodDuration, int startingFoodTime, int startingSyrupTime, int startingDelay)
+        public SettingsContainer(int craftCount, bool collectableCraft, int foodDuration, int startingFoodTime, int startingSyrupTime, int startingDelay, int endingDelay)
         {
             if (craftCount < 0)
             {
@@ -29,6 +30,7 @@ namespace AutoSynthesis
             StartingFoodTime = startingFoodTime;
             StartingSyrupTime = startingSyrupTime;
             StartingDelay = startingDelay;
+            EndingDelay = endingDelay;
         }
     }
 }

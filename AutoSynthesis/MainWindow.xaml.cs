@@ -76,6 +76,7 @@ namespace AutoSynthesis
         private System.Windows.Forms.NotifyIcon Notify { get; set; }
         private bool NotifyFlagged { get; set; } = true;
         private int StartCraftingDelay { get; set; } = 0;
+        private int EndCraftingDelay { get; set; } = 0;
         #endregion
 
         #region Brush Colors
@@ -348,7 +349,8 @@ namespace AutoSynthesis
                         FoodTimer,
                         TimerContainers[TXBFoodTimer].Timer,
                         TimerContainers[TXBSyrupTimer].Timer, 
-                        StartCraftingDelay * 1000
+                        StartCraftingDelay * 1000,
+                        EndCraftingDelay * 1000
                     );
                 }
                 catch (InvalidUserParametersException error)
@@ -1227,10 +1229,13 @@ namespace AutoSynthesis
         {
             try
             {
-                var settingsDialogue = new Settings(StartCraftingDelay.ToString());
+                var settingsDialogue = new Settings(StartCraftingDelay.ToString(), EndCraftingDelay.ToString());
                 settingsDialogue.Owner = Application.Current.MainWindow;
                 if (settingsDialogue.ShowDialog() == true)
-                    StartCraftingDelay = Convert.ToInt32(settingsDialogue.Time);
+                {
+                    StartCraftingDelay = Convert.ToInt32(settingsDialogue.StartDelay);
+                    EndCraftingDelay = Convert.ToInt32(settingsDialogue.EndDelay);
+                }
                 WriteSaveSettings();
             }
             catch (Exception error)
@@ -1245,7 +1250,7 @@ namespace AutoSynthesis
         {
             try
             {
-                var text = AlwaysOnTopEnabled.ToString() + "|" + StartCraftingDelay.ToString();
+                var text = AlwaysOnTopEnabled.ToString() + "|" + StartCraftingDelay.ToString() + "|" + EndCraftingDelay.ToString();
                 File.WriteAllText(SettingsFileDirectory, text);
             }
             catch
@@ -1264,11 +1269,13 @@ namespace AutoSynthesis
                 var fileResult = File.ReadAllText(SettingsFileDirectory).Split('|');
                 AlwaysOnTopEnabled = Convert.ToBoolean(fileResult[0]);
                 StartCraftingDelay = Convert.ToInt32(fileResult[1]);
+                EndCraftingDelay= Convert.ToInt32(fileResult[2]);
             }
             catch
             {
                 AlwaysOnTopEnabled = false;
                 StartCraftingDelay = 0;
+                EndCraftingDelay = 0;
             }
             var resourceUrl = AlwaysOnTopEnabled ? "Resources/Images/Buttons/AlwaysOnTopOn.png" : "Resources/Images/Buttons/AlwaysOnTopOff.png";
             AlwaysOnTop_Label.Source = new BitmapImage(new Uri(resourceUrl, UriKind.Relative));

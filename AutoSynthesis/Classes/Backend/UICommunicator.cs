@@ -135,16 +135,13 @@ namespace AutoSynthesis
             MaxNumber = max;
         }
 
-        public static void UpdateMacroUIInfo(int macroNumber, int macroTimer, bool finalMacro = false)
+        public static void UpdateMacroUIInfo(int macroNumber, int macroTimer)
         {
             MacroNumber = macroNumber;
             UpdateStatus($"Using Macro {MacroNumber}...");
 
             ProgressMacroTimeDuration = macroTimer;
-            if (!finalMacro)
-                ProgressMacroTime = DateTime.Now.AddMilliseconds(macroTimer);
-            else
-                ProgressMacroTime = ProgressCraftTime;
+            ProgressMacroTime = DateTime.Now.AddMilliseconds(macroTimer);
         }
 
         public static void BeginTotalTimer(int totalTime)
@@ -341,7 +338,7 @@ namespace AutoSynthesis
             {
                 var foodString = GetTimeRemainingString(NextFood, true);
                 var syrupString = GetTimeRemainingString(NextSyrup, true);
-                return "Next Food: " + foodString + "             Next Syrup: " + syrupString;
+                return "Next Food: " + foodString + ". Next Syrup: " + syrupString;
             }
             if (FoodEnabled)
             {
@@ -371,7 +368,7 @@ namespace AutoSynthesis
                 {
                     var minutes = difference.Hours * 60 + difference.Minutes;
                     var seconds = difference.Seconds;
-                    return longFormat ? minutes.ToString("00") + ":" + seconds.ToString("00") : minutes + ":" + seconds;
+                    return minutes.ToString() + ":" + seconds.ToString("00");
                 }
             }
         }

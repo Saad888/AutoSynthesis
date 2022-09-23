@@ -748,6 +748,7 @@
 
     <Grid
         x:Name="MainWindowGrid"
+        Margin="10,10,10,10"
         HorizontalAlignment="Center"
         VerticalAlignment="Center"
         Grid.IsSharedSizeScope="True"
@@ -1582,6 +1583,7 @@
                     x:Name="CHBCollectableCraft"
                     Grid.Row="0"
                     Grid.Column="1"
+                    Margin="5,5,5,5"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Background="#FFDCEDFF"
@@ -1756,11 +1758,11 @@
                 x:Name="LBLTimerTotal"
                 Grid.Row="0"
                 Grid.Column="2"
-                Width="Auto"
                 Margin="2,2,2,2"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Right"
                 Background="#7FFFFFFF"
+                BorderThickness="1"
                 Content="Crafted: 99/99"
                 FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen"
                 Foreground="Black" />
@@ -1818,7 +1820,7 @@
                 Background="#FF2B2B2B"
                 BorderBrush="{x:Null}"
                 FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen"
-                Foreground="#FF7400FF"
+                Foreground="#FF0ECC1A"
                 Maximum="1000" />
             <Label
                 x:Name="LBLTimerFood"

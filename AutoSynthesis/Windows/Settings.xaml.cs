@@ -20,14 +20,20 @@ namespace AutoSynthesis.Windows
     /// </summary>
     public partial class Settings : Window
     {
-        public string Time {
-            get { return TXBDelay.Text; }
+        public string StartDelay {
+            get { return TXBStartDelay.Text; }
         }
 
-        public Settings(string initialTime)
+        public string EndDelay
+        {
+            get { return TXBEndDelay.Text; }
+        }
+
+        public Settings(string startDelayTime, string endDelayTime)
         {
             InitializeComponent();
-            TXBDelay.Text = initialTime;
+            TXBStartDelay.Text = startDelayTime;
+            TXBEndDelay.Text = endDelayTime;
         }
 
         private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
@@ -44,8 +50,8 @@ namespace AutoSynthesis.Windows
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            TXBDelay.Focus();
-            TXBDelay.SelectAll();
+            TXBStartDelay.Focus();
+            TXBStartDelay.SelectAll();
         }
     }
 }
