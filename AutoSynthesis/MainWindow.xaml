@@ -1549,8 +1549,7 @@
                     KeyDown="SetTimeValue"
                     LostFocus="TimeLostFocus"
                     Opacity="0.9"
-                    Text="0"
-                    TextWrapping="Wrap" />
+                    Text="0" />
             </Grid>
 
             <Grid
