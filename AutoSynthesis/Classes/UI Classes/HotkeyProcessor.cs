@@ -203,8 +203,8 @@ namespace AutoSynthesis
             KeyCodeToVKCode.Add(Key.Escape, VirtualKeyCode.END);
             KeyCodeToVKCode.Add(Key.F, VirtualKeyCode.VK_F);
             KeyCodeToVKCode.Add(Key.F1, VirtualKeyCode.F1);
-            KeyCodeToVKCode.Add(Key.F10, VirtualKeyCode.F2);
-            KeyCodeToVKCode.Add(Key.F11, VirtualKeyCode.F3);
+            KeyCodeToVKCode.Add(Key.F10, VirtualKeyCode.F10);
+            KeyCodeToVKCode.Add(Key.F11, VirtualKeyCode.F11);
             KeyCodeToVKCode.Add(Key.F12, VirtualKeyCode.F12);
             KeyCodeToVKCode.Add(Key.F2, VirtualKeyCode.F2);
             KeyCodeToVKCode.Add(Key.F3, VirtualKeyCode.F3);

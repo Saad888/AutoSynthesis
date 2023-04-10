@@ -46,7 +46,9 @@ namespace AutoSynthesis
         private static DateTime NullDateTime { get; set; }
         private static int MacroNumber { get; set; }
         private static int CraftNumber { get; set; }
-        private static int MaxNumber { get; set; }
+        private static int MaxCraft { get; set; }
+        private static int FoodNumber { get; set; }
+        private static int MaxFood { get; set; }
 
         private static DateTime NextFood { get; set; }
         private static DateTime NextSyrup { get; set; }
@@ -105,7 +107,7 @@ namespace AutoSynthesis
         public static void ResetValues()
         {
             CraftNumber = 0;
-            MaxNumber = 0;
+            MaxCraft = 0;
             MacroNumber = 0;
             FoodEnabled = false;
             SyrupEnabled = false;
@@ -127,12 +129,18 @@ namespace AutoSynthesis
         #endregion
 
         #region Update Methods (Called by External Functions)
+        // Updates visual display on craft status
         public static void UpdateCraftUIInfo(int craftCount, int max)
         {
-            // Updates visual display on craft status
-            // Label
             CraftNumber = craftCount;
-            MaxNumber = max;
+            MaxCraft = max;
+        }
+
+        // Updates visual display on food status
+        public static void UpdateFoodUIInfo(int foodCount, int max)
+        {
+            FoodNumber = foodCount;
+            MaxFood = max;
         }
 
         public static void UpdateMacroUIInfo(int macroNumber, int macroTimer)
@@ -158,10 +166,15 @@ namespace AutoSynthesis
 
         public static void BeginFoodTimer(int totalTime)
         {
-            FoodEnabled = true;
             ProgressFoodTimeDuration = totalTime;
-            ProgressFoodTime = DateTime.Now.AddMilliseconds(totalTime);
-            NextFood = DateTime.Now.AddMilliseconds(totalTime);
+            if (IsDateNull(ProgressFoodTime))
+            {
+                ProgressFoodTime = DateTime.Now.AddMilliseconds(totalTime);
+            }
+            else
+            {
+                ProgressFoodTime = ProgressFoodTime.AddMilliseconds(totalTime);
+            }
         }
 
         public static void UpdateFood(DateTime nextFood)
@@ -287,8 +300,8 @@ namespace AutoSynthesis
         private static void UpdateCraftTimerText()
         {
             var output = $"Craft {CraftNumber}";
-            if (MaxNumber > 0)
-                output += $"/{MaxNumber}";
+            if (MaxCraft > 0)
+                output += $"/{MaxCraft}";
             output += ": ";
             var timer = GetTimeRemainingString(ProgressCraftTime);
             output += timer;
@@ -313,7 +326,12 @@ namespace AutoSynthesis
 
         private static void UpdateFoodTimerText()
         {
-            var output = "Food: ";
+            var output = $"Food {FoodNumber}";
+            if (MaxFood > 0)
+            {
+                output += $"/{MaxFood}";
+            }
+            output += ": ";
             var timer = GetTimeRemainingString(ProgressFoodTime);
             output += timer;
 

@@ -896,6 +896,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
@@ -1295,98 +1296,99 @@
                 Opacity="0.9"
                 Text="0"
                 TextWrapping="Wrap" />
-        </Grid>
 
-        <Grid
-            Name="FoodTimerGrid"
-            Grid.Row="2"
-            Grid.Column="0">
-            <Grid.RowDefinitions>
-                <RowDefinition />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-
-            <!--  Food Duration  -->
-            <Label
-                x:Name="LabelFoodTimer"
-                Grid.Row="0"
+            <Grid
+                Name="FoodTimerGrid"
+                Grid.Row="8"
                 Grid.Column="0"
-                Padding="5,5,5,5"
-                HorizontalAlignment="Left"
-                VerticalContentAlignment="Center"
-                Content="Food Duration"
-                FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen"
-                FontSize="17"
-                Foreground="#FFDCEDFF">
-                <Label.Effect>
-                    <DropShadowEffect ShadowDepth="1" />
-                </Label.Effect>
-            </Label>
-            <RadioButton
-                x:Name="RDFood30"
-                Grid.Row="0"
-                Grid.Column="1"
-                Margin="5,5,5,5"
-                VerticalContentAlignment="Center"
-                Background="#FFDCEDFF"
-                Checked="RDFood30_Checked"
-                Content="30 Min"
-                FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen"
-                FontSize="13"
-                Foreground="#FFDCEDFF"
-                GotFocus="CheckRadioGain"
-                GroupName="RDFoodTimer"
-                IsChecked="True"
-                LostFocus="CheckRadioLoss">
-                <RadioButton.Effect>
-                    <DropShadowEffect BlurRadius="1" ShadowDepth="1" />
-                </RadioButton.Effect>
-            </RadioButton>
-            <RadioButton
-                x:Name="RDFood40"
-                Grid.Row="0"
-                Grid.Column="2"
-                Margin="5,5,5,5"
-                VerticalContentAlignment="Center"
-                Background="#FFDCEDFF"
-                Checked="RDFood40_Checked"
-                Content="40 Min"
-                FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen"
-                FontSize="13"
-                Foreground="#FFDCEDFF"
-                GotFocus="CheckRadioGain"
-                GroupName="RDFoodTimer"
-                LostFocus="CheckRadioLoss">
-                <RadioButton.Effect>
-                    <DropShadowEffect BlurRadius="1" ShadowDepth="1" />
-                </RadioButton.Effect>
-            </RadioButton>
-            <RadioButton
-                x:Name="RDFood45"
-                Grid.Row="0"
-                Grid.Column="3"
-                Margin="5,5,5,5"
-                VerticalContentAlignment="Center"
-                Background="#FFDCEDFF"
-                Checked="RDFood45_Checked"
-                Content="45 Min"
-                FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen"
-                FontSize="13"
-                Foreground="#FFDCEDFF"
-                GotFocus="CheckRadioGain"
-                GroupName="RDFoodTimer"
-                LostFocus="CheckRadioLoss">
-                <RadioButton.Effect>
-                    <DropShadowEffect BlurRadius="1" ShadowDepth="1" />
-                </RadioButton.Effect>
-            </RadioButton>
+                Grid.ColumnSpan="4">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
 
+                <!--  Food Duration  -->
+                <Label
+                    x:Name="LabelFoodTimer"
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Padding="5,5,5,5"
+                    HorizontalAlignment="Left"
+                    VerticalContentAlignment="Center"
+                    Content="Food Duration"
+                    FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen"
+                    FontSize="17"
+                    Foreground="#FFDCEDFF">
+                    <Label.Effect>
+                        <DropShadowEffect ShadowDepth="1" />
+                    </Label.Effect>
+                </Label>
+                <RadioButton
+                    x:Name="RDFood30"
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Margin="5,5,5,5"
+                    VerticalContentAlignment="Center"
+                    Background="#FFDCEDFF"
+                    Checked="RDFood30_Checked"
+                    Content="30 Min"
+                    FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen"
+                    FontSize="13"
+                    Foreground="#FFDCEDFF"
+                    GotFocus="CheckRadioGain"
+                    GroupName="RDFoodTimer"
+                    IsChecked="True"
+                    LostFocus="CheckRadioLoss">
+                    <RadioButton.Effect>
+                        <DropShadowEffect BlurRadius="1" ShadowDepth="1" />
+                    </RadioButton.Effect>
+                </RadioButton>
+                <RadioButton
+                    x:Name="RDFood40"
+                    Grid.Row="0"
+                    Grid.Column="2"
+                    Margin="5,5,5,5"
+                    VerticalContentAlignment="Center"
+                    Background="#FFDCEDFF"
+                    Checked="RDFood40_Checked"
+                    Content="40 Min"
+                    FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen"
+                    FontSize="13"
+                    Foreground="#FFDCEDFF"
+                    GotFocus="CheckRadioGain"
+                    GroupName="RDFoodTimer"
+                    LostFocus="CheckRadioLoss">
+                    <RadioButton.Effect>
+                        <DropShadowEffect BlurRadius="1" ShadowDepth="1" />
+                    </RadioButton.Effect>
+                </RadioButton>
+                <RadioButton
+                    x:Name="RDFood45"
+                    Grid.Row="0"
+                    Grid.Column="3"
+                    Margin="5,5,5,5"
+                    VerticalContentAlignment="Center"
+                    Background="#FFDCEDFF"
+                    Checked="RDFood45_Checked"
+                    Content="45 Min"
+                    FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen"
+                    FontSize="13"
+                    Foreground="#FFDCEDFF"
+                    GotFocus="CheckRadioGain"
+                    GroupName="RDFoodTimer"
+                    LostFocus="CheckRadioLoss">
+                    <RadioButton.Effect>
+                        <DropShadowEffect BlurRadius="1" ShadowDepth="1" />
+                    </RadioButton.Effect>
+                </RadioButton>
+            </Grid>
         </Grid>
+
 
         <Grid
             Name="RightGrid"
@@ -1497,6 +1499,7 @@
                 Grid.ColumnSpan="3">
                 <Grid.RowDefinitions>
                     <RowDefinition />
+                    <RowDefinition />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -1504,7 +1507,6 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-
                 <Label
                     x:Name="LabelCraftCount"
                     Grid.Row="0"
@@ -1519,7 +1521,7 @@
                 </Label>
                 <CheckBox
                     x:Name="CHBCraftCount"
-                    Grid.Row="4"
+                    Grid.Row="0"
                     Grid.Column="1"
                     Margin="5,5,5,5"
                     HorizontalAlignment="Center"
@@ -1534,6 +1536,51 @@
                 <TextBox
                     x:Name="TXBCraftCount"
                     Grid.Row="0"
+                    Grid.Column="2"
+                    MinWidth="50"
+                    Margin="2,2,2,2"
+                    Padding="2,2,2,2"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Background="#FFDCEDFF"
+                    FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen"
+                    FontSize="16"
+                    GotFocus="TimeGetFocus"
+                    IsEnabled="False"
+                    IsReadOnly="True"
+                    KeyDown="SetTimeValue"
+                    LostFocus="TimeLostFocus"
+                    Opacity="0.9"
+                    Text="0" />
+                <Label
+                    x:Name="LabelFoodCount"
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Content="Food Count"
+                    FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen"
+                    FontSize="17"
+                    Foreground="#FFDCEDFF">
+                    <Label.Effect>
+                        <DropShadowEffect ShadowDepth="1" />
+                    </Label.Effect>
+                </Label>
+                <CheckBox
+                    x:Name="CHBFoodCount"
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Margin="5,5,5,5"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Background="#FFDCEDFF"
+                    Checked="CHBFoodCount_Checked"
+                    FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen"
+                    GotFocus="CheckFocusGain"
+                    LostFocus="CheckFocusLoss"
+                    Opacity="0.9"
+                    Unchecked="CHBFoodCount_Checked" />
+                <TextBox
+                    x:Name="TXBFoodCount"
+                    Grid.Row="1"
                     Grid.Column="2"
                     MinWidth="50"
                     Margin="2,2,2,2"
@@ -1734,14 +1781,12 @@
                 Grid.Column="0"
                 MinWidth="120"
                 Margin="2,2,2,2"
-                Padding="25,25,25,25"
                 Click="BTNCraftInitiate"
                 Content="Start"
                 FontFamily="/AutoSynthesis;component/Resources/Fonts/#Sen"
                 FontSize="18"
                 Foreground="#FFDCEDFF"
                 Style="{DynamicResource ButtonStyleIdle}" />
-
             <!--  Status  -->
             <ProgressBar
                 x:Name="PGBTotal"
