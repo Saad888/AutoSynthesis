@@ -1,12 +1,10 @@
-# This app is now outdated
-
-There's a plugin which does everything AutoSynthesis does but 10x better and fully in game, use them instead: 
+Note: There's a plugin which does everything AutoSynthesis does and a lot more, fully in-game using XIV Launcher plugins:
 
 https://puni.sh/plugin/Artisan
 
 https://github.com/PunishXIV/Artisan/tree/main
 
-
+Also note this app does not work with XIV Alexander, or on windows versions prior to 10. 
 ---
 
 # **AutoSynthesis** - An FFXIV Auto Crafter
