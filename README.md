@@ -5,6 +5,7 @@ https://puni.sh/plugin/Artisan
 https://github.com/PunishXIV/Artisan/tree/main
 
 Also note this app does not work with XIV Alexander, or on windows versions prior to 10. 
+AuthSynth still functions as of Dawntrail (somehow)
 ---
 
 # **AutoSynthesis** - An FFXIV Auto Crafter
