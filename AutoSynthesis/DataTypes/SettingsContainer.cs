@@ -10,13 +10,15 @@ namespace AutoSynthesis
     {
         // contains settings metadata
         public int CraftCount { get; set; } // Set to 0 if endless craft
-        public int FoodDuration { get; set; } // if 40 min food, true
+        public int FoodCount { get; set; }
+        public int FoodDuration { get; set; }
         public bool CollectableCraft { get; set; }
         public int StartingFoodTime { get; set; }
         public int StartingSyrupTime { get; set; }
         public int StartingDelay { get; set; }
+        public int EndingDelay { get; set; }
 
-        public SettingsContainer(int craftCount, bool collectableCraft, int foodDuration, int startingFoodTime, int startingSyrupTime, int startingDelay)
+        public SettingsContainer(int craftCount, int foodCount, bool collectableCraft, int foodDuration, int startingFoodTime, int startingSyrupTime, int startingDelay, int endingDelay)
         {
             if (craftCount < 0)
             {
@@ -24,11 +26,13 @@ namespace AutoSynthesis
             }
 
             CraftCount = craftCount;
+            FoodCount = foodCount;
             CollectableCraft = collectableCraft;
             FoodDuration = foodDuration;
             StartingFoodTime = startingFoodTime;
             StartingSyrupTime = startingSyrupTime;
             StartingDelay = startingDelay;
+            EndingDelay = endingDelay;
         }
     }
 }

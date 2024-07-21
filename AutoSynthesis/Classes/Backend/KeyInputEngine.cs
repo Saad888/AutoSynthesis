@@ -2,10 +2,6 @@
 using System.Runtime.InteropServices;
 using WindowsInput.Native;
 using System.Threading;
-//using WindowsInput;
-
-
-
 
 namespace AutoSynthesis 
 {
@@ -34,6 +30,8 @@ namespace AutoSynthesis
                 {
                     SendMessage(ProcessManager.ProcessPtr(), WM_KEYDOWN, (int)modKey, 0);
                 }
+
+                Thread.Sleep(50);
             }
 
             // send key command 

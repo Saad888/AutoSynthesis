@@ -65,6 +65,7 @@ namespace AutoSynthesis
             IDLE,
             PREPARINGCCRAFT,
             ACTIVECRAFTING,
+            COMPLETINGFINALFOOD,
             COMPLETINGFINALCRAFT,
             CANCELLINGCRAFT
         }
@@ -73,9 +74,11 @@ namespace AutoSynthesis
         private Dictionary<SystemStates, string> MainButtonText { get; set; }
         public Action<Exception> ErrorMessageHandler { get; set; }
         public Action<int, int> GetFoodAndSyrupTimings { get; set; }
+        public Action<int> GetCraftCount { get; set; }
         private System.Windows.Forms.NotifyIcon Notify { get; set; }
         private bool NotifyFlagged { get; set; } = true;
         private int StartCraftingDelay { get; set; } = 0;
+        private int EndCraftingDelay { get; set; } = 0;
         #endregion
 
         #region Brush Colors
@@ -96,11 +99,12 @@ namespace AutoSynthesis
             SetErrorAction();
             SetupSystemTray();
             SetupFoodAndSyrupTimings();
+            SetupCraftCount();
             ReadSettingsFile();
 
             // Set up UICommunicator
-            UICommunicator.ConnectUI(LBLCraftNumber, LBLUpdate, LBLUpdateFooter, LBLTimerCraft, LBLTimerMacro, 
-                LBLFoodSyrupTimer, PGBOverall, PGBCraft, PGBMacro);
+            UICommunicator.ConnectUI(LBLTimerTotal, LBLUpdate, LBLUpdateFooter, LBLTimerCraft, LBLTimerMacro, LBLFoodSyrupTimer, LBLTimerFood,
+                 PGBTotal, PGBCraft, PGBMacro, PGBFood);
 
             // Set system state
             SystemState = SystemStates.IDLE;
@@ -113,7 +117,7 @@ namespace AutoSynthesis
         private void SetupSystemTray()
         {
             Notify = new System.Windows.Forms.NotifyIcon();
-            Notify.Icon = new System.Drawing.Icon("Icon.ico"); 
+            Notify.Icon = new System.Drawing.Icon("Icon.ico");
             Notify.Visible = true;
             Notify.Click +=
                 delegate (object sender, EventArgs args)
@@ -143,6 +147,7 @@ namespace AutoSynthesis
             TimerContainers.Add(TXBFoodTimer, new TimeInputContainer());
             TimerContainers.Add(TXBSyrupTimer, new TimeInputContainer());
             TimerContainers.Add(TXBCraftCount, new TimeInputContainer(false));
+            TimerContainers.Add(TXBFoodCount, new TimeInputContainer(false));
         }
 
         private void SetUIDictionaries()
@@ -166,6 +171,7 @@ namespace AutoSynthesis
                 { SystemStates.IDLE, Resources["ButtonStyleIdle"] as Style },
                 { SystemStates.PREPARINGCCRAFT,Resources["ButtonStyleProcessing"] as Style },
                 { SystemStates.ACTIVECRAFTING, Resources["ButtonStyleCrafting"] as Style },
+                { SystemStates.COMPLETINGFINALFOOD, Resources["ButtonStyleCrafting"] as Style },
                 { SystemStates.COMPLETINGFINALCRAFT, Resources["ButtonStyleCrafting"] as Style },
                 { SystemStates.CANCELLINGCRAFT, Resources["ButtonStyleProcessing"] as Style }
             };
@@ -176,7 +182,8 @@ namespace AutoSynthesis
                 { SystemStates.IDLE, "Start" },
                 { SystemStates.PREPARINGCCRAFT, "Preparing..." },
                 { SystemStates.ACTIVECRAFTING, "Crafting" },
-                { SystemStates.COMPLETINGFINALCRAFT, "Ending..." },
+                { SystemStates.COMPLETINGFINALFOOD, "Last food..." },
+                { SystemStates.COMPLETINGFINALCRAFT, "Last craft..." },
                 { SystemStates.CANCELLINGCRAFT, "Ending..." }
             };
         }
@@ -202,8 +209,8 @@ namespace AutoSynthesis
             bool collectableCraft = false;
             int foodDuration = 30;
 
-            var profile = new Profile(macro1, macro1timer, macro2, macro2timer, macro2check, macro3, macro3timer, 
-                          macro3check, food, foodcheck, syrup, syrupcheck, confirm, cancel, 
+            var profile = new Profile(macro1, macro1timer, macro2, macro2timer, macro2check, macro3, macro3timer,
+                          macro3check, food, foodcheck, syrup, syrupcheck, confirm, cancel,
                           collectableCraft, foodDuration);
             SetAllHoykeys(profile);
         }
@@ -233,16 +240,25 @@ namespace AutoSynthesis
             GetFoodAndSyrupTimings = (int foodTime, int syrupTime) =>
             {
                 foodTime = Math.Max(0, foodTime);
-                syrupTime = Math.Max(0, syrupTime);
-
                 var FoodTimeContainer = TimerContainers[TXBFoodTimer];
-                var SyrupTimeContainer = TimerContainers[TXBSyrupTimer];
-
                 FoodTimeContainer.Timer = foodTime;
-                SyrupTimeContainer.Timer = syrupTime;
-
                 TXBFoodTimer.Dispatcher.Invoke(() => { TXBFoodTimer.Text = foodTime.ToString(); });
+
+                syrupTime = Math.Max(0, syrupTime);
+                var SyrupTimeContainer = TimerContainers[TXBSyrupTimer];
+                SyrupTimeContainer.Timer = syrupTime;
                 TXBSyrupTimer.Dispatcher.Invoke(() => { TXBSyrupTimer.Text = syrupTime.ToString(); });
+            };
+        }
+
+        private void SetupCraftCount()
+        {
+            GetCraftCount = (int craftCount) =>
+            {
+                craftCount = Math.Max(0, craftCount);
+                var CraftCountContainer = TimerContainers[TXBCraftCount];
+                CraftCountContainer.Timer = craftCount;
+                TXBCraftCount.Dispatcher.Invoke(() => { TXBCraftCount.Text = craftCount.ToString(); });
             };
         }
         #endregion
@@ -270,7 +286,7 @@ namespace AutoSynthesis
                     hkContainer = HKTContainers[TXBMacro1Key];
                     timerContainer = TimerContainers[TXBMacro1Timer];
                     ValidateHotkeyInputs(hkContainer, timerContainer, "Macro 1");
-                    hotkeys.Add(HKType.Macro1, new Hotkey(hkContainer.Keys(), hkContainer.ModKeys(), 
+                    hotkeys.Add(HKType.Macro1, new Hotkey(hkContainer.Keys(), hkContainer.ModKeys(),
                                 TXBMacro1Key.Text, timerContainer.Timer * 1000));
 
                     // Macro 2
@@ -279,7 +295,7 @@ namespace AutoSynthesis
                         hkContainer = HKTContainers[TXBMacro2Key];
                         timerContainer = TimerContainers[TXBMacro2Timer];
                         ValidateHotkeyInputs(hkContainer, timerContainer, "Macro 2");
-                        hotkeys.Add(HKType.Macro2, new Hotkey(hkContainer.Keys(), hkContainer.ModKeys(), 
+                        hotkeys.Add(HKType.Macro2, new Hotkey(hkContainer.Keys(), hkContainer.ModKeys(),
                                     TXBMacro2Key.Text, timerContainer.Timer * 1000));
                     }
                     else
@@ -342,13 +358,16 @@ namespace AutoSynthesis
                     if ((bool)CHBCraftCount.IsChecked && TimerContainers[TXBCraftCount].Timer == 0)
                         throw new InvalidUserParametersException("Craft Count must be greater than 0");
                     var craftCount = (bool)CHBCraftCount.IsChecked ? TimerContainers[TXBCraftCount].Timer : 0;
+                    var foodCount = (bool)CHBFoodCount.IsChecked ? TimerContainers[TXBFoodCount].Timer : 0;
                     settings = new SettingsContainer(
                         craftCount,
+                        foodCount,
                         (bool)CHBCollectableCraft.IsChecked,
                         FoodTimer,
                         TimerContainers[TXBFoodTimer].Timer,
-                        TimerContainers[TXBSyrupTimer].Timer, 
-                        StartCraftingDelay * 1000
+                        TimerContainers[TXBSyrupTimer].Timer,
+                        StartCraftingDelay * 1000,
+                        EndCraftingDelay * 1000
                     );
                 }
                 catch (InvalidUserParametersException error)
@@ -365,7 +384,7 @@ namespace AutoSynthesis
                 };
                 try
                 {
-                    CraftingEngine.InitiateCraftingEngine(hotkeys, settings, action, ErrorMessageHandler, GetFoodAndSyrupTimings);
+                    CraftingEngine.InitiateCraftingEngine(hotkeys, settings, action, ErrorMessageHandler, GetFoodAndSyrupTimings, GetCraftCount);
                     SetCraftingStatus(SystemStates.ACTIVECRAFTING);
                 }
                 catch (ProcessMissingException)
@@ -386,6 +405,19 @@ namespace AutoSynthesis
             {
                 // Cancel the craft
                 SetCraftingStatus(SystemStates.CANCELLINGCRAFT);
+                if ((bool)CHBFood.IsChecked)
+                {
+                    CraftingEngine.CancelAfterFood();
+                    SetCraftingStatus(SystemStates.COMPLETINGFINALFOOD);
+                }
+                else
+                {
+                    CraftingEngine.CancelCrafting();
+                    SetCraftingStatus(SystemStates.COMPLETINGFINALCRAFT);
+                }
+            }
+            else if (SystemState == SystemStates.COMPLETINGFINALFOOD)
+            {
                 CraftingEngine.CancelCrafting();
                 SetCraftingStatus(SystemStates.COMPLETINGFINALCRAFT);
             }
@@ -1002,6 +1034,12 @@ namespace AutoSynthesis
             bool check = (bool)CHBCraftCount.IsChecked;
             TXBCraftCount.IsEnabled = check;
         }
+
+        private void CHBFoodCount_Checked(object sender, RoutedEventArgs e)
+        {
+            bool check = (bool)CHBFoodCount.IsChecked;
+            TXBFoodCount.IsEnabled = check;
+        }
         #endregion
 
         #region Misc Functions
@@ -1040,34 +1078,29 @@ namespace AutoSynthesis
         #endregion
 
         #region Help Window
-        private ScaleTransform helpScale = new ScaleTransform(0.9, 0.9, 0.5, 0.5);
         private string URL = "https://github.com/Saad888/AutoSynthesis/blob/master/README.md";
         private void LBLHelp_MouseEnter(object sender, MouseEventArgs e)
         {
-            var lbl = (Label)sender;
-            lbl.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), "Resources/Images/Background/InfoHighlighted.png")));
-            lbl.Background.RelativeTransform = helpScale;
+            var image = (Image)sender;
+            image.Source = new BitmapImage(new Uri("Resources/Images/Background/InfoHighlighted.png", UriKind.Relative));
         }
 
         private void LBLHelp_MouseLeave(object sender, MouseEventArgs e)
         {
-            var lbl = (Label)sender;
-            lbl.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), "Resources/Images/Background/InfoUnhighlighted.png")));
-            lbl.Background.RelativeTransform = helpScale;
+            var image = (Image)sender;
+            image.Source = new BitmapImage(new Uri("Resources/Images/Background/InfoUnhighlighted.png", UriKind.Relative));
         }
 
         private void LBLHelp_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            var lbl = (Label)sender;
-            lbl.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), "Resources/Images/Background/InfoPressed.png")));
-            lbl.Background.RelativeTransform = helpScale;
+            var image = (Image)sender;
+            image.Source = new BitmapImage(new Uri("Resources/Images/Background/InfoPressed.png", UriKind.Relative));
         }
 
         private void LBLHelp_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            var lbl = (Label)sender;
-            lbl.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), "Resources/Images/Background/InfoHighlighted.png")));
-            lbl.Background.RelativeTransform = helpScale;
+            var image = (Image)sender;
+            image.Source = new BitmapImage(new Uri("Resources/Images/Background/InfoHighlighted.png", UriKind.Relative));
             System.Diagnostics.Process.Start(URL);
         }
         #endregion
@@ -1075,26 +1108,26 @@ namespace AutoSynthesis
         #region Minimize To Tray
         private void MinimizeLabelMouseEnter(object sender, MouseEventArgs e)
         {
-            var lbl = (Label)sender;
-            lbl.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), "Resources/Images/Buttons/Minimize to Tray Hover.png")));
+            var image = (Image)sender;
+            image.Source = new BitmapImage(new Uri("Resources/Images/Buttons/Minimize to Tray Hover.png", UriKind.Relative));
         }
 
         private void MinimizeLabelMouseExit(object sender, MouseEventArgs e)
         {
-            var lbl = (Label)sender;
-            lbl.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), "Resources/Images/Buttons/Minimize to Tray.png")));
+            var image = (Image)sender;
+            image.Source = new BitmapImage(new Uri("Resources/Images/Buttons/Minimize to Tray.png", UriKind.Relative));
         }
 
         private void MinimizeLabelMouseDown(object sender, MouseButtonEventArgs e)
         {
-            var lbl = (Label)sender;
-            lbl.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), "Resources/Images/Buttons/Minimize to Tray Pressed.png")));
+            var image = (Image)sender;
+            image.Source = new BitmapImage(new Uri("Resources/Images/Buttons/Minimize to Tray Pressed.png", UriKind.Relative));
         }
 
         private void MinimizeLabelMouseUp(object sender, MouseButtonEventArgs e)
         {
-            var lbl = (Label)sender;
-            lbl.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), "Resources/Images/Buttons/Minimize to Tray Hover.png")));
+            var image = (Image)sender;
+            image.Source = new BitmapImage(new Uri("Resources/Images/Buttons/Minimize to Tray Hover.png", UriKind.Relative));
             Hide();
             if (NotifyFlagged)
             {
@@ -1116,42 +1149,43 @@ namespace AutoSynthesis
         private void Window_Deactivated(object sender, EventArgs e)
         {
             Window window = (Window)sender;
-            
+
             if (AlwaysOnTopEnabled)
             {
                 window.Topmost = true;
-            } else
+            }
+            else
             {
                 window.Topmost = false;
             }
         }
         private void AlwaysOnTopLabelMouseDown(object sender, MouseButtonEventArgs e)
         {
-            var lbl = (Label)sender;
+            var image = (Image)sender;
             var resourceUrl = AlwaysOnTopEnabled ? "Resources/Images/Buttons/AlwaysOnTopPressedOn.png" : "Resources/Images/Buttons/AlwaysOnTopPressedOff.png";
-            lbl.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), resourceUrl)));
+            image.Source = new BitmapImage(new Uri(resourceUrl, UriKind.Relative));
         }
 
         private void AlwaysOnTopLabelMouseEnter(object sender, MouseEventArgs e)
         {
-            var lbl = (Label)sender;
+            var image = (Image)sender;
             var resourceUrl = AlwaysOnTopEnabled ? "Resources/Images/Buttons/AlwaysOnTopHoverOn.png" : "Resources/Images/Buttons/AlwaysOnTopHoverOff.png";
-            lbl.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), resourceUrl)));
+            image.Source = new BitmapImage(new Uri(resourceUrl, UriKind.Relative));
         }
 
         private void AlwaysOnTopLabelMouseExit(object sender, MouseEventArgs e)
         {
-            var lbl = (Label)sender;
+            var image = (Image)sender;
             var resourceUrl = AlwaysOnTopEnabled ? "Resources/Images/Buttons/AlwaysOnTopOn.png" : "Resources/Images/Buttons/AlwaysOnTopOff.png";
-            lbl.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), resourceUrl)));
+            image.Source = new BitmapImage(new Uri(resourceUrl, UriKind.Relative));
         }
 
         private void AlwaysOnTopLabelMouseUp(object sender, MouseButtonEventArgs e)
         {
             FlipAlwaysOnTop();
-            var lbl = (Label)sender;
+            var image = (Image)sender;
             var resourceUrl = AlwaysOnTopEnabled ? "Resources/Images/Buttons/AlwaysOnTopHoverOn.png" : "Resources/Images/Buttons/AlwaysOnTopHoverOff.png";
-            lbl.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), resourceUrl)));
+            image.Source = new BitmapImage(new Uri(resourceUrl, UriKind.Relative));
         }
 
         private void FlipAlwaysOnTop()
@@ -1202,7 +1236,7 @@ namespace AutoSynthesis
                 Process.Start(directory);
                 Application.Current.Shutdown();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 MessageBox.Show(e.Message);
                 return;
@@ -1216,26 +1250,29 @@ namespace AutoSynthesis
         #region Settings
         private void SettingsEnter(object sender, MouseEventArgs e)
         {
-            var lbl = (Label)sender;
+            var image = (Image)sender;
             var resourceUrl = "Resources/Images/Buttons/settings-hover.png";
-            lbl.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), resourceUrl)));
+            image.Source = new BitmapImage(new Uri(resourceUrl, UriKind.Relative));
         }
 
         private void SettingsExit(object sender, MouseEventArgs e)
         {
-            var lbl = (Label)sender;
+            var image = (Image)sender;
             var resourceUrl = "Resources/Images/Buttons/settings.png";
-            lbl.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), resourceUrl)));
+            image.Source = new BitmapImage(new Uri(resourceUrl, UriKind.Relative));
         }
 
         private void OpenSettings(object sender, MouseButtonEventArgs e)
         {
             try
             {
-                var settingsDialogue = new Settings(StartCraftingDelay.ToString());
+                var settingsDialogue = new Settings(StartCraftingDelay.ToString(), EndCraftingDelay.ToString());
                 settingsDialogue.Owner = Application.Current.MainWindow;
                 if (settingsDialogue.ShowDialog() == true)
-                    StartCraftingDelay = Convert.ToInt32(settingsDialogue.Time);
+                {
+                    StartCraftingDelay = Convert.ToInt32(settingsDialogue.StartDelay);
+                    EndCraftingDelay = Convert.ToInt32(settingsDialogue.EndDelay);
+                }
                 WriteSaveSettings();
             }
             catch (Exception error)
@@ -1250,7 +1287,7 @@ namespace AutoSynthesis
         {
             try
             {
-                var text = AlwaysOnTopEnabled.ToString() + "|" + StartCraftingDelay.ToString();
+                var text = AlwaysOnTopEnabled.ToString() + "|" + StartCraftingDelay.ToString() + "|" + EndCraftingDelay.ToString();
                 File.WriteAllText(SettingsFileDirectory, text);
             }
             catch
@@ -1269,14 +1306,16 @@ namespace AutoSynthesis
                 var fileResult = File.ReadAllText(SettingsFileDirectory).Split('|');
                 AlwaysOnTopEnabled = Convert.ToBoolean(fileResult[0]);
                 StartCraftingDelay = Convert.ToInt32(fileResult[1]);
+                EndCraftingDelay = Convert.ToInt32(fileResult[2]);
             }
             catch
             {
                 AlwaysOnTopEnabled = false;
                 StartCraftingDelay = 0;
+                EndCraftingDelay = 0;
             }
             var resourceUrl = AlwaysOnTopEnabled ? "Resources/Images/Buttons/AlwaysOnTopOn.png" : "Resources/Images/Buttons/AlwaysOnTopOff.png";
-            AlwaysOnTop_Label.Background = new ImageBrush(new BitmapImage(new Uri(BaseUriHelper.GetBaseUri(this), resourceUrl)));
+            AlwaysOnTop_Label.Source = new BitmapImage(new Uri(resourceUrl, UriKind.Relative));
         }
         #endregion
     }

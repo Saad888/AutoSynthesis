@@ -14,25 +14,41 @@ namespace AutoSynthesis
         private static SettingsContainer Settings { get; set; }
         public static bool CraftingActive { get; set; } = false;
         public static DateTime NextFoodUse { get; set; }
+        public static DateTime FoodExpiration { get; set; }
         public static DateTime NextSyrupUse { get; set; }
         public static CancellationTokenSource Cts { get; set; }
         private static Action EndCraftCallback { get; set; }
         public static Action<Exception> ErrorMessageHandler { get; set; }
         private static Action<int, int> SetFoodAndSyrupTimings { get; set; }
+
+        // Action to update the "Craft Count" text box
+        private static Action<int> SetCraftCount { get; set; }
+
         private static bool CraftPrimedToCancel { get; set; }
+        private static bool FoodPrimedToCancel { get; set; }
 
         private const int CONSUMABLE_MARGIN_IN_MINUTES = 2;
         private const int STANDARD_SYRUP_TIME = 15;
         private const int STANDARD_MENU_DELAY = 2000;
         private const int STANDARD_ANIMATION_DELAY = 2000;
         private const int STANDARD_TICK_TIME = 50;
-        private static int CraftCount = 0;
-        private static int TotalCount = 0;
+
+        // The current craft number
+        private static int CraftNumber = 0;
+
+        // The craft number target
+        private static int CraftCountTarget = 0;
+
+        // The number of crafts completed
+        private static int CompletedCount = 0;
+
+        private static int FoodConsumed = 0;
         #endregion
 
         #region System Methods
         public static void InitiateCraftingEngine(Dictionary<HKType, Hotkey> hotKeyDictionary,
-            SettingsContainer userSettings, Action endCraftCallback, Action<Exception> errorMessageHandler, Action<int, int> setFoodAndSyrupTimings)
+            SettingsContainer userSettings, Action endCraftCallback, Action<Exception> errorMessageHandler,
+            Action<int, int> setFoodAndSyrupTimings, Action<int> setCraftCount)
         {
             // Ensure craft is not already happening
             if (CraftingActive)
@@ -48,12 +64,14 @@ namespace AutoSynthesis
                 EndCraftCallback = endCraftCallback;
                 ErrorMessageHandler = errorMessageHandler;
                 SetFoodAndSyrupTimings = setFoodAndSyrupTimings;
+                SetCraftCount = setCraftCount;
 
                 // Load process or throw error if process does not exist
                 ProcessManager.LoadProcess();
 
                 // Set values 
                 CraftPrimedToCancel = false;
+                FoodPrimedToCancel = false;
 
                 // Store values
                 HotkeySet = hotKeyDictionary;
@@ -71,12 +89,27 @@ namespace AutoSynthesis
             }
         }
 
+        public static void CancelAfterFood()
+        {
+            if (!CraftingActive)
+                return;
+
+            if (!FoodPrimedToCancel)
+            {
+                FoodPrimedToCancel = true;
+                UICommunicator.UpdateStatus("Finishing this food...", true);
+                return;
+            }
+
+            UICommunicator.UpdateStatus("Ending Food...");
+        }
+
         public static void CancelCrafting()
         {
             if (!CraftingActive)
                 return;
 
-            if(!CraftPrimedToCancel)
+            if (!CraftPrimedToCancel)
             {
                 CraftPrimedToCancel = true;
                 UICommunicator.UpdateStatus("Finishing this craft...", true);
@@ -107,35 +140,41 @@ namespace AutoSynthesis
                 UICommunicator.ErrorMessageHandler = ErrorMessageHandler;
                 UICommunicator.UpdateStatus("Setting up for Crafting...");
                 UICommunicator.StartTimedProgressBarUpdates();
-                UICommunicator.UpdateCompletedUIInfo(0, Settings.CraftCount);
 
-
-                CraftCount = 1;
-                TotalCount = 0;
+                CraftNumber = 1;
+                CraftCountTarget = Settings.CraftCount;
+                CompletedCount = 0;
+                FoodConsumed = 0;
                 if (HotkeySet[HKType.Food] != null)
                 {
-                    NextFoodUse = CalculateNextConsumableUse(Settings.StartingFoodTime);
+                    UICommunicator.UpdateFoodUIInfo(FoodConsumed, Settings.FoodCount);
+                    NextFoodUse = CalculateNextConsumableUse(Settings.StartingFoodTime, DateTime.Now);
                     UICommunicator.UpdateFood(NextFoodUse);
+
+                    FoodExpiration = DateTime.Now.AddMinutes(Settings.StartingFoodTime);
+                    RunFoodProgressBar(Settings.StartingFoodTime * 60 * 1000);
                 }
                 if (HotkeySet[HKType.Syrup] != null)
                 {
-                    NextSyrupUse = CalculateNextConsumableUse(Settings.StartingSyrupTime);
+                    NextSyrupUse = CalculateNextConsumableUse(Settings.StartingSyrupTime, DateTime.Now);
                     UICommunicator.UpdateSyrup(NextSyrupUse);
                 }
 
+                RunTotalProgressBar();
+                DateTime craftStartTime = DateTime.Now;
 
-                // If crafts remaining was 0, loop infinitley
+                // If crafts remaining was 0, loop infinitely
                 // If not, craft until quota is met
                 while (!CraftingComplete())
                 {
                     // UI MESSAGE: Set timer for overall craft
-                    UICommunicator.UpdateCraftUIInfo(CraftCount, Settings.CraftCount);
+                    UICommunicator.UpdateCraftUIInfo(CraftNumber, CraftCountTarget);
+
+                    // Begin Craft Timer:
+                    RunCraftProgressBar();
 
                     // Add requested delay
                     Break(Settings.StartingDelay);
-                    
-                    // Begin Craft Timer:
-                    RunCraftProgressBar();
 
                     // Initiate Macro 1
                     SendMacroInput(HotkeySet[HKType.Macro1], 1);
@@ -146,30 +185,30 @@ namespace AutoSynthesis
                     // Initiate Macro 3
                     SendMacroInput(HotkeySet[HKType.Macro3], 3);
 
-                    // Update UI Message
-                    TotalCount = CraftCount;
-                    UICommunicator.UpdateCompletedUIInfo(TotalCount, Settings.CraftCount);
+                    // Finish and add requested end delay
+                    Break(STANDARD_MENU_DELAY + Settings.EndingDelay);
 
                     // Collectable Menu Option
                     SendCollectableConfirmationInput();
 
-                    // Standard delay for menus
-                    Break(STANDARD_MENU_DELAY);
+                    CompletedCount = CraftNumber;
 
                     // Use Food and Syrup
                     SendFoodAndSyrupInput();
 
                     // Prepare next craft if crafting is not finished
                     PrepareNextCraftInput();
-                    Break(STANDARD_ANIMATION_DELAY);
 
-                    CraftCount += 1;
+                    CraftNumber += 1;
                 }
-            } 
+
+                var totalCraftTime = (int)(DateTime.Now - craftStartTime).TotalSeconds;
+                Logger.Write($"Actual total craft time of {totalCraftTime}");
+            }
             catch (Exception e) when (!(e is CraftCancelRequest))
             {
                 ErrorMessageHandler(e);
-            } 
+            }
             finally
             {
                 EndCraftingProcess();
@@ -177,18 +216,25 @@ namespace AutoSynthesis
         }
 
         private static void EndCraftingProcess()
-        { 
+        {
             // ALL CLEANUP
             UICommunicator.EndAllProgress();
             UICommunicator.UpdateStatus("Crafting Finished!");
             var craftCompleted = "Completed ";
-            craftCompleted += Settings.CraftCount > 0 ? $"{TotalCount}/{Settings.CraftCount}" : $"{TotalCount}";
+            craftCompleted += CraftCountTarget > 0 ? $"{CompletedCount}/{CraftCountTarget}" : $"{CompletedCount}";
             UICommunicator.UpdateStatus2(craftCompleted);
             CraftingActive = false;
 
-            var foodRemaining = (int)(NextFoodUse - DateTime.Now).TotalMinutes;
+            var foodRemaining = (int)(FoodExpiration - DateTime.Now).TotalMinutes;
             var syrupRemaining = (int)(NextSyrupUse - DateTime.Now).TotalMinutes;
             SetFoodAndSyrupTimings.Invoke(foodRemaining, syrupRemaining);
+
+            if (Settings.CraftCount > 0)
+            {
+                // Update the "Craft Count" text box
+                var craftsRemaining = CraftCountTarget - CompletedCount;
+                SetCraftCount.Invoke(craftsRemaining);
+            }
 
             EndCraftCallback.Invoke();
         }
@@ -211,20 +257,8 @@ namespace AutoSynthesis
                 return;
             Logger.Write("Sending Macro " + macroNumber);
             // UI message: MACRO NUMBER macroNumber
-            UICommunicator.UpdateMacroUIInfo(macroNumber, hotkey.TimerInMiliseconds, VerifyFinalMacro(macroNumber));
+            UICommunicator.UpdateMacroUIInfo(macroNumber, hotkey.TimerInMilliseconds);
             SendInput(hotkey);
-        }
-
-        private static bool VerifyFinalMacro(int macroNumber)
-        {
-            switch (macroNumber)
-            {
-                case 1:
-                    return (HotkeySet[HKType.Macro2] == null && HotkeySet[HKType.Macro3] == null);
-                case 2:
-                    return (HotkeySet[HKType.Macro3] == null);
-            }
-            return true;
         }
 
         private static void SendCollectableConfirmationInput()
@@ -235,14 +269,13 @@ namespace AutoSynthesis
             Logger.Write("Accepting Collectable Craft");
 
             UICommunicator.UpdateStatus("Accepting Collectable Craft...");
+            SendInput(HotkeySet[HKType.Confirm], 2);
             Break(STANDARD_MENU_DELAY);
-            SendInput(HotkeySet[HKType.Confirm]);
-            SendInput(HotkeySet[HKType.Confirm]);
         }
 
         private static bool CraftingComplete()
         {
-            return CraftPrimedToCancel || ((Settings.CraftCount != 0) && (TotalCount >= Settings.CraftCount));
+            return CraftPrimedToCancel || ((CraftCountTarget != 0) && (CompletedCount >= CraftCountTarget));
         }
 
         private static void SendFoodAndSyrupInput()
@@ -257,26 +290,36 @@ namespace AutoSynthesis
             // leave if neither are to be used
             if (!useFood && !useSyrup)
                 return;
+
+            if (useFood && FoodPrimedToCancel || (Settings.FoodCount > 0 && FoodConsumed >= Settings.FoodCount))
+            {
+                // Only cancel crafting if food is actually about to expire
+                if (DateTime.Compare(FoodExpiration, DateTime.Now) <= 0)
+                {
+                    throw new CraftCancelRequest();
+                }
+                // Don't use food
+                return;
+            }
+
             UICommunicator.UpdateStatus("Refreshing Consumables...");
             Logger.Write("Refreshing Consumables");
 
             // enter a craft and leave it out
-            Break(500);
+            Break(Settings.StartingDelay);
 
             try
             {
                 ProcessManager.DisableInputs();
-                Break(50);
+                Break(100);
                 SendInput(HotkeySet[HKType.Confirm], 3);
-                SendInput(HotkeySet[HKType.Cancel]);
-                Break(50);
             }
             finally
             {
                 ProcessManager.EnableInputs();
             }
 
-            Break(1500);
+            Break(STANDARD_ANIMATION_DELAY);
 
             try
             {
@@ -285,14 +328,13 @@ namespace AutoSynthesis
                 SendInput(HotkeySet[HKType.Confirm]);
                 SendInput(HotkeySet[HKType.Cancel]);
                 SendInput(HotkeySet[HKType.Confirm]);
-                Break(50);
             }
             finally
             {
                 ProcessManager.EnableInputs();
             }
 
-            Break(2000);
+            Break(STANDARD_MENU_DELAY);
 
             // use food and syrup as needed
             if (useFood)
@@ -300,15 +342,22 @@ namespace AutoSynthesis
                 UICommunicator.UpdateStatus("Using Food...");
                 Logger.Write("Using Food");
                 SendInput(HotkeySet[HKType.Food]);
-                NextFoodUse = CalculateNextConsumableUse(Settings.FoodDuration);
+
+                FoodConsumed++;
+                UICommunicator.UpdateFoodUIInfo(FoodConsumed, Settings.FoodCount);
+
+                NextFoodUse = CalculateNextConsumableUse(Settings.FoodDuration, FoodExpiration);
                 UICommunicator.UpdateFood(NextFoodUse);
+
+                FoodExpiration = FoodExpiration.AddMinutes(Settings.FoodDuration);
+                RunFoodProgressBar((int)(FoodExpiration - DateTime.Now).TotalMilliseconds);
             }
             if (useSyrup)
             {
                 UICommunicator.UpdateStatus("Using Syrup...");
                 Logger.Write("Using Syrup");
                 SendInput(HotkeySet[HKType.Syrup]);
-                NextSyrupUse = CalculateNextConsumableUse(STANDARD_SYRUP_TIME);
+                NextSyrupUse = CalculateNextConsumableUse(STANDARD_SYRUP_TIME, DateTime.Now);
                 UICommunicator.UpdateSyrup(NextSyrupUse);
             }
         }
@@ -317,52 +366,166 @@ namespace AutoSynthesis
         {
             if (CraftingComplete())
                 return;
-            
+
             UICommunicator.UpdateStatus("Preparing Next Craft...");
             Logger.Write("Resetting Craft Cycle");
             try
             {
                 ProcessManager.DisableInputs();
-                Break(50);
+                Break(100);
                 SendInput(HotkeySet[HKType.Confirm], 3);
-                Break(50);
             }
             finally
             {
                 ProcessManager.EnableInputs();
             }
 
-
+            Break(STANDARD_ANIMATION_DELAY);
         }
 
-        private static DateTime CalculateNextConsumableUse(int timeRemainingInMinutes)
+        #endregion
+
+        #region Calculation Methods
+
+        private static DateTime CalculateNextConsumableUse(int timeRemainingInMinutes, DateTime start)
         {
             var timeMargin = CalculateFoodSyrupMargin();
-            return DateTime.Now.AddMinutes(timeRemainingInMinutes - timeMargin);
+            return start.AddMinutes(timeRemainingInMinutes - timeMargin);
         }
 
         private static double CalculateFoodSyrupMargin()
         {
-            double totalTime = HotkeySet[HKType.Macro1].TimerInMiliseconds;
-            if (HotkeySet[HKType.Macro2] != null)
-                totalTime += HotkeySet[HKType.Macro2].TimerInMiliseconds;
-            if (HotkeySet[HKType.Macro3] != null)
-                totalTime += HotkeySet[HKType.Macro3].TimerInMiliseconds;
-            return totalTime / (1000 * 60) + 0.25;
+            return (double)CalculateMacroTime() / (1000 * 60) + 0.25;
+        }
+
+        private static int CalculateInputTime(HKType type)
+        {
+            if (HotkeySet[type] == null)
+            {
+                return 0;
+            }
+
+            int totalTime = HotkeySet[type].TimerInMilliseconds;
+            if (HotkeySet[type].ModKeyCodes != null)
+            {
+                totalTime += 50;
+            }
+            return totalTime;
+        }
+
+        private static int CalculateMacroTime()
+        {
+            int totalTime = CalculateInputTime(HKType.Macro1);
+            totalTime += CalculateInputTime(HKType.Macro2);
+            totalTime += CalculateInputTime(HKType.Macro3);
+            return totalTime;
+        }
+
+        private static int CalculateCraftTime()
+        {
+            int totalTime = Settings.StartingDelay;
+            totalTime += CalculateMacroTime();
+            totalTime += STANDARD_MENU_DELAY;
+            totalTime += Settings.EndingDelay;
+            if (Settings.CollectableCraft)
+            {
+                totalTime += CalculateInputTime(HKType.Confirm) * 2;
+                totalTime += STANDARD_MENU_DELAY;
+            }
+            return totalTime;
         }
 
         #endregion
 
         #region UI Methods
+        private static void RunTotalProgressBar()
+        {
+            // Don't set up the total progress bar if we don't have targets
+            if (CraftCountTarget == 0 && Settings.FoodCount == 0)
+            {
+                return;
+            }
+
+            DateTime start = DateTime.Now;
+            DateTime simulated = start;
+            DateTime simulatedNextFood = NextFoodUse;
+            DateTime simulatedNextSyrup = NextSyrupUse;
+            DateTime simulatedFoodExpiration = FoodExpiration;
+            bool done = false;
+            int craftsCompleted = 0;
+            int foodConsumed = 0;
+            while (!done)
+            {
+                simulated = simulated.AddMilliseconds(CalculateCraftTime());
+                craftsCompleted++;
+
+                if (CraftCountTarget > 0 && craftsCompleted >= CraftCountTarget)
+                {
+                    break;
+                }
+
+                bool useFood = (HotkeySet[HKType.Food] != null && DateTime.Compare(simulatedNextFood, simulated) <= 0);
+                bool useSyrup = (HotkeySet[HKType.Syrup] != null && DateTime.Compare(simulatedNextSyrup, simulated) <= 0);
+                if (Settings.FoodCount > 0 &&
+                    HotkeySet[HKType.Food] != null &&
+                    foodConsumed >= Settings.FoodCount
+                    && DateTime.Compare(simulatedFoodExpiration, simulated) <= 0)
+                {
+                    break;
+                }
+                if (useFood || useSyrup)
+                {
+                    simulated = simulated.AddMilliseconds(
+                        Settings.StartingDelay +
+                        100 +
+                        CalculateInputTime(HKType.Confirm) * 3 +
+                        STANDARD_ANIMATION_DELAY +
+                        100 +
+                        CalculateInputTime(HKType.Confirm) +
+                        CalculateInputTime(HKType.Cancel) +
+                        CalculateInputTime(HKType.Confirm) +
+                        STANDARD_MENU_DELAY);
+                    if (useFood)
+                    {
+                        simulated = simulated.AddMilliseconds(CalculateInputTime(HKType.Food));
+                        simulatedFoodExpiration = simulatedFoodExpiration.AddMinutes(Settings.FoodDuration);
+                        simulatedNextFood = CalculateNextConsumableUse(Settings.FoodDuration, simulatedFoodExpiration);
+                        foodConsumed++;
+                    }
+                    if (useSyrup)
+                    {
+                        simulated = simulated.AddMilliseconds(CalculateInputTime(HKType.Syrup));
+                        simulatedNextSyrup = CalculateNextConsumableUse(STANDARD_SYRUP_TIME, simulated);
+                    }
+                }
+
+                // Prepare next craft input
+                simulated = simulated.AddMilliseconds(
+                    100 +
+                    CalculateInputTime(HKType.Confirm) * 3 +
+                    STANDARD_ANIMATION_DELAY);
+
+                // For each craft, add an artificial execution delay
+                simulated = simulated.AddMilliseconds(400);
+            }
+
+            CraftCountTarget = craftsCompleted;
+            var totalDuration = (int)(simulated - start).TotalMilliseconds;
+            Logger.Write($"Estimating total craft time of {totalDuration}");
+            UICommunicator.BeginTotalTimer(totalDuration);
+        }
+
         private static void RunCraftProgressBar()
         {
-            int totalTime = HotkeySet[HKType.Macro1].TimerInMiliseconds;
-            if (HotkeySet[HKType.Macro2] != null)
-                totalTime += HotkeySet[HKType.Macro2].TimerInMiliseconds;
-            if (HotkeySet[HKType.Macro3] != null)
-                totalTime += HotkeySet[HKType.Macro3].TimerInMiliseconds;
-
+            int totalTime = CalculateCraftTime();
             UICommunicator.BeginCraftTimer(totalTime);
+        }
+
+        private static void RunFoodProgressBar(int milliseconds)
+        {
+            // int totalTime = minutes * 60 * 1000;
+            UICommunicator.BeginFoodTimer(milliseconds);
+
         }
         #endregion
 
@@ -378,8 +541,7 @@ namespace AutoSynthesis
             {
                 UICommunicator.UpdateStatus2("Sending \"" + hotkey.ToString() + "\"");
                 KeyInputEngine.SendKeysToGame(hotkey.KeyCode, hotkey.ModKeyCodes);
-                SleepThread(hotkey.TimerInMiliseconds);
-
+                SleepThread(hotkey.TimerInMilliseconds);
             }
         }
 
@@ -393,6 +555,7 @@ namespace AutoSynthesis
                 Thread.Sleep(STANDARD_TICK_TIME);
             }
         }
+
         #endregion
     }
 }
